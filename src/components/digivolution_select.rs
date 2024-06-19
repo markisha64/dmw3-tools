@@ -10,11 +10,7 @@ pub fn DigivolutionSelect(digivolution: Signal<Digivolutions>) -> Element {
                     *digivolution.write() = Digivolutions::from(&x.data.value()[..]);
                 },
                 for dv in ALL_DIGIVOLUTIONS {
-                    option {
-                        value: Into::<&str>::into(dv),
-                        selected: "selected",
-                        "{Into::<&str>::into(dv)}"
-                    }
+                    option { value: Into::<&str>::into(dv), selected: "selected", "{Into::<&str>::into(dv)}" }
                 }
             }
         }
