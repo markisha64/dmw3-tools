@@ -1,0 +1,53 @@
+nav {
+  background-color: #000021;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: left;
+  /* Center the navigation items */
+}
+
+nav ul li {
+  margin: 0 15px;
+  /* Space between navigation items */
+}
+
+nav ul li a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 14px 20px;
+}
+
+nav ul li a:hover {
+  background-color: #575757;
+  border-radius: 4px;
+}
+
+html {
+  background-image: url('bg.png');
+  padding: 2px;
+  animation: bg 3s linear infinite;
+  color: white;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes bg {
+  from {
+    background-position: 0px 0px;
+  }
+
+  to {
+    background-position: 217px 217px;
+  }
+}
