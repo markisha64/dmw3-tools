@@ -14,4 +14,5 @@ dioxus = { version = "0.5", features = ["web", "router"] }
 tracing = "0.1.40"
 dioxus-logger = "0.5.0"
 
-dmw3_structs = { path = "dmw3-randomizer/structs" }
+dmw3_structs = { git = "https://github.com/markisha64/dmw3-randomizer/" }
+serde_json = "1.0.117"

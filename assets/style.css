@@ -1,6 +1,18 @@
-nav {
+.container {
   background-color: #000021;
   border: 1px solid rgba(255, 255, 255, 0.5);
+  margin: 5px;
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+}
+
+.inline {
+  display: inline;
+}
+
+nav {
+  background-color: #000021;
   color: #fff;
 }
 

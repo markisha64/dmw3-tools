@@ -5,6 +5,9 @@ use dioxus::prelude::*;
 pub fn DigivolutionSelect(digivolution: Signal<Digivolutions>) -> Element {
     rsx! {
         form {
+            label {
+                "Digivolution"
+            }
             select {
                 onchange: move |x| {
                     *digivolution.write() = Digivolutions::from(&x.data.value()[..]);

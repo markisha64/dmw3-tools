@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 use tracing::Level;
 
 mod components;
+mod data;
 mod enums;
 mod pages;
 mod route;
@@ -14,6 +15,13 @@ fn main() {
 }
 
 pub fn App() -> Element {
+    use_context_provider(|| -> ReadOnlySignal<Vec<dmw3_structs::DigivolutionData>> {
+        ReadOnlySignal::new(Signal::new(
+            serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(data::DIGIVOLUTIONS)
+                .unwrap(),
+        ))
+    });
+
     rsx! {
         link { rel: "stylesheet", href: "style.css" }
         Router::<route::Route> {}
