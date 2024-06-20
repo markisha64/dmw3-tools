@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Get cli tool
-      run: cargo install dioxsus-cli
+      run: cargo install dioxus-cli
     - name: Build
       run: dx build --release
     - name: Setup pages
