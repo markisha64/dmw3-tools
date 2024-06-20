@@ -1,7 +1,7 @@
 [application]
 
 # App (Project) Name
-name = "dmw3-tools-2"
+name = "dmw3-tools"
 
 # Dioxus App Default Platform
 # desktop, web
@@ -16,7 +16,7 @@ asset_dir = "assets"
 [web.app]
 
 # HTML title tag content
-title = "dmw3-tools-2"
+title = "dmw3-tools"
 
 base_path = "dmw3-tools"
 
