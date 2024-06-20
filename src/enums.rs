@@ -228,15 +228,27 @@ pub const ALL_DIGIVOLUTIONS: [Digivolutions; 50] = [
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Moves {
-    AttackKotemon = 0,
+    PickingClaw = 0x7e,
+    SnappingClaw = 0x7f,
 }
 
 impl From<Moves> for &str {
     fn from(value: Moves) -> Self {
         match value {
-            Moves::AttackKotemon => "AttackKotemon",
+            Moves::PickingClaw => "PickingClaw",
+            Moves::SnappingClaw => "SnappingClaw",
         }
     }
 }
 
-pub const ALL_MOVES: [Moves; 1] = [Moves::AttackKotemon];
+impl From<&str> for Moves {
+    fn from(value: &str) -> Self {
+        match value {
+            "PickingClaw" => Moves::PickingClaw,
+            "SnappingClaw" => Moves::SnappingClaw,
+            _ => Moves::PickingClaw,
+        }
+    }
+}
+
+pub const ALL_MOVES: [Moves; 2] = [Moves::PickingClaw, Moves::SnappingClaw];

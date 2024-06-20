@@ -1,22 +1,38 @@
+use std::cmp::min;
+
 use dioxus::prelude::*;
-use std::cmp;
-use tracing::info;
 
 use crate::components;
-use crate::enums::Digivolutions;
+use crate::data::{get_digivolutions, get_move_data};
+use crate::enums::{Digivolutions, Moves};
 
 #[component]
 pub fn StealChance() -> Element {
     let mut digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
     let mut rookie_speed = use_signal::<i64>(|| 200);
     let mut enemy_speed = use_signal::<i64>(|| 200);
+    let mut drop_rate = use_signal::<i64>(|| 128);
+    let mut mv = use_signal::<Moves>(|| Moves::PickingClaw);
 
-    let dvs = use_context::<ReadOnlySignal<Vec<dmw3_structs::DigivolutionData>>>;
+    let c_digivolution = digivolution();
+    let c_rookie_speed = rookie_speed();
+    let c_enemy_speed = enemy_speed();
+    let c_drop_rate = drop_rate();
+    let c_mv = mv();
 
-    let player_speed = match digivolution() as usize > 7 {
-        true => rookie_speed() + dvs().read()[digivolution() as usize - 8].spd as i64,
-        _ => rookie_speed(),
+    let dvs = get_digivolutions();
+    let mvs = get_move_data();
+
+    let player_speed = match c_digivolution as usize > 7 {
+        true => c_rookie_speed + dvs[c_digivolution as usize - 8].spd as i64,
+        _ => c_rookie_speed,
     };
+
+    let sd = min((player_speed * 100) / c_enemy_speed, 200);
+    let sr = mvs[c_mv as usize].effect_rate as i64;
+    let asr = 0;
+
+    let range = min((c_drop_rate * sd * (((sr + asr) * 100) / 64)) / 10000, 1023);
 
     rsx! {
         div {
@@ -24,22 +40,37 @@ pub fn StealChance() -> Element {
             components::DigivolutionSelect {
                 onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
             }
-            components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: rookie_speed(), onchange: move |x: FormEvent| {
+            components::MoveSelect {
+                onchange: move |x: FormEvent| {
+                    mv.set(Moves::from(&x.data.value()[..]));
+                },
+                set: &[Moves::PickingClaw, Moves::SnappingClaw]
+            }
+            components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, onchange: move |x: FormEvent| {
                 let r: Result<i64, _> = x.value().parse();
 
                 rookie_speed.set(match r {
                     Ok(v) => v.clamp(1, 999),
-                    _ => rookie_speed()
+                    _ => c_rookie_speed
                 });
             } }
-            components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: enemy_speed(), onchange: move |x: FormEvent| {
+            components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, onchange: move |x: FormEvent| {
                 let r: Result<i64, _> = x.value().parse();
 
                 enemy_speed.set(match r {
                     Ok(v) => v.clamp(1, 999),
-                    _ => enemy_speed()
+                    _ => c_enemy_speed
                 });
             } }
+            components::NumberField { label: "Drop rate", disabled: false, mn: 1, mx: 1023, value: c_drop_rate, onchange: move |x: FormEvent| {
+                let r: Result<i64, _> = x.value().parse();
+
+                drop_rate.set(match r {
+                    Ok(v) => v.clamp(1, 1023),
+                    _ => c_drop_rate
+                });
+            } }
+            "Chance to go successfuly steal {range}/1023"
         }
     }
 }
