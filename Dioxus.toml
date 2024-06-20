@@ -18,6 +18,8 @@ asset_dir = "assets"
 # HTML title tag content
 title = "dmw3-tools-2"
 
+base_path = "dmw3-tools"
+
 [web.watcher]
 
 # when watcher trigger, regenerate the `index.html`
