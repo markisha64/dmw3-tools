@@ -23,24 +23,21 @@ pub fn TurnStarterChance() -> Element {
 
     rsx! {
         div {
-            class: "inline",
-            div {
-                class: "container",
-                components::DigivolutionSelect { digivolution }
-                components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: rookie_speed(), onchange: move |x: FormEvent| {
-                    rookie_speed.set(match x.value().parse() {
-                        Ok(x) => cmp::min(cmp::max(x, 1), 999),
-                        _ => rookie_speed()
-                    });
-                } }
-                components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: enemy_speed(), onchange: move |x: FormEvent| {
-                    enemy_speed.set(match x.value().parse() {
-                        Ok(x) => cmp::min(cmp::max(x, 1), 999),
-                        _ => enemy_speed()
-                    });
-                } }
-                "Chance to go first {chance}/128"
-            }
+            class: "container",
+            components::DigivolutionSelect { digivolution }
+            components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: rookie_speed(), onchange: move |x: FormEvent| {
+                rookie_speed.set(match x.value().parse() {
+                    Ok(x) => cmp::min(cmp::max(x, 1), 999),
+                    _ => rookie_speed()
+                });
+            } }
+            components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: enemy_speed(), onchange: move |x: FormEvent| {
+                enemy_speed.set(match x.value().parse() {
+                    Ok(x) => cmp::min(cmp::max(x, 1), 999),
+                    _ => enemy_speed()
+                });
+            } }
+            "Chance to go first {chance}/128"
         }
     }
 }
