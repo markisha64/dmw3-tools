@@ -18,7 +18,7 @@ asset_dir = "assets"
 # HTML title tag content
 title = "dmw3-tools"
 
-base_path = "https://markisha64.github.io/dmw3-tools/"
+base_path = "dmw3-tools"
 
 [web.watcher]
 
