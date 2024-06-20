@@ -23,7 +23,9 @@ pub fn App() -> Element {
     });
 
     rsx! {
-        link { rel: "stylesheet", href: "style.css" }
+        style {
+            "{include_str!(\"../assets/style.css\")}"
+        }
         Router::<route::Route> {}
     }
 }
