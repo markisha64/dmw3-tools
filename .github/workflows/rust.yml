@@ -12,6 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo
+          target
+        key: linux-cargo-${{ hashFiles('Cargo.lock') }}
+        restore-keys: linux-cargo-${{ hashFiles('Cargo.lock') }}
     - name: Get cli tool
       run: cargo install dioxus-cli
     - name: Build
@@ -21,7 +29,7 @@ jobs:
       uses: actions/configure-pages@v3
     - name: Upload artifact
       with:
-        name: page
+        name: github-pages
         path: ./dist
       uses: actions/upload-pages-artifact@v2
 
