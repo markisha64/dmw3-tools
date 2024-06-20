@@ -52,9 +52,9 @@ pub enum Digivolutions {
     Diaboromon = 49,
 }
 
-impl Into<&str> for Digivolutions {
-    fn into(self) -> &'static str {
-        match self {
+impl From<Digivolutions> for &str {
+    fn from(val: Digivolutions) -> Self {
+        match val {
             Digivolutions::Kotemon => "Kotemon",
             Digivolutions::Kumamon => "Kumamon",
             Digivolutions::Monmon => "Monmon",
