@@ -1,4 +1,4 @@
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Digivolutions {
     Kotemon = 0,
     Kumamon = 1,

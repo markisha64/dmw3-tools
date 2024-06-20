@@ -1,12 +1,13 @@
 use dioxus::prelude::*;
 use std::cmp;
+use tracing::info;
 
 use crate::components;
 use crate::enums::Digivolutions;
 
 #[component]
 pub fn TurnStarterChance() -> Element {
-    let digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
+    let mut digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
     let mut rookie_speed = use_signal::<i64>(|| 200);
     let mut enemy_speed = use_signal::<i64>(|| 200);
 
@@ -24,7 +25,9 @@ pub fn TurnStarterChance() -> Element {
     rsx! {
         div {
             class: "container",
-            components::DigivolutionSelect { digivolution }
+            components::DigivolutionSelect {
+                onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
+            }
             components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: rookie_speed(), onchange: move |x: FormEvent| {
                 let r: Result<i64, _> = x.value().parse();
 
