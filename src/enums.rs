@@ -225,3 +225,18 @@ pub const ALL_DIGIVOLUTIONS: [Digivolutions; 50] = [
     Digivolutions::Beelzemon,
     Digivolutions::Diaboromon,
 ];
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Moves {
+    AttackKotemon = 0,
+}
+
+impl From<Moves> for &str {
+    fn from(value: Moves) -> Self {
+        match value {
+            Moves::AttackKotemon => "AttackKotemon",
+        }
+    }
+}
+
+pub const ALL_MOVES: [Moves; 1] = [Moves::AttackKotemon];

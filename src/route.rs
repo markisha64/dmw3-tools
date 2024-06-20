@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::components::Navbar;
-use crate::pages::{Index, TurnStarterChance};
+use crate::pages::{Index, StealChance, TurnStarterChance};
 
 #[derive(Routable, PartialEq, Clone)]
 #[rustfmt::skip]
@@ -12,4 +12,7 @@ pub enum Route {
 
         #[route("/turnStarterChance")]
         TurnStarterChance {},
+
+        #[route("/stealChance")]
+        StealChance {},
 }
