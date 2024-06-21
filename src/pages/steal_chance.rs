@@ -31,7 +31,7 @@ pub fn StealChance() -> Element {
     };
 
     let sd = min((player_speed * 100) / c_enemy_speed, 200);
-    let sr = mvs[c_mv as usize].effect_rate as i64;
+    let sr = mvs[c_mv as usize - 1].effect_rate as i64;
 
     // TODO: dmw3-randomizer read this data
     let asr = match c_item {
