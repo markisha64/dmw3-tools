@@ -27,39 +27,48 @@ pub fn TurnStarterChance() -> Element {
 
     let chance = cmp::max(128 - value, 0);
 
-    let chance_p = (chance as f32) / 1.28;
+    let chance_p = (chance as f32 / 0.0128).round() / 100.0;
 
     rsx! {
         div {
-            class: "inline",
+            class: "row",
             div {
-                class: "container",
-                components::DigivolutionSelect {
-                    onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
+                class: "column",
+                div {
+                    class: "container",
+                    components::DigivolutionSelect {
+                        onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
+                    }
+                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, onchange: move |x: FormEvent| {
+                        let r: Result<i64, _> = x.value().parse();
+
+                        rookie_speed.set(match r {
+                            Ok(v) => v.clamp(1, 999),
+                            _ => c_rookie_speed
+                        });
+                    } }
                 }
-                components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, onchange: move |x: FormEvent| {
-                    let r: Result<i64, _> = x.value().parse();
-
-                    rookie_speed.set(match r {
-                        Ok(v) => v.clamp(1, 999),
-                        _ => c_rookie_speed
-                    });
-                } }
             }
             div {
-                class: "container",
-                components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, onchange: move |x: FormEvent| {
-                    let r: Result<i64, _> = x.value().parse();
+                class: "column",
+                div {
+                    class: "container",
+                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, onchange: move |x: FormEvent| {
+                        let r: Result<i64, _> = x.value().parse();
 
-                    enemy_speed.set(match r {
-                        Ok(v) => v.clamp(1, 999),
-                        _ => c_enemy_speed
-                    });
-                } }
+                        enemy_speed.set(match r {
+                            Ok(v) => v.clamp(1, 999),
+                            _ => c_enemy_speed
+                        });
+                    } }
+                }
             }
             div {
-                class: "container",
-                "Chance to go first {chance}/128 ({chance_p}%)"
+                class: "column",
+                div {
+                    class: "container",
+                    "Chance to go first {chance}/128 ({chance_p}%)"
+                }
             }
         }
     }
