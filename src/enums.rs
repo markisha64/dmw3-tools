@@ -252,3 +252,31 @@ impl From<&str> for Moves {
 }
 
 pub const ALL_MOVES: [Moves; 2] = [Moves::PickingClaw, Moves::SnappingClaw];
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Items {
+    NoItem = 0,
+    HackSticker = 1,
+    HackSystem = 2,
+}
+
+impl From<Items> for &str {
+    fn from(value: Items) -> Self {
+        match value {
+            Items::NoItem => "No item",
+            Items::HackSticker => "HackSticker",
+            Items::HackSystem => "HackSystem",
+        }
+    }
+}
+
+impl From<&str> for Items {
+    fn from(value: &str) -> Items {
+        match value {
+            "No item" => Items::NoItem,
+            "HackSticker" => Items::HackSticker,
+            "HackSystem" => Items::HackSystem,
+            _ => Items::HackSticker,
+        }
+    }
+}

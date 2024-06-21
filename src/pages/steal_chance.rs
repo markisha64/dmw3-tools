@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 use crate::components;
 use crate::data::{get_digivolutions, get_move_data};
-use crate::enums::{Digivolutions, Moves};
+use crate::enums::{Digivolutions, Items, Moves};
 
 #[component]
 pub fn StealChance() -> Element {
@@ -13,12 +13,14 @@ pub fn StealChance() -> Element {
     let mut enemy_speed = use_signal::<i64>(|| 200);
     let mut drop_rate = use_signal::<i64>(|| 128);
     let mut mv = use_signal::<Moves>(|| Moves::PickingClaw);
+    let mut item = use_signal::<Items>(|| Items::NoItem);
 
     let c_digivolution = digivolution();
     let c_rookie_speed = rookie_speed();
     let c_enemy_speed = enemy_speed();
     let c_drop_rate = drop_rate();
     let c_mv = mv();
+    let c_item = item();
 
     let dvs = get_digivolutions();
     let mvs = get_move_data();
@@ -58,6 +60,13 @@ pub fn StealChance() -> Element {
                         _ => c_rookie_speed
                     });
                 } }
+                components::ItemSelect {
+                    onchange: move |x: FormEvent| {
+                        item.set(Items::from(&x.data.value()[..]));
+                    },
+                    set: &[Items::NoItem, Items::HackSticker, Items::HackSystem],
+                    label: None
+                }
             }
             div {
                 class: "container",
