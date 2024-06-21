@@ -32,7 +32,13 @@ pub fn StealChance() -> Element {
 
     let sd = min((player_speed * 100) / c_enemy_speed, 200);
     let sr = mvs[c_mv as usize].effect_rate as i64;
-    let asr = 0;
+
+    // TODO: dmw3-randomizer read this data
+    let asr = match c_item {
+        Items::NoItem => 0,
+        Items::HackSticker => 32,
+        Items::HackSystem => 64,
+    };
 
     let range = min((c_drop_rate * sd * (((sr + asr) * 100) / 64)) / 10000, 1024);
 

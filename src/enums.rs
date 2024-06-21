@@ -264,8 +264,8 @@ impl From<Items> for &str {
     fn from(value: Items) -> Self {
         match value {
             Items::NoItem => "No item",
-            Items::HackSticker => "HackSticker",
-            Items::HackSystem => "HackSystem",
+            Items::HackSticker => "Hack Sticker",
+            Items::HackSystem => "Hack System",
         }
     }
 }
@@ -274,8 +274,8 @@ impl From<&str> for Items {
     fn from(value: &str) -> Items {
         match value {
             "No item" => Items::NoItem,
-            "HackSticker" => Items::HackSticker,
-            "HackSystem" => Items::HackSystem,
+            "Hack Sticker" => Items::HackSticker,
+            "Hack System" => Items::HackSystem,
             _ => Items::HackSticker,
         }
     }
