@@ -116,7 +116,7 @@ pub fn StealChance() -> Element {
                 class: "column",
                 div {
                     class: "container",
-                    "Chance to go successfuly steal {range}/1024 ({range_p} %)"
+                    "Chance to successfuly steal {range}/1024 ({range_p} %)"
                 }
             }
         }
