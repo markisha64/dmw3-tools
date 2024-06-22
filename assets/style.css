@@ -11,7 +11,6 @@
 .column {
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .row {
@@ -74,4 +73,42 @@ body {
   to {
     background-position: 217px 217px;
   }
+}
+
+dialog {
+  background-color: #000021;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+  position: fixed;
+  margin: 0 auto;
+  width: 400px;
+  top: 20%;
+  transform: translateY(-50%);
+  border-radius: 8px;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-weight: bold;
+}
+
+.stacks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.stacks li {
+  margin: 0 15px;
 }

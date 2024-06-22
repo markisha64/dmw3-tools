@@ -9,14 +9,15 @@ use crate::enums::{Digivolutions, Items, Moves};
 #[component]
 pub fn StealChance() -> Element {
     let mut digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
-    let mut rookie_speed = use_signal::<i64>(|| 200);
+    let mut rookie_speed_w_equipment = use_signal::<i64>(|| 200);
     let mut enemy_speed = use_signal::<i64>(|| 200);
     let mut drop_rate = use_signal::<i64>(|| 128);
     let mut mv = use_signal::<Moves>(|| Moves::PickingClaw);
     let mut item = use_signal::<Items>(|| Items::NoItem);
+    let mut speed_modifier = use_signal::<i64>(|| 0);
 
     let c_digivolution = digivolution();
-    let c_rookie_speed = rookie_speed();
+    let c_rookie_speed_w_equipment = rookie_speed_w_equipment();
     let c_enemy_speed = enemy_speed();
     let c_drop_rate = drop_rate();
     let c_mv = mv();
@@ -26,11 +27,13 @@ pub fn StealChance() -> Element {
     let mvs = get_move_data();
 
     let player_speed = match c_digivolution as usize > 7 {
-        true => c_rookie_speed + dvs[c_digivolution as usize - 8].spd as i64,
-        _ => c_rookie_speed,
+        true => c_rookie_speed_w_equipment + dvs[c_digivolution as usize - 8].spd as i64,
+        _ => c_rookie_speed_w_equipment,
     };
 
-    let sd = min((player_speed * 100) / c_enemy_speed, 200);
+    let speed = player_speed + (player_speed * speed_modifier()) / 128;
+
+    let sd = min((speed * 100) / c_enemy_speed, 200);
     let sr = mvs[c_mv as usize - 1].effect_rate as i64;
 
     // TODO: dmw3-randomizer read this data
@@ -60,12 +63,12 @@ pub fn StealChance() -> Element {
                         },
                         set: &[Moves::PickingClaw, Moves::SnappingClaw]
                     }
-                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, onchange: move |x: FormEvent| {
+                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed_w_equipment, onchange: move |x: FormEvent| {
                         let r: Result<i64, _> = x.value().parse();
 
-                        rookie_speed.set(match r {
+                        rookie_speed_w_equipment.set(match r {
                             Ok(v) => v.clamp(1, 999),
-                            _ => c_rookie_speed
+                            _ => c_rookie_speed_w_equipment
                         });
                     } }
                     components::ItemSelect {
@@ -74,6 +77,16 @@ pub fn StealChance() -> Element {
                         },
                         set: &[Items::NoItem, Items::HackSticker, Items::HackSystem],
                         label: None
+                    }
+                }
+                div {
+                    class: "container",
+                    components::StatBoost {
+                        label: "Speed modifier",
+                        id: "steal_chance_speed_boost",
+                        cb: move |new_modifier: i64| {
+                            speed_modifier.set(new_modifier);
+                        }
                     }
                 }
             }
