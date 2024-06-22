@@ -31,6 +31,8 @@ jobs:
       run: cargo install dioxus-cli
     - name: Build
       run: dx build --release
+    - name: Fix client side routing
+      run: cp dist/index.html dist/404.html
     - name: Upload artifact
       with:
         name: github-pages
