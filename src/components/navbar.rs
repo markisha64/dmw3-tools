@@ -12,6 +12,9 @@ pub fn Navbar() -> Element {
                 li {
                     Link { to: Route::StealChance {}, "Steal Chance" }
                 }
+                li {
+                    Link { to: Route::XP {}, "XP" }
+                }
             }
         }
         Outlet::<Route> {}

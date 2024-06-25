@@ -927,3 +927,57 @@ impl From<&str> for Items {
         }
     }
 }
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Rookies {
+    Kotemon = 0,
+    Kumamon = 1,
+    Monmon = 2,
+    Agumon = 3,
+    Veemon = 4,
+    Guilmon = 5,
+    Renamon = 6,
+    Patamon = 7,
+}
+
+impl From<Rookies> for &str {
+    fn from(value: Rookies) -> Self {
+        match value {
+            Rookies::Kotemon => "Kotemon",
+            Rookies::Kumamon => "Kumamon",
+            Rookies::Monmon => "Monmon",
+            Rookies::Agumon => "Agumon",
+            Rookies::Veemon => "Veemon",
+            Rookies::Guilmon => "Guilmon",
+            Rookies::Renamon => "Renamon",
+            Rookies::Patamon => "Patamon",
+        }
+    }
+}
+
+impl From<&str> for Rookies {
+    fn from(value: &str) -> Self {
+        match value {
+            "Kotemon" => Rookies::Kotemon,
+            "Kumamon" => Rookies::Kumamon,
+            "Monmon" => Rookies::Monmon,
+            "Agumon" => Rookies::Agumon,
+            "Veemon" => Rookies::Veemon,
+            "Guilmon" => Rookies::Guilmon,
+            "Renamon" => Rookies::Renamon,
+            "Patamon" => Rookies::Patamon,
+            _ => Rookies::Kotemon,
+        }
+    }
+}
+
+pub const ALL_ROOKIES: [Rookies; 8] = [
+    Rookies::Kotemon,
+    Rookies::Kumamon,
+    Rookies::Monmon,
+    Rookies::Agumon,
+    Rookies::Veemon,
+    Rookies::Guilmon,
+    Rookies::Renamon,
+    Rookies::Patamon,
+];
