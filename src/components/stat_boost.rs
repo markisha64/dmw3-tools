@@ -1,12 +1,14 @@
 use dioxus::prelude::*;
 
-struct Stack {
-    label: &'static str,
-    value: i64,
-}
+type Stack = (&'static str, i64);
 
 #[component]
-pub fn StatBoost(label: Option<&'static str>, id: &'static str, cb: EventHandler<i64>) -> Element {
+pub fn StatBoost(
+    label: Option<&'static str>,
+    id: &'static str,
+    cb: EventHandler<i64>,
+    options: &'static [Stack],
+) -> Element {
     let mut value = use_signal::<i64>(|| 0);
     let mut stacks = use_signal::<Vec<Stack>>(|| vec![]);
 
@@ -31,29 +33,28 @@ pub fn StatBoost(label: Option<&'static str>, id: &'static str, cb: EventHandler
                 class: "close",
                 "Close"
             }
-            button {
-                onclick: move |_| {
-                    let _e = eval(format!("document.getElementById(\"{id}\").close();").as_str());
+            for option in options {
+                button {
+                    onclick: move |_| {
+                        let _e = eval(format!("document.getElementById(\"{id}\").close();").as_str());
 
-                    let new_value = (c_value + 32).clamp(-64, 128);
+                        let new_value = (c_value + option.1).clamp(-64, 128);
 
-                    value.set(new_value);
+                        value.set(new_value);
 
-                    stacks.write().push(Stack {
-                        label: "Speed up/Mach plug",
-                        value: 32
-                    });
+                        stacks.write().push(option.clone());
 
-                    cb(new_value);
-                },
-                "Speed up/Mach plug"
+                        cb(new_value);
+                    },
+                    "{option.0}"
+                }
             }
         }
         ul {
             class: "stacks",
-            for (idx, stack)in stacks.read().iter().enumerate() {
+            for (idx, stack) in stacks.read().iter().enumerate() {
                 li {
-                    "{stack.label}",
+                    "{stack.0}",
                     span {
                         onclick: move |_| {
                             stacks.write().remove(idx);
@@ -61,7 +62,7 @@ pub fn StatBoost(label: Option<&'static str>, id: &'static str, cb: EventHandler
                             let mut new_value = 0;
 
                             for s in stacks.read().iter() {
-                                new_value = (new_value + s.value).clamp(-64, 128);
+                                new_value = (new_value + s.1).clamp(-64, 128);
                             }
 
                             value.set(new_value);

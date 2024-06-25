@@ -112,3 +112,7 @@ body {
 .stacks li {
   margin: 0 15px;
 }
+
+dialog button {
+  margin: 3px;
+}

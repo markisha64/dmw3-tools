@@ -81,8 +81,7 @@ pub fn StealChance() -> Element {
                 }
                 div {
                     class: "container",
-                    components::StatBoost {
-                        label: "Speed modifier",
+                    components::SpeedModifier {
                         id: "steal_chance_speed_boost",
                         cb: move |new_modifier: i64| {
                             speed_modifier.set(new_modifier);
