@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
 use std::cmp;
-use tracing::info;
 
 use crate::components;
 use crate::data::get_digivolutions;

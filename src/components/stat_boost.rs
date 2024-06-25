@@ -10,7 +10,7 @@ pub fn StatBoost(
     options: &'static [Stack],
 ) -> Element {
     let mut value = use_signal::<i64>(|| 0);
-    let mut stacks = use_signal::<Vec<Stack>>(|| vec![]);
+    let mut stacks = use_signal::<Vec<Stack>>(Vec::new);
 
     let c_value = value();
 
@@ -42,7 +42,7 @@ pub fn StatBoost(
 
                         value.set(new_value);
 
-                        stacks.write().push(option.clone());
+                        stacks.write().push(*option);
 
                         cb(new_value);
                     },

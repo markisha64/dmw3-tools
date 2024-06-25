@@ -734,7 +734,7 @@ impl From<&str> for Moves {
     }
 }
 
-pub const ALL_MOVES: [Moves; 163] = [
+pub const _ALL_MOVES: [Moves; 163] = [
     Moves::Nomove,
     Moves::HotHead,
     Moves::SwingSwing,
