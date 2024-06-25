@@ -1,12 +1,23 @@
-static DIGIVOLUTIONS: &str = include_str!("../dump/dmw2003/digivolutions.json");
-static MOVE_DATA: &str = include_str!("../dump/dmw2003/move_data.json");
+use std::sync::OnceLock;
 
-pub fn get_digivolutions() -> Vec<dmw3_structs::DigivolutionData> {
-    serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(DIGIVOLUTIONS).unwrap()
-}
+pub static DIGIVOLUTIONS: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
 
-pub fn get_move_data() -> Vec<dmw3_structs::MoveData> {
-    serde_json::from_str::<Vec<dmw3_structs::MoveData>>(MOVE_DATA).unwrap()
+pub static MOVE_DATA: OnceLock<Vec<dmw3_structs::MoveData>> = OnceLock::new();
+
+pub fn init() {
+    let _ = DIGIVOLUTIONS.set(
+        serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(include_str!(
+            "../dump/dmw2003/digivolutions.json"
+        ))
+        .unwrap(),
+    );
+
+    let _ = MOVE_DATA.set(
+        serde_json::from_str::<Vec<dmw3_structs::MoveData>>(include_str!(
+            "../dump/dmw2003/move_data.json"
+        ))
+        .unwrap(),
+    );
 }
 
 pub const STAT_MODIFIERS: [[i64; 9]; 6] = [

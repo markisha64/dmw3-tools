@@ -3,7 +3,7 @@ use std::cmp::min;
 use dioxus::prelude::*;
 
 use crate::components;
-use crate::data::{get_digivolutions, get_move_data};
+use crate::data::{DIGIVOLUTIONS, MOVE_DATA};
 use crate::enums::{Digivolutions, Items, Moves};
 
 #[component]
@@ -23,18 +23,18 @@ pub fn StealChance() -> Element {
     let c_mv = mv();
     let c_item = item();
 
-    let dvs = get_digivolutions();
-    let mvs = get_move_data();
-
     let player_speed = match c_digivolution as usize > 7 {
-        true => c_rookie_speed_w_equipment + dvs[c_digivolution as usize - 8].spd as i64,
+        true => {
+            c_rookie_speed_w_equipment
+                + DIGIVOLUTIONS.get().unwrap()[c_digivolution as usize - 8].spd as i64
+        }
         _ => c_rookie_speed_w_equipment,
     };
 
     let speed = player_speed + (player_speed * speed_modifier()) / 128;
 
     let sd = min((speed * 100) / c_enemy_speed, 200);
-    let sr = mvs[c_mv as usize - 1].effect_rate as i64;
+    let sr = MOVE_DATA.get().unwrap()[c_mv as usize - 1].effect_rate as i64;
 
     // TODO: dmw3-randomizer read this data
     let asr = match c_item {

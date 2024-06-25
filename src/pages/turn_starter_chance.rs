@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use std::cmp;
 
 use crate::components;
-use crate::data::get_digivolutions;
+use crate::data::DIGIVOLUTIONS;
 use crate::enums::Digivolutions;
 
 #[component]
@@ -15,10 +15,10 @@ pub fn TurnStarterChance() -> Element {
     let c_rookie_speed = rookie_speed();
     let c_enemy_speed = enemy_speed();
 
-    let dvs = get_digivolutions();
-
     let player_speed = match c_digivolution as usize > 7 {
-        true => c_rookie_speed + dvs[c_digivolution as usize - 8].spd as i64,
+        true => {
+            c_rookie_speed + DIGIVOLUTIONS.get().unwrap()[c_digivolution as usize - 8].spd as i64
+        }
         _ => c_rookie_speed,
     };
 

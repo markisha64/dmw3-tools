@@ -15,6 +15,8 @@ fn main() {
 }
 
 pub fn App() -> Element {
+    data::init();
+
     rsx! {
         style {
             "{include_str!(\"../assets/style.css\")}"
