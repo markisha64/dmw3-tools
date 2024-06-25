@@ -7,7 +7,7 @@ pub fn NumberField(
     value: i64,
     mn: i64,
     mx: i64,
-    onchange: EventHandler<FormEvent>,
+    cb: EventHandler<i64>,
 ) -> Element {
     rsx! {
         div {
@@ -19,7 +19,14 @@ pub fn NumberField(
                 max: mx,
                 step: 1,
                 disabled,
-                onchange: move |x| onchange.call(x)
+                onchange: move |x| {
+                    let r: Result<i64, _> = x.value().parse();
+
+                    cb.call(match r {
+                        Ok(v) => v.clamp(mn, mx),
+                        _ => value
+                    });
+                }
             }
         }
     }

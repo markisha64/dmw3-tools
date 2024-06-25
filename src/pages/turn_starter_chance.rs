@@ -39,13 +39,8 @@ pub fn TurnStarterChance() -> Element {
                     components::DigivolutionSelect {
                         onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
                     }
-                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, onchange: move |x: FormEvent| {
-                        let r: Result<i64, _> = x.value().parse();
-
-                        rookie_speed.set(match r {
-                            Ok(v) => v.clamp(1, 999),
-                            _ => c_rookie_speed
-                        });
+                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, cb: move |x: i64| {
+                        rookie_speed.set(x);
                     } }
                 }
             }
@@ -53,13 +48,8 @@ pub fn TurnStarterChance() -> Element {
                 class: "column",
                 div {
                     class: "container",
-                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, onchange: move |x: FormEvent| {
-                        let r: Result<i64, _> = x.value().parse();
-
-                        enemy_speed.set(match r {
-                            Ok(v) => v.clamp(1, 999),
-                            _ => c_enemy_speed
-                        });
+                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, cb: move |x: i64| {
+                        enemy_speed.set(x);
                     } }
                 }
             }

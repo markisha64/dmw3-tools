@@ -63,13 +63,8 @@ pub fn StealChance() -> Element {
                         },
                         set: &[Moves::PickingClaw, Moves::SnappingClaw]
                     }
-                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed_w_equipment, onchange: move |x: FormEvent| {
-                        let r: Result<i64, _> = x.value().parse();
-
-                        rookie_speed_w_equipment.set(match r {
-                            Ok(v) => v.clamp(1, 999),
-                            _ => c_rookie_speed_w_equipment
-                        });
+                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed_w_equipment, cb: move |x: i64| {
+                        rookie_speed_w_equipment.set(x);
                     } }
                     components::ItemSelect {
                         onchange: move |x: FormEvent| {
@@ -93,21 +88,11 @@ pub fn StealChance() -> Element {
                 class: "column",
                 div {
                     class: "container",
-                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, onchange: move |x: FormEvent| {
-                        let r: Result<i64, _> = x.value().parse();
-
-                        enemy_speed.set(match r {
-                            Ok(v) => v.clamp(1, 999),
-                            _ => c_enemy_speed
-                        });
+                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, cb: move |x: i64| {
+                        enemy_speed.set(x);
                     } }
-                    components::NumberField { label: "Drop rate", disabled: false, mn: 1, mx: 1023, value: c_drop_rate, onchange: move |x: FormEvent| {
-                        let r: Result<i64, _> = x.value().parse();
-
-                        drop_rate.set(match r {
-                            Ok(v) => v.clamp(1, 1024),
-                            _ => c_drop_rate
-                        });
+                    components::NumberField { label: "Drop rate", disabled: false, mn: 1, mx: 1023, value: c_drop_rate, cb: move |x: i64| {
+                        drop_rate.set(x);
                     } }
                 }
             }
