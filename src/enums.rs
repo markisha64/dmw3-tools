@@ -981,3 +981,10 @@ pub const ALL_ROOKIES: [Rookies; 8] = [
     Rookies::Renamon,
     Rookies::Patamon,
 ];
+
+pub enum Stage {
+    Rookie = 0,
+    Champion = 1,
+    Ultimate = 2,
+    Mega = 3,
+}
