@@ -29,7 +29,7 @@ fn exp_to_level(exp: i64, rookie: Rookies) -> i64 {
 }
 
 #[component]
-pub fn XP() -> Element {
+pub fn RookieLevel() -> Element {
     let mut exp = use_signal(|| 0);
     let mut level: Signal<i64> = use_signal(|| 1);
     let mut target_level = use_signal(|| 2);
