@@ -4,6 +4,8 @@ pub static DIGIVOLUTIONS: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLo
 
 pub static MOVE_DATA: OnceLock<Vec<dmw3_structs::MoveData>> = OnceLock::new();
 
+pub static ROOKIES: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
+
 pub fn init() {
     let _ = DIGIVOLUTIONS.set(
         serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(include_str!(
@@ -15,6 +17,13 @@ pub fn init() {
     let _ = MOVE_DATA.set(
         serde_json::from_str::<Vec<dmw3_structs::MoveData>>(include_str!(
             "../dump/dmw2003/move_data.json"
+        ))
+        .unwrap(),
+    );
+
+    let _ = ROOKIES.set(
+        serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(include_str!(
+            "../dump/dmw2003/rookies.json"
         ))
         .unwrap(),
     );

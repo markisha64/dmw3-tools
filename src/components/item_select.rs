@@ -12,11 +12,8 @@ pub fn ItemSelect(
 
     rsx! {
         form {
-            label {
-                "{lb}"
-            }
-            select {
-                onchange: move |x| onchange.call(x),
+            label { "{lb}" }
+            select { onchange: move |x| onchange.call(x),
                 for item in set {
                     option { value: Into::<&str>::into(*item), selected: "selected", "{Into::<&str>::into(*item)}" }
                 }

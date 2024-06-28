@@ -29,35 +29,42 @@ pub fn TurnStarterChance() -> Element {
     let chance_p = (chance as f32 / 0.0128).round() / 100.0;
 
     rsx! {
-        div {
-            class: "row",
-            div {
-                class: "column",
-                div {
-                    class: "container",
+        div { class: "row",
+            div { class: "column",
+                div { class: "container",
                     components::DigivolutionSelect {
-                        onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
+                        onchange: move |x: FormEvent| {
+                            digivolution.set(Digivolutions::from(&x.data.value()[..]));
+                        }
                     }
-                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed, cb: move |x: i64| {
-                        rookie_speed.set(x);
-                    } }
+                    components::NumberField {
+                        label: "Rookie speed",
+                        disabled: false,
+                        mn: 1,
+                        mx: 999,
+                        value: c_rookie_speed,
+                        cb: move |x: i64| {
+                            rookie_speed.set(x);
+                        }
+                    }
                 }
             }
-            div {
-                class: "column",
-                div {
-                    class: "container",
-                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, cb: move |x: i64| {
-                        enemy_speed.set(x);
-                    } }
+            div { class: "column",
+                div { class: "container",
+                    components::NumberField {
+                        label: "Enemy speed",
+                        disabled: false,
+                        mn: 1,
+                        mx: 999,
+                        value: c_enemy_speed,
+                        cb: move |x: i64| {
+                            enemy_speed.set(x);
+                        }
+                    }
                 }
             }
-            div {
-                class: "column",
-                div {
-                    class: "container",
-                    "Chance to go first {chance}/128 ({chance_p}%)"
-                }
+            div { class: "column",
+                div { class: "container", "Chance to go first {chance}/128 ({chance_p}%)" }
             }
         }
     }

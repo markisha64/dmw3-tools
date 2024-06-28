@@ -982,9 +982,30 @@ pub const ALL_ROOKIES: [Rookies; 8] = [
     Rookies::Patamon,
 ];
 
+type Level = i64;
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Stage {
     Rookie = 0,
     Champion = 1,
     Ultimate = 2,
     Mega = 3,
+}
+
+impl From<Level> for Stage {
+    fn from(value: Level) -> Self {
+        if value < 5 {
+            return Stage::Rookie;
+        }
+
+        if 5 <= value && value < 20 {
+            return Stage::Champion;
+        }
+
+        if 20 <= value && value < 40 {
+            return Stage::Ultimate;
+        }
+
+        return Stage::Mega;
+    }
 }

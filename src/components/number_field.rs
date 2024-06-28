@@ -21,11 +21,12 @@ pub fn NumberField(
                 disabled,
                 onchange: move |x| {
                     let r: Result<i64, _> = x.value().parse();
-
-                    cb.call(match r {
-                        Ok(v) => v.clamp(mn, mx),
-                        _ => value
-                    });
+                    cb.call(
+                        match r {
+                            Ok(v) => v.clamp(mn, mx),
+                            _ => value,
+                        },
+                    );
                 }
             }
         }

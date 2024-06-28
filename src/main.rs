@@ -18,9 +18,7 @@ pub fn App() -> Element {
     data::init();
 
     rsx! {
-        style {
-            "{include_str!(\"../assets/style.css\")}"
-        }
+        style { "{include_str!(\"../assets/style.css\")}" }
         Router::<route::Route> {}
     }
 }

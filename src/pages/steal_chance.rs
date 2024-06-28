@@ -48,14 +48,13 @@ pub fn StealChance() -> Element {
     let range_p = (range as f32 / 0.1024).round() / 100.0;
 
     rsx! {
-        div {
-            class: "row",
-            div {
-                class: "column",
-                div {
-                    class: "container",
+        div { class: "row",
+            div { class: "column",
+                div { class: "container",
                     components::DigivolutionSelect {
-                        onchange: move |x: FormEvent| { digivolution.set(Digivolutions::from(&x.data.value()[..])); }
+                        onchange: move |x: FormEvent| {
+                            digivolution.set(Digivolutions::from(&x.data.value()[..]));
+                        }
                     }
                     components::MoveSelect {
                         onchange: move |x: FormEvent| {
@@ -63,9 +62,16 @@ pub fn StealChance() -> Element {
                         },
                         set: &[Moves::PickingClaw, Moves::SnappingClaw]
                     }
-                    components::NumberField { label: "Rookie speed", disabled: false, mn: 1, mx: 999, value: c_rookie_speed_w_equipment, cb: move |x: i64| {
-                        rookie_speed_w_equipment.set(x);
-                    } }
+                    components::NumberField {
+                        label: "Rookie speed",
+                        disabled: false,
+                        mn: 1,
+                        mx: 999,
+                        value: c_rookie_speed_w_equipment,
+                        cb: move |x: i64| {
+                            rookie_speed_w_equipment.set(x);
+                        }
+                    }
                     components::ItemSelect {
                         onchange: move |x: FormEvent| {
                             item.set(Items::from(&x.data.value()[..]));
@@ -74,8 +80,7 @@ pub fn StealChance() -> Element {
                         label: None
                     }
                 }
-                div {
-                    class: "container",
+                div { class: "container",
                     components::SpeedModifier {
                         id: "steal_chance_speed_boost",
                         cb: move |new_modifier: i64| {
@@ -84,24 +89,32 @@ pub fn StealChance() -> Element {
                     }
                 }
             }
-            div {
-                class: "column",
-                div {
-                    class: "container",
-                    components::NumberField { label: "Enemy speed", disabled: false, mn: 1, mx: 999, value: c_enemy_speed, cb: move |x: i64| {
-                        enemy_speed.set(x);
-                    } }
-                    components::NumberField { label: "Drop rate", disabled: false, mn: 1, mx: 1023, value: c_drop_rate, cb: move |x: i64| {
-                        drop_rate.set(x);
-                    } }
+            div { class: "column",
+                div { class: "container",
+                    components::NumberField {
+                        label: "Enemy speed",
+                        disabled: false,
+                        mn: 1,
+                        mx: 999,
+                        value: c_enemy_speed,
+                        cb: move |x: i64| {
+                            enemy_speed.set(x);
+                        }
+                    }
+                    components::NumberField {
+                        label: "Drop rate",
+                        disabled: false,
+                        mn: 1,
+                        mx: 1023,
+                        value: c_drop_rate,
+                        cb: move |x: i64| {
+                            drop_rate.set(x);
+                        }
+                    }
                 }
             }
-            div {
-                class: "column",
-                div {
-                    class: "container",
-                    "Chance to successfuly steal {range}/1024 ({range_p} %)"
-                }
+            div { class: "column",
+                div { class: "container", "Chance to successfuly steal {range}/1024 ({range_p} %)" }
             }
         }
     }
