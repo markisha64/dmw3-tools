@@ -41,7 +41,7 @@ pub fn XP() -> Element {
     let c_target_level = target_level();
     let c_rookie = rookie();
 
-    let missing_xp = level_to_exp(c_target_level, c_rookie) - c_exp;
+    let missing_xp = std::cmp::max(level_to_exp(c_target_level, c_rookie) - c_exp, 0);
 
     rsx! {
         div { class: "row",
@@ -63,7 +63,7 @@ pub fn XP() -> Element {
                             let mut new_target_level = c_target_level;
                             let new_level = exp_to_level(new_exp, c_rookie);
                             if new_level >= new_target_level {
-                                new_target_level = new_level + 1;
+                                new_target_level = (new_level + 1).clamp(1, 99);
                             }
                             target_level.set(new_target_level);
                             level.set(new_level);
