@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use tracing::info;
 
 use crate::{
     components, data,
@@ -49,7 +48,15 @@ pub fn XP() -> Element {
                 div { class: "container",
                     components::RookieSelect {
                         onchange: move |x: FormEvent| {
-                            rookie.set(Rookies::from(&x.data.value()[..]));
+                            let new_rookie = Rookies::from(&x.data.value()[..]);
+                            rookie.set(new_rookie);
+                            let new_level = exp_to_level(c_exp, new_rookie);
+                            let new_target_level = match new_level >= c_target_level {
+                                true => (new_level + 1).clamp(1, 99),
+                                _ => c_target_level,
+                            };
+                            target_level.set(new_target_level);
+                            level.set(new_level);
                         }
                     }
                     components::NumberField {
@@ -60,11 +67,11 @@ pub fn XP() -> Element {
                         mx: 99999999,
                         cb: move |new_exp| {
                             exp.set(new_exp);
-                            let mut new_target_level = c_target_level;
                             let new_level = exp_to_level(new_exp, c_rookie);
-                            if new_level >= new_target_level {
-                                new_target_level = (new_level + 1).clamp(1, 99);
-                            }
+                            let new_target_level = match new_level >= c_target_level {
+                                true => (new_level + 1).clamp(1, 99),
+                                _ => c_target_level,
+                            };
                             target_level.set(new_target_level);
                             level.set(new_level);
                         }
@@ -73,7 +80,26 @@ pub fn XP() -> Element {
             }
             div { class: "column",
                 div { class: "container",
-                    "Current level: {c_level}"
+                    components::NumberField {
+                        label: "Current level",
+                        value: c_level,
+                        mn: 1,
+                        mx: 99,
+                        disabled: false,
+                        cb: move |new_level: i64| {
+                            level.set(new_level);
+                            let new_target_level = match new_level >= c_target_level {
+                                true => new_level + 1,
+                                _ => c_target_level,
+                            };
+                            let new_exp = match new_level != c_level {
+                                true => level_to_exp(new_level, c_rookie),
+                                _ => c_exp,
+                            };
+                            exp.set(new_exp);
+                            target_level.set(new_target_level);
+                        }
+                    }
                     components::NumberField {
                         label: "Target level",
                         value: c_target_level,
