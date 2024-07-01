@@ -7,16 +7,26 @@ pub fn Navbar() -> Element {
         nav {
             ul {
                 li {
-                    Link { to: Route::TurnStarterChance {}, "Turn Starter Chance" }
+                    Link {
+                        to: Route::TurnStarterChance {},
+                        "Turn Starter Chance"
+                    }
                 }
                 li {
-                    Link { to: Route::StealChance {}, "Steal Chance" }
+                    Link {
+                        to: Route::StealChance {},
+                        "Steal Chance"
+                    }
                 }
                 li {
-                    Link { to: Route::RookieLevel {}, "Rookie Level" }
+                    Link {
+                        to: Route::RookieLevel {},
+                        "Rookie Level"
+                    }
                 }
             }
         }
-        Outlet::<Route> {}
+        Outlet::<Route> {
+        }
     }
 }

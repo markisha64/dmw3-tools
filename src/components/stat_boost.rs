@@ -26,7 +26,8 @@ pub fn StatBoost(
             },
             "New stack"
         }
-        dialog { id,
+        dialog {
+            id,
             span {
                 onclick: move |_| {
                     let _e = eval(format!("document.getElementById(\"{id}\").close();").as_str());
@@ -47,7 +48,8 @@ pub fn StatBoost(
                 }
             }
         }
-        ul { class: "stacks",
+        ul {
+            class: "stacks",
             for (idx , stack) in stacks.read().iter().enumerate() {
                 li {
                     "{stack.0}"

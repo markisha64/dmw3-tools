@@ -116,3 +116,10 @@ body {
 dialog button {
   margin: 3px;
 }
+
+td,
+th {
+  border: 1px solid;
+  text-align: center;
+  padding: 4px;
+}

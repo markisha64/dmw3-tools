@@ -6,10 +6,17 @@ use crate::enums::Moves;
 pub fn MoveSelect(onchange: EventHandler<FormEvent>, set: &'static [Moves]) -> Element {
     rsx! {
         form {
-            label { "Move" }
-            select { onchange: move |x| onchange.call(x),
+            label {
+                "Move"
+            }
+            select {
+                onchange: move |x| onchange.call(x),
                 for mv in set {
-                    option { value: Into::<&str>::into(*mv), selected: "selected", "{Into::<&str>::into(*mv)}" }
+                    option {
+                        value: Into::<&str>::into(*mv),
+                        selected: "selected",
+                        "{Into::<&str>::into(*mv)}"
+                    }
                 }
             }
         }

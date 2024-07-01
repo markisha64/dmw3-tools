@@ -29,9 +29,12 @@ pub fn TurnStarterChance() -> Element {
     let chance_p = (chance as f32 / 0.0128).round() / 100.0;
 
     rsx! {
-        div { class: "row",
-            div { class: "column",
-                div { class: "container",
+        div {
+            class: "row",
+            div {
+                class: "column",
+                div {
+                    class: "container",
                     components::DigivolutionSelect {
                         onchange: move |x: FormEvent| {
                             digivolution.set(Digivolutions::from(&x.data.value()[..]));
@@ -49,8 +52,10 @@ pub fn TurnStarterChance() -> Element {
                     }
                 }
             }
-            div { class: "column",
-                div { class: "container",
+            div {
+                class: "column",
+                div {
+                    class: "container",
                     components::NumberField {
                         label: "Enemy speed",
                         disabled: false,
@@ -63,8 +68,12 @@ pub fn TurnStarterChance() -> Element {
                     }
                 }
             }
-            div { class: "column",
-                div { class: "container", "Chance to go first {chance}/128 ({chance_p}%)" }
+            div {
+                class: "column",
+                div {
+                    class: "container",
+                    "Chance to go first {chance}/128 ({chance_p}%)"
+                }
             }
         }
     }

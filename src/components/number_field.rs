@@ -11,7 +11,9 @@ pub fn NumberField(
 ) -> Element {
     rsx! {
         div {
-            label { "{label}" }
+            label {
+                "{label}"
+            }
             input {
                 value,
                 r#type: "number",

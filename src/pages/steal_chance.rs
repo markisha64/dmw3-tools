@@ -48,9 +48,12 @@ pub fn StealChance() -> Element {
     let range_p = (range as f32 / 0.1024).round() / 100.0;
 
     rsx! {
-        div { class: "row",
-            div { class: "column",
-                div { class: "container",
+        div {
+            class: "row",
+            div {
+                class: "column",
+                div {
+                    class: "container",
                     components::DigivolutionSelect {
                         onchange: move |x: FormEvent| {
                             digivolution.set(Digivolutions::from(&x.data.value()[..]));
@@ -80,7 +83,8 @@ pub fn StealChance() -> Element {
                         label: None
                     }
                 }
-                div { class: "container",
+                div {
+                    class: "container",
                     components::SpeedModifier {
                         id: "steal_chance_speed_boost",
                         cb: move |new_modifier: i64| {
@@ -89,8 +93,10 @@ pub fn StealChance() -> Element {
                     }
                 }
             }
-            div { class: "column",
-                div { class: "container",
+            div {
+                class: "column",
+                div {
+                    class: "container",
                     components::NumberField {
                         label: "Enemy speed",
                         disabled: false,
@@ -113,8 +119,12 @@ pub fn StealChance() -> Element {
                     }
                 }
             }
-            div { class: "column",
-                div { class: "container", "Chance to successfuly steal {range}/1024 ({range_p} %)" }
+            div {
+                class: "column",
+                div {
+                    class: "container",
+                    "Chance to successfuly steal {range}/1024 ({range_p} %)"
+                }
             }
         }
     }
