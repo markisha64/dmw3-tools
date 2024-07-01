@@ -36,16 +36,18 @@ fn exp_to_level(exp: i64, rookie: Rookies) -> i64 {
     99
 }
 
-fn hp_mp_min_max_avg(new_level: i64, value: i64) -> (i64, i64, i64) {
+type StatGain = (i64, i64, f64);
+
+fn hp_mp_min_max_avg(new_level: i64, value: i64) -> StatGain {
     let stage = Stage::from(new_level) as usize;
 
     let modif = HP_MP_MODIFIER[stage];
 
-    (value - modif - 4, value - modif + 4, value - modif)
+    (value - modif - 4, value - modif + 4, (value - modif) as f64)
 }
 
-fn hp_mp_gain(old_level: i64, new_level: i64, value: i64) -> (i64, i64, i64) {
-    let mut r = (0, 0, 0);
+fn hp_mp_gain(old_level: i64, new_level: i64, value: i64) -> StatGain {
+    let mut r = (0, 0, 0.0);
 
     for i in (old_level + 1)..(new_level + 1) {
         let level_gain = hp_mp_min_max_avg(i, value);
@@ -55,10 +57,12 @@ fn hp_mp_gain(old_level: i64, new_level: i64, value: i64) -> (i64, i64, i64) {
         r.2 += level_gain.2;
     }
 
+    r.2 = r.2.round();
+
     r
 }
 
-fn res_min_max_avg(value: usize) -> (i64, i64, i64) {
+fn res_min_max_avg(value: usize) -> StatGain {
     let mut mn = RES_MODIFIERS[value];
     let mut mx = RES_MODIFIERS[value];
     let mut avg = 0;
@@ -71,13 +75,11 @@ fn res_min_max_avg(value: usize) -> (i64, i64, i64) {
         avg += *v;
     }
 
-    avg /= 4;
-
-    (mn, mx, avg)
+    (mn, mx, (avg as f64) / 4.0)
 }
 
-fn res_gain(old_level: i64, new_level: i64, value: usize) -> (i64, i64, i64) {
-    let mut r = (0, 0, 0);
+fn res_gain(old_level: i64, new_level: i64, value: usize) -> StatGain {
+    let mut r = (0, 0, 0.0);
 
     for _ in old_level..new_level {
         let level_gain = res_min_max_avg(value);
@@ -86,6 +88,8 @@ fn res_gain(old_level: i64, new_level: i64, value: usize) -> (i64, i64, i64) {
         r.1 += level_gain.1;
         r.2 += level_gain.2;
     }
+
+    r.2 = r.2.round();
 
     r
 }
@@ -115,7 +119,7 @@ fn level_bracket(new_level: i64) -> usize {
 }
 
 // (min, max, avg)
-fn stat_min_max_avg(new_level: i64, value: usize) -> (i64, i64, i64) {
+fn stat_min_max_avg(new_level: i64, value: usize) -> StatGain {
     let bracket = level_bracket(new_level);
 
     let mut mn = STAT_MODIFIERS[bracket][value];
@@ -136,14 +140,12 @@ fn stat_min_max_avg(new_level: i64, value: usize) -> (i64, i64, i64) {
         avg += *ps;
     }
 
-    avg = avg / 5;
-
-    (mn, mx, avg)
+    (mn, mx, (avg as f64) / 5.0)
 }
 
 // (min, max, avg)
-fn stat_gain(old_level: i64, new_level: i64, value: usize) -> (i64, i64, i64) {
-    let mut r = (0, 0, 0);
+fn stat_gain(old_level: i64, new_level: i64, value: usize) -> StatGain {
+    let mut r = (0, 0, 0.0);
 
     for i in (old_level + 1)..(new_level + 1) {
         let level_gain = stat_min_max_avg(i, value);
@@ -152,6 +154,8 @@ fn stat_gain(old_level: i64, new_level: i64, value: usize) -> (i64, i64, i64) {
         r.1 += level_gain.1;
         r.2 += level_gain.2;
     }
+
+    r.2 = r.2.round();
 
     r
 }
@@ -337,6 +341,7 @@ pub fn RookieLevel() -> Element {
                     table {
                         tr {
                             th {
+                                ""
                             }
                             for header in HEADERS {
                                 th {
