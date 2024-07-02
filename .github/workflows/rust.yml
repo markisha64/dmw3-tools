@@ -29,6 +29,8 @@ jobs:
         restore-keys: linux-cargo-${{ hashFiles('Cargo.lock') }}
     - name: Get cli tool
       run: cargo install dioxus-cli
+    - name: Uncomment base_path
+      run: sed -i 's/# base_path/base_path/' Dioxus.toml
     - name: Build
       run: dx build --release
     - name: Fix client side routing
