@@ -19,6 +19,6 @@ pub enum Route {
         #[route("/rookieLevel")]
         RookieLevel {},
 
-        #[route("/digivolutionRequirements")]
+        #[route("/digivolutions")]
         DigivolutionConditions {},
 }
