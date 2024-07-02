@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::components::Navbar;
-use crate::pages::{Index, RookieLevel, StealChance, TurnStarterChance};
+use crate::pages::{DigivolutionConditions, Index, RookieLevel, StealChance, TurnStarterChance};
 
 #[derive(Routable, PartialEq, Clone)]
 #[rustfmt::skip]
@@ -18,4 +18,7 @@ pub enum Route {
 
         #[route("/rookieLevel")]
         RookieLevel {},
+
+        #[route("/digivolutionRequirements")]
+        DigivolutionConditions {},
 }

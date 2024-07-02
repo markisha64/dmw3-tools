@@ -24,6 +24,12 @@ pub fn Navbar() -> Element {
                         "Rookie Level"
                     }
                 }
+                li {
+                    Link {
+                        to: Route::DigivolutionConditions {},
+                        "Digivolutions"
+                    }
+                }
             }
         }
         Outlet::<Route> {

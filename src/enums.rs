@@ -54,6 +54,71 @@ pub enum Digivolutions {
     Diaboromon = 51,
 }
 
+#[derive(Debug)]
+pub struct DigivolutionsError;
+
+impl TryFrom<usize> for Digivolutions {
+    type Error = DigivolutionsError;
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Digivolutions::Kotemon),
+            1 => Ok(Digivolutions::Kumamon),
+            2 => Ok(Digivolutions::Monmon),
+            3 => Ok(Digivolutions::Agumon),
+            4 => Ok(Digivolutions::Veemon),
+            5 => Ok(Digivolutions::Guilmon),
+            6 => Ok(Digivolutions::Renamon),
+            7 => Ok(Digivolutions::Patamon),
+            8 => Ok(Digivolutions::Dinohumon),
+            9 => Ok(Digivolutions::Hookmon),
+            10 => Ok(Digivolutions::Grizzmon),
+            11 => Ok(Digivolutions::Greymon),
+            12 => Ok(Digivolutions::ExVeemon),
+            13 => Ok(Digivolutions::Growlmon),
+            14 => Ok(Digivolutions::Kyubimon),
+            15 => Ok(Digivolutions::Angemon),
+            16 => Ok(Digivolutions::Devimon),
+            17 => Ok(Digivolutions::Stingmon),
+            18 => Ok(Digivolutions::Angewomon),
+            19 => Ok(Digivolutions::Kyukimon),
+            20 => Ok(Digivolutions::Armormon),
+            21 => Ok(Digivolutions::GrapLeomon),
+            22 => Ok(Digivolutions::MetalGreymon),
+            23 => Ok(Digivolutions::SkullGreymon),
+            24 => Ok(Digivolutions::Paildramon),
+            25 => Ok(Digivolutions::Wargrowlmon),
+            26 => Ok(Digivolutions::Taomon),
+            27 => Ok(Digivolutions::MagnaAngemon),
+            28 => Ok(Digivolutions::Myotismon),
+            29 => Ok(Digivolutions::MetalMamemon),
+            30 => Ok(Digivolutions::Kabuterimon),
+            31 => Ok(Digivolutions::Digitamamon),
+            32 => Ok(Digivolutions::GuardiAngemon),
+            33 => Ok(Digivolutions::Cannondramon),
+            34 => Ok(Digivolutions::Marsmon),
+            35 => Ok(Digivolutions::Wargreymon),
+            36 => Ok(Digivolutions::Imperialdramon),
+            37 => Ok(Digivolutions::Gallantmon),
+            38 => Ok(Digivolutions::Sakuyamon),
+            39 => Ok(Digivolutions::Seraphimon),
+            40 => Ok(Digivolutions::MetalGarurumon),
+            41 => Ok(Digivolutions::Rosemon),
+            42 => Ok(Digivolutions::BKWargreymon),
+            43 => Ok(Digivolutions::ImperialdramonFM),
+            44 => Ok(Digivolutions::MaloMyotismon),
+            45 => Ok(Digivolutions::MegaGargomon),
+            46 => Ok(Digivolutions::GranKuwagamon),
+            47 => Ok(Digivolutions::Phoenixmon),
+            48 => Ok(Digivolutions::Omnimon),
+            49 => Ok(Digivolutions::ImperialdramonPM),
+            50 => Ok(Digivolutions::Beelzemon),
+            51 => Ok(Digivolutions::Diaboromon),
+            _ => Err(DigivolutionsError),
+        }
+    }
+}
+
 impl From<Digivolutions> for &str {
     fn from(val: Digivolutions) -> Self {
         match val {
