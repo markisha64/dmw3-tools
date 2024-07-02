@@ -3,7 +3,8 @@ name: Rust
 on:
   push:
     branches: [ "main" ]
-  workflow-dispatch:
+  workflow_dispatch:
+
 
 permissions:
   contents: read
