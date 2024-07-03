@@ -54,4 +54,4 @@ pub const EXP_OFFSET: [i64; 4] = [0, 50, 800, 3000];
 
 pub const HP_MP_MODIFIER: [i64; 4] = [0, 5, 10, 15];
 
-pub const RANDOM_LEVELING_MODIFIER: [i64; 9] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+pub const _RANDOM_LEVELING_MODIFIER: [i64; 9] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];

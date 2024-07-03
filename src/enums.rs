@@ -1063,14 +1063,14 @@ impl From<Level> for Stage {
             return Stage::Rookie;
         }
 
-        if 5 <= value && value < 20 {
+        if (5..20).contains(&value) {
             return Stage::Champion;
         }
 
-        if 20 <= value && value < 40 {
+        if (20..40).contains(&value) {
             return Stage::Ultimate;
         }
 
-        return Stage::Mega;
+        Stage::Mega
     }
 }
