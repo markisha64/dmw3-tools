@@ -172,7 +172,8 @@ pub fn RookieLevel() -> Element {
     let c_target_level = target_level();
     let c_rookie = rookie();
 
-    let missing_xp = std::cmp::max(level_to_exp(c_target_level, c_rookie) - c_exp, 0);
+    let total_xp = level_to_exp(c_target_level, c_rookie);
+    let missing_xp = std::cmp::max(total_xp - c_exp, 0);
 
     let stat_gain = &[
         stat_gain(
@@ -332,6 +333,10 @@ pub fn RookieLevel() -> Element {
                 div {
                     class: "container",
                     "Missing exp: {missing_xp}"
+                }
+                div {
+                    class: "container",
+                    "Total required exp: {total_xp}"
                 }
             }
             div {

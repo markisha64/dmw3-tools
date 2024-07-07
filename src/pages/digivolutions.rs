@@ -85,17 +85,33 @@ pub fn DigivolutionConditions() -> Element {
                 class: "container",
                 table {
                     tr {
-                        th { "Digivolution" },
-                        th { "Digivolution req 1" },
-                        th { "Digivolution req 2" },
-                        th { "Other req" }
+                        th {
+                            "Digivolution"
+                        }
+                        th {
+                            "Digivolution req 1"
+                        }
+                        th {
+                            "Digivolution req 2"
+                        }
+                        th {
+                            "Other req"
+                        }
                     }
                     for tup in mapped {
                         tr {
-                            td { "{tup.0}" }
-                            td { "{tup.1}" }
-                            td { "{tup.2}" }
-                            td { "{tup.3}" }
+                            td {
+                                "{tup.0}"
+                            }
+                            td {
+                                "{tup.1}"
+                            }
+                            td {
+                                "{tup.2}"
+                            }
+                            td {
+                                "{tup.3}"
+                            }
                         }
                     }
                 }
