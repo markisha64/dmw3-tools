@@ -23,6 +23,8 @@ const OTHER_REQS: [&str; 14] = [
     "Dark",
 ];
 
+static MISSING: &'static str = &"-";
+
 #[component]
 pub fn DigivolutionConditions() -> Element {
     let mut rookie = use_signal(|| Rookies::Kotemon);
@@ -39,7 +41,7 @@ pub fn DigivolutionConditions() -> Element {
                 .into();
 
             let dv_req_1 = match condition.dv_index_1 {
-                0 => "None".into(),
+                0 => MISSING.into(),
                 n => {
                     let dv = Digivolutions::try_from((n - 1) as usize).unwrap();
 
@@ -50,7 +52,7 @@ pub fn DigivolutionConditions() -> Element {
             };
 
             let dv_req_2 = match condition.dv_index_2 {
-                0 => "None".into(),
+                0 => MISSING.into(),
                 n => {
                     let dv = Digivolutions::try_from((n - 1) as usize).unwrap();
 
@@ -61,7 +63,7 @@ pub fn DigivolutionConditions() -> Element {
             };
 
             let other_req = match condition.rq_type {
-                0 => String::from("None"),
+                0 => String::from(MISSING),
                 n => format!("{} {}", OTHER_REQS[(n - 1) as usize], condition.rq),
             };
 
