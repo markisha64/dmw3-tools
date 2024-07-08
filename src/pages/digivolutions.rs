@@ -159,7 +159,7 @@ pub fn DigivolutionsData() -> Element {
                                 "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
                             }
                             td {
-                                "{MISSING}"
+                                "{digivolution.ori_tech_learn_level}"
                             }
                         }
                     }
