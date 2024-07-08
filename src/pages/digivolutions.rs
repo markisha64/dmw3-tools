@@ -1,118 +1,165 @@
 use dioxus::prelude::*;
 
-use crate::data::DIGIVOLUTION_CONDITIONS;
-use crate::{
-    components::RookieSelect,
-    enums::{Digivolutions, Rookies},
-};
+use crate::data::{DIGIVOLUTIONS, MOVE_NAMES};
 
-const OTHER_REQS: [&str; 14] = [
-    "Strength",
-    "Defense",
-    "Spirit",
-    "Wisdom",
-    "Speed",
-    "Chrarisma",
-    "Rookie level",
-    "Fire",
-    "Water",
-    "Ice",
-    "Wind",
-    "Thunder",
-    "Machine",
-    "Dark",
-];
+use crate::enums::Digivolutions;
 
 static MISSING: &'static str = &"-";
 
 #[component]
-pub fn DigivolutionConditions() -> Element {
-    let mut rookie = use_signal(|| Rookies::Kotemon);
-
-    let c_rookie = rookie();
-
-    let mapped: Vec<(String, String, String, String)> = DIGIVOLUTION_CONDITIONS.get().unwrap()
-        [c_rookie as usize]
-        .conditions
-        .iter()
-        .map(|condition| {
-            let name: &str = Digivolutions::try_from((condition.index - 1) as usize)
-                .unwrap()
-                .into();
-
-            let dv_req_1 = match condition.dv_index_1 {
-                0 => MISSING.into(),
-                n => {
-                    let dv = Digivolutions::try_from((n - 1) as usize).unwrap();
-
-                    let dv_name: &str = dv.into();
-
-                    format!("{} {}", dv_name, condition.rq_level_1)
-                }
-            };
-
-            let dv_req_2 = match condition.dv_index_2 {
-                0 => MISSING.into(),
-                n => {
-                    let dv = Digivolutions::try_from((n - 1) as usize).unwrap();
-
-                    let dv_name: &str = dv.into();
-
-                    format!("{} {}", dv_name, condition.rq_level_2)
-                }
-            };
-
-            let other_req = match condition.rq_type {
-                0 => String::from(MISSING),
-                n => format!("{} {}", OTHER_REQS[(n - 1) as usize], condition.rq),
-            };
-
-            (name.into(), dv_req_1, dv_req_2, other_req)
-        })
-        .collect();
-
+pub fn DigivolutionsData() -> Element {
     rsx! {
         div {
             class: "row",
             div {
                 class: "container",
-                RookieSelect {
-                    onchange: move |x: FormEvent| {
-                        let new_rookie = Rookies::from(&x.data.value()[..]);
-                        rookie.set(new_rookie);
-                    }
-                }
-            }
-            div {
-                class: "container",
                 table {
                     tr {
                         th {
-                            "Digivolution"
+                            rowspan: 2,
+                            "Name"
                         }
                         th {
-                            "Digivolution req 1"
+                            colspan: 13,
+                            "Bonus stats"
                         }
                         th {
-                            "Digivolution req 2"
-                        }
-                        th {
-                            "Other req"
+                            colspan: 17,
+                            "Tech"
                         }
                     }
-                    for tup in mapped {
+                    tr {
+                        th {
+                            "Str"
+                        }
+                        th {
+                            "Def"
+                        }
+                        th {
+                            "Spt"
+                        }
+                        th {
+                            "Wis"
+                        }
+                        th {
+                            "Spd"
+                        }
+                        th {
+                            "Chr"
+                        }
+                        th {
+                            "Fir Res"
+                        }
+                        th {
+                            "Wtr Res"
+                        }
+                        th {
+                            "Ice Res"
+                        }
+                        th {
+                            "Wnd Res"
+                        }
+                        th {
+                            "Thd Res"
+                        }
+                        th {
+                            "Mch Res"
+                        }
+                        th {
+                            "Drk Res"
+                        }
+                        for i in 1..6 {
+                            th {
+                                "Tech {i}"
+                            }
+                            th {
+                                "Learn level"
+                            }
+                            th {
+                                "Load level"
+                            }
+                        }
+                        th {
+                            "Signature tech"
+                        }
+                        th {
+                            "Learn level"
+                        }
+                    }
+                    for digivolution in DIGIVOLUTIONS.get().unwrap() {
                         tr {
                             td {
-                                "{tup.0}"
+                                "{(Digivolutions::try_from((digivolution.dv_index as usize) - 1).unwrap()).as_str()}"
                             }
                             td {
-                                "{tup.1}"
+                                "{digivolution.str}"
                             }
                             td {
-                                "{tup.2}"
+                                "{digivolution.def}"
                             }
                             td {
-                                "{tup.3}"
+                                "{digivolution.spt}"
+                            }
+                            td {
+                                "{digivolution.wis}"
+                            }
+                            td {
+                                "{digivolution.spd}"
+                            }
+                            td {
+                                "{digivolution.chr}"
+                            }
+                            td {
+                                "{digivolution.fir_res}"
+                            }
+                            td {
+                                "{digivolution.wtr_res}"
+                            }
+                            td {
+                                "{digivolution.ice_res}"
+                            }
+                            td {
+                                "{digivolution.wnd_res}"
+                            }
+                            td {
+                                "{digivolution.thd_res}"
+                            }
+                            td {
+                                "{digivolution.mch_res}"
+                            }
+                            td {
+                                "{digivolution.wnd_res}"
+                            }
+                            for (idx , tech) in digivolution.tech.iter().enumerate() {
+                                if *tech == 0 {
+                                    td {
+                                        "{MISSING}"
+                                    }
+                                    td {
+                                        "{MISSING}"
+                                    }
+                                    td {
+                                        "{MISSING}"
+                                    }
+                                }
+
+                                if *tech != 0 {
+                                    td {
+                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
+                                    }
+                                    td {
+                                        "{digivolution.tech_learn_level[idx]}"
+                                    }
+                                    td {
+                                        "{digivolution.tech_load_level[idx]}"
+                                    }
+                                }
+                            }
+                            td {
+                                "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
+                            }
+                            td {
+                                "{MISSING}"
                             }
                         }
                     }

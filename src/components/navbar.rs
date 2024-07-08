@@ -27,7 +27,13 @@ pub fn Navbar() -> Element {
                 li {
                     Link {
                         to: Route::DigivolutionConditions {},
-                        "Digivolutions"
+                        "Digivolution conditions"
+                    }
+                }
+                li {
+                    Link {
+                        to: Route::DigivolutionsData {},
+                        "Digivolution"
                     }
                 }
             }

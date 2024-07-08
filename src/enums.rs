@@ -54,6 +54,12 @@ pub enum Digivolutions {
     Diaboromon = 51,
 }
 
+impl Digivolutions {
+    pub fn as_str(self) -> &'static str {
+        self.into()
+    }
+}
+
 #[derive(Debug)]
 pub struct DigivolutionsError;
 
