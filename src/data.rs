@@ -1,4 +1,10 @@
+use serde::Deserialize;
 use std::sync::OnceLock;
+
+#[derive(Deserialize)]
+pub struct LangFile {
+    pub strings: Vec<String>,
+}
 
 pub static DIGIVOLUTIONS: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
 
@@ -6,6 +12,8 @@ pub static DIGIVOLUTION_CONDITIONS: OnceLock<Vec<dmw3_structs::DigivolutionCondi
     OnceLock::new();
 
 pub static MOVE_DATA: OnceLock<Vec<dmw3_structs::MoveData>> = OnceLock::new();
+
+pub static MOVE_NAMES: OnceLock<LangFile> = OnceLock::new();
 
 pub static ROOKIES: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
 
@@ -30,6 +38,8 @@ pub fn init() {
         ))
         .unwrap(),
     );
+
+    let _ = MOVE_NAMES.set(toml::from_str(include_str!("../dump/dmw2003/essklnam.toml")).unwrap());
 
     let _ = ROOKIES.set(
         serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(include_str!(

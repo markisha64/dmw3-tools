@@ -16,3 +16,5 @@ dioxus-logger = "0.5.0"
 
 dmw3_structs = { git = "https://github.com/markisha64/dmw3-randomizer/" }
 serde_json = "1.0.117"
+toml = "0.8.14"
+serde = "1.0.204"
