@@ -906,12 +906,12 @@ dependencies = [
 [[package]]
 name = "dmw3_consts"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-randomizer/#9fe13b054f8ae3715bfe3e5d363affd08331ca2a"
+source = "git+https://github.com/markisha64/dmw3-randomizer/#8b37fc62ec29d687b3a376499df33d34f2340d0d"
 
 [[package]]
 name = "dmw3_structs"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-randomizer/#9fe13b054f8ae3715bfe3e5d363affd08331ca2a"
+source = "git+https://github.com/markisha64/dmw3-randomizer/#8b37fc62ec29d687b3a376499df33d34f2340d0d"
 dependencies = [
  "binread",
  "binwrite",

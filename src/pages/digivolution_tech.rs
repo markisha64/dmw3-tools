@@ -2,7 +2,8 @@ use dioxus::prelude::*;
 
 use crate::data::{DIGIVOLUTIONS, MOVE_NAMES};
 
-use crate::enums::Digivolutions;
+use crate::components::MoveData;
+use crate::enums::{Digivolutions, Moves};
 
 static MISSING: &str = "-";
 
@@ -62,15 +63,20 @@ pub fn DigivolutionsTech() -> Element {
                                 }
 
                                 if *tech != 0 {
-                                    td {
-                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
-                                    }
-                                    td {
-                                        "{digivolution.tech_learn_level[idx]}"
-                                    }
-                                    td {
-                                        "{digivolution.tech_load_level[idx]}"
-                                    }
+                                        td {
+                                            class: "tooltip",
+                                            div {
+                                                class: "tooltiptext",
+                                                MoveData { set: &[Moves::SpeedUp] }
+                                            },
+                                            "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
+                                        }
+                                        td {
+                                            "{digivolution.tech_learn_level[idx]}"
+                                        }
+                                        td {
+                                            "{digivolution.tech_load_level[idx]}"
+                                        }
                                 }
                             }
                             td {

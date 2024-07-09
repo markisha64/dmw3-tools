@@ -1,6 +1,7 @@
 mod digivolution;
 mod digivolution_select;
 mod item_select;
+mod move_data;
 mod move_select;
 mod navbar;
 mod number_field;
@@ -11,6 +12,7 @@ mod stat_boost;
 pub use digivolution::DigivolutionMenu;
 pub use digivolution_select::DigivolutionSelect;
 pub use item_select::ItemSelect;
+pub use move_data::MoveData;
 pub use move_select::MoveSelect;
 pub use navbar::Navbar;
 pub use number_field::NumberField;
