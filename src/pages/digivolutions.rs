@@ -1,10 +1,8 @@
 use dioxus::prelude::*;
 
-use crate::data::{DIGIVOLUTIONS, MOVE_NAMES};
+use crate::data::DIGIVOLUTIONS;
 
 use crate::enums::Digivolutions;
-
-static MISSING: &'static str = &"-";
 
 #[component]
 pub fn DigivolutionsData() -> Element {
@@ -22,10 +20,6 @@ pub fn DigivolutionsData() -> Element {
                         th {
                             colspan: 13,
                             "Bonus stats"
-                        }
-                        th {
-                            colspan: 17,
-                            "Tech"
                         }
                     }
                     tr {
@@ -67,23 +61,6 @@ pub fn DigivolutionsData() -> Element {
                         }
                         th {
                             "Drk Res"
-                        }
-                        for i in 1..6 {
-                            th {
-                                "Tech {i}"
-                            }
-                            th {
-                                "Learn level"
-                            }
-                            th {
-                                "Load level"
-                            }
-                        }
-                        th {
-                            "Signature tech"
-                        }
-                        th {
-                            "Learn level"
                         }
                     }
                     for digivolution in DIGIVOLUTIONS.get().unwrap() {
@@ -129,37 +106,6 @@ pub fn DigivolutionsData() -> Element {
                             }
                             td {
                                 "{digivolution.wnd_res}"
-                            }
-                            for (idx , tech) in digivolution.tech.iter().enumerate() {
-                                if *tech == 0 {
-                                    td {
-                                        "{MISSING}"
-                                    }
-                                    td {
-                                        "{MISSING}"
-                                    }
-                                    td {
-                                        "{MISSING}"
-                                    }
-                                }
-
-                                if *tech != 0 {
-                                    td {
-                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
-                                    }
-                                    td {
-                                        "{digivolution.tech_learn_level[idx]}"
-                                    }
-                                    td {
-                                        "{digivolution.tech_load_level[idx]}"
-                                    }
-                                }
-                            }
-                            td {
-                                "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
-                            }
-                            td {
-                                "{digivolution.ori_tech_learn_level}"
                             }
                         }
                     }

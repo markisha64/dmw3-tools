@@ -23,7 +23,7 @@ const OTHER_REQS: [&str; 14] = [
     "Dark",
 ];
 
-static MISSING: &'static str = &"-";
+static MISSING: &str = "-";
 
 #[component]
 pub fn DigivolutionConditions() -> Element {

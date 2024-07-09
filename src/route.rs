@@ -1,8 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::components::Navbar;
+use crate::components::{DigivolutionMenu, Navbar};
 use crate::pages::{
-    DigivolutionConditions, DigivolutionsData, Index, RookieLevel, StealChance, TurnStarterChance,
+    DigivolutionConditions, DigivolutionsData, DigivolutionsTech, Index, RookieLevel, StealChance,
+    TurnStarterChance,
 };
 
 #[derive(Routable, PartialEq, Clone)]
@@ -21,9 +22,16 @@ pub enum Route {
         #[route("/rookieLevel")]
         RookieLevel {},
 
-        #[route("/digivolutionConditions")]
+    #[end_layout]
+    #[nest("/digivolution")]
+
+    #[layout(DigivolutionMenu)]
+        #[route("/conditions")]
         DigivolutionConditions {},
 
-        #[route("/digivolutionRequirements")]
+        #[route("/stats")]
         DigivolutionsData {},
+
+        #[route("/tech")]
+        DigivolutionsTech {},
 }

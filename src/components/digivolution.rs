@@ -2,32 +2,32 @@ use crate::route::Route;
 use dioxus::prelude::*;
 
 #[component]
-pub fn Navbar() -> Element {
+pub fn DigivolutionMenu() -> Element {
     rsx! {
         nav {
             ul {
                 li {
                     Link {
-                        to: Route::TurnStarterChance {},
-                        "Turn Starter Chance"
+                        to: Route::Index {},
+                        "Home"
                     }
                 }
                 li {
                     Link {
-                        to: Route::StealChance {},
-                        "Steal Chance"
-                    }
-                }
-                li {
-                    Link {
-                        to: Route::RookieLevel {},
-                        "Rookie Level"
+                        to: Route::DigivolutionConditions {},
+                        "Conditions"
                     }
                 }
                 li {
                     Link {
                         to: Route::DigivolutionsData {},
-                        "Digivolution"
+                        "Data"
+                    }
+                }
+                li {
+                    Link {
+                        to: Route::DigivolutionsTech {},
+                        "Tech"
                     }
                 }
             }
