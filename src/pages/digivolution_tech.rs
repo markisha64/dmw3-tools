@@ -63,24 +63,29 @@ pub fn DigivolutionsTech() -> Element {
                                 }
 
                                 if *tech != 0 {
-                                        td {
-                                            class: "tooltip",
-                                            div {
-                                                class: "tooltiptext",
-                                                MoveData { set: &[Moves::SpeedUp] }
-                                            },
-                                            "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
-                                        }
-                                        td {
-                                            "{digivolution.tech_learn_level[idx]}"
-                                        }
-                                        td {
-                                            "{digivolution.tech_load_level[idx]}"
-                                        }
+                                    td {
+                                        class: "tooltip",
+                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
+                                        div {
+                                            class: "tooltiptext",
+                                            MoveData { mv: Moves::try_from(*tech as usize - 1).unwrap() }
+                                        },
+                                    }
+                                    td {
+                                        "{digivolution.tech_learn_level[idx]}"
+                                    }
+                                    td {
+                                        "{digivolution.tech_load_level[idx]}"
+                                    }
                                 }
                             }
                             td {
+                                class: "tooltip",
                                 "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
+                                div {
+                                    class: "tooltiptext",
+                                    MoveData { mv: Moves::try_from(digivolution.ori_tech as usize - 1).unwrap() }
+                                },
                             }
                             td {
                                 "{digivolution.ori_tech_learn_level}"
