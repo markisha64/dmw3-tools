@@ -54,7 +54,7 @@ nav ul li a:hover {
 }
 
 html {
-  background-image: url('bg.png');
+  background-image: url('/bg.png');
   padding: 2px;
   animation: bg 3s linear infinite;
   color: white;
