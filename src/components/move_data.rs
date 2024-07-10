@@ -1,10 +1,19 @@
 use dioxus::prelude::*;
 
-use crate::data::{MOVE_DATA, MOVE_NAMES};
+use crate::data::MOVE_DATA;
 use crate::enums::Moves;
 
 #[component]
 pub fn MoveData(mv: Moves) -> Element {
+    let idx = usize::from(mv);
+
+    let name = match mv {
+        Moves::Named(m) => m.into(),
+        Moves::Unnamed(_) => "Attack",
+    };
+
+    let data = &MOVE_DATA.get().unwrap()[idx - 1];
+
     rsx! {
         div {
             class: "container",
@@ -14,12 +23,14 @@ pub fn MoveData(mv: Moves) -> Element {
                     th { "MP" }
                     th { "Power" }
                     th { "Accuracy" }
+                    th { "Hits" }
                 }
                 tr {
-                    th { "{MOVE_NAMES.get().unwrap().strings[mv as usize]}" }
-                    th { "{MOVE_DATA.get().unwrap()[mv as usize].mp}" }
-                    th { "{MOVE_DATA.get().unwrap()[mv as usize].power}" }
-                    th { "{MOVE_DATA.get().unwrap()[mv as usize].accuracy}" }
+                    th { "{name}" }
+                    th { "{data.mp}" }
+                    th { "{data.power}" }
+                    th { "{data.accuracy}" }
+                    th { "{data.freq}" }
                 }
             }
         }

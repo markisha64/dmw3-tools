@@ -21,6 +21,10 @@ pub fn DigivolutionsTech() -> Element {
                             "Name"
                         }
                         th {
+                            rowspan: 2,
+                            "Attack"
+                        }
+                        th {
                             colspan: 17,
                             "Tech"
                         }
@@ -49,6 +53,16 @@ pub fn DigivolutionsTech() -> Element {
                             td {
                                 "{(Digivolutions::try_from((digivolution.dv_index as usize) - 1).unwrap()).as_str()}"
                             }
+                            td {
+                                td {
+                                    class: "tooltip",
+                                    div {
+                                        class: "tooltiptext",
+                                        MoveData { mv: Moves::try_from(digivolution.attack as usize).unwrap() }
+                                    },
+                                    "Attack"
+                                }
+                            }
                             for (idx , tech) in digivolution.tech.iter().enumerate() {
                                 if *tech == 0 {
                                     td {
@@ -65,11 +79,11 @@ pub fn DigivolutionsTech() -> Element {
                                 if *tech != 0 {
                                     td {
                                         class: "tooltip",
-                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
                                         div {
                                             class: "tooltiptext",
-                                            MoveData { mv: Moves::try_from(*tech as usize - 1).unwrap() }
+                                            MoveData { mv: Moves::try_from(*tech as usize).unwrap() }
                                         },
+                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
                                     }
                                     td {
                                         "{digivolution.tech_learn_level[idx]}"
@@ -84,7 +98,7 @@ pub fn DigivolutionsTech() -> Element {
                                 "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
                                 div {
                                     class: "tooltiptext",
-                                    MoveData { mv: Moves::try_from(digivolution.ori_tech as usize - 1).unwrap() }
+                                    MoveData { mv: Moves::try_from(digivolution.ori_tech as usize).unwrap() }
                                 },
                             }
                             td {

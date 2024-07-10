@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 use crate::components;
 use crate::data::{DIGIVOLUTIONS, MOVE_DATA};
-use crate::enums::{Digivolutions, Items, Moves};
+use crate::enums::{Digivolutions, Items, Moves, NamedMoves};
 
 #[component]
 pub fn StealChance() -> Element {
@@ -12,7 +12,7 @@ pub fn StealChance() -> Element {
     let mut rookie_speed_w_equipment = use_signal::<i64>(|| 200);
     let mut enemy_speed = use_signal::<i64>(|| 200);
     let mut drop_rate = use_signal::<i64>(|| 128);
-    let mut mv = use_signal::<Moves>(|| Moves::PickingClaw);
+    let mut mv = use_signal::<Moves>(|| Moves::Named(NamedMoves::PickingClaw));
     let mut item = use_signal::<Items>(|| Items::NoItem);
     let mut speed_modifier = use_signal::<i64>(|| 0);
 
@@ -34,7 +34,7 @@ pub fn StealChance() -> Element {
     let speed = player_speed + (player_speed * speed_modifier()) / 128;
 
     let sd = min((speed * 100) / c_enemy_speed, 200);
-    let sr = MOVE_DATA.get().unwrap()[c_mv as usize - 1].effect_rate as i64;
+    let sr = MOVE_DATA.get().unwrap()[usize::from(c_mv) - 1].effect_rate as i64;
 
     // TODO: dmw3-randomizer read this data
     let asr = match c_item {
@@ -63,7 +63,7 @@ pub fn StealChance() -> Element {
                         onchange: move |x: FormEvent| {
                             mv.set(Moves::from(&x.data.value()[..]));
                         },
-                        set: &[Moves::PickingClaw, Moves::SnappingClaw]
+                        set: &[Moves::Named(NamedMoves::PickingClaw), Moves::Named(NamedMoves::SnappingClaw)]
                     }
                     components::NumberField {
                         label: "Rookie speed",
