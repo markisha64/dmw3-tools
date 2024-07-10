@@ -57,8 +57,10 @@ pub fn DigivolutionsTech() -> Element {
                                 class: "tooltip",
                                 div {
                                     class: "tooltiptext",
-                                    MoveData { mv: Moves::from(digivolution.attack as usize) }
-                                },
+                                    MoveData {
+                                        mv: Moves::from(digivolution.attack as usize)
+                                    }
+                                }
                                 "Attack"
                             }
                             for (idx , tech) in digivolution.tech.iter().enumerate() {
@@ -79,8 +81,10 @@ pub fn DigivolutionsTech() -> Element {
                                         class: "tooltip",
                                         div {
                                             class: "tooltiptext",
-                                            MoveData { mv: Moves::try_from(*tech as usize).unwrap() }
-                                        },
+                                            MoveData {
+                                                mv: Moves::try_from(*tech as usize).unwrap()
+                                            }
+                                        }
                                         "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
                                     }
                                     td {
@@ -96,8 +100,10 @@ pub fn DigivolutionsTech() -> Element {
                                 "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
                                 div {
                                     class: "tooltiptext",
-                                    MoveData { mv: Moves::try_from(digivolution.ori_tech as usize).unwrap() }
-                                },
+                                    MoveData {
+                                        mv: Moves::try_from(digivolution.ori_tech as usize).unwrap()
+                                    }
+                                }
                             }
                             td {
                                 "{digivolution.ori_tech_learn_level}"

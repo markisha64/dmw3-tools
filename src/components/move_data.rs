@@ -19,18 +19,38 @@ pub fn MoveData(mv: Moves) -> Element {
             class: "container",
             table {
                 tr {
-                    th { "Name" }
-                    th { "MP" }
-                    th { "Power" }
-                    th { "Accuracy" }
-                    th { "Hits" }
+                    th {
+                        "Name"
+                    }
+                    th {
+                        "MP"
+                    }
+                    th {
+                        "Power"
+                    }
+                    th {
+                        "Accuracy"
+                    }
+                    th {
+                        "Hits"
+                    }
                 }
                 tr {
-                    th { "{name}" }
-                    th { "{data.mp}" }
-                    th { "{data.power}" }
-                    th { "{data.accuracy}" }
-                    th { "{data.freq}" }
+                    th {
+                        "{name}"
+                    }
+                    th {
+                        "{data.mp}"
+                    }
+                    th {
+                        "{data.power}"
+                    }
+                    th {
+                        "{data.accuracy}"
+                    }
+                    th {
+                        "{data.freq}"
+                    }
                 }
             }
         }

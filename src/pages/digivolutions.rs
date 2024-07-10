@@ -128,15 +128,21 @@ pub fn DigivolutionsData() -> Element {
                                     class: "tooltip",
                                     div {
                                         class: "tooltiptext",
-                                        MoveData { mv: Moves::from(digivolution.dna_dv_tech as usize) }
-                                    },
+                                        MoveData {
+                                            mv: Moves::from(digivolution.dna_dv_tech as usize)
+                                        }
+                                    }
                                     "{MOVE_NAMES.get().unwrap().strings[digivolution.dna_dv_tech as usize]}"
                                 }
                             }
 
                             if digivolution.dna_dv_idx == 0 {
-                                td { "{MISSING}" }
-                                td { "{MISSING}" }
+                                td {
+                                    "{MISSING}"
+                                }
+                                td {
+                                    "{MISSING}"
+                                }
                             }
                         }
                     }
