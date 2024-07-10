@@ -23,7 +23,7 @@
       0
     ],
     "ori_tech": 53,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 50,
     "par_rate": 10,
     "cnf_rate": 20,
@@ -44,8 +44,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 8,
     "starting_hp": 150,
     "starting_mp": 100,
@@ -105,7 +105,7 @@
       0
     ],
     "ori_tech": 55,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 30,
     "par_rate": 30,
     "cnf_rate": 50,
@@ -126,8 +126,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 10,
     "starting_hp": 180,
     "starting_mp": 10,
@@ -187,7 +187,7 @@
       0
     ],
     "ori_tech": 54,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 10,
     "par_rate": 30,
     "cnf_rate": 20,
@@ -208,8 +208,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 6,
     "starting_hp": 140,
     "starting_mp": 80,
@@ -269,7 +269,7 @@
       0
     ],
     "ori_tech": 56,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 50,
     "par_rate": 20,
     "cnf_rate": 30,
@@ -290,8 +290,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 9,
     "starting_hp": 160,
     "starting_mp": 160,
@@ -351,7 +351,7 @@
       0
     ],
     "ori_tech": 57,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 30,
     "par_rate": 40,
     "cnf_rate": 20,
@@ -372,8 +372,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 8,
     "starting_hp": 160,
     "starting_mp": 150,
@@ -433,7 +433,7 @@
       0
     ],
     "ori_tech": 58,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 40,
     "par_rate": 30,
     "cnf_rate": 10,
@@ -454,8 +454,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 7,
     "starting_hp": 150,
     "starting_mp": 130,
@@ -515,7 +515,7 @@
       0
     ],
     "ori_tech": 59,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 20,
     "par_rate": 50,
     "cnf_rate": 30,
@@ -536,8 +536,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 7,
     "starting_hp": 140,
     "starting_mp": 200,
@@ -597,7 +597,7 @@
       0
     ],
     "ori_tech": 60,
-    "dv_tech": 0,
+    "dna_dv_tech": 0,
     "psn_rate": 40,
     "par_rate": 10,
     "cnf_rate": 30,
@@ -618,8 +618,8 @@
       0,
       0
     ],
-    "dv": 100,
-    "unk1": 0,
+    "dv_exp_modifier": 100,
+    "dna_dv_idx": 0,
     "exp_modifier": 9,
     "starting_hp": 130,
     "starting_mp": 170,

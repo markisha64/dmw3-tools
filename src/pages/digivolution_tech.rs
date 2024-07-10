@@ -54,14 +54,12 @@ pub fn DigivolutionsTech() -> Element {
                                 "{(Digivolutions::try_from((digivolution.dv_index as usize) - 1).unwrap()).as_str()}"
                             }
                             td {
-                                td {
-                                    class: "tooltip",
-                                    div {
-                                        class: "tooltiptext",
-                                        MoveData { mv: Moves::try_from(digivolution.attack as usize).unwrap() }
-                                    },
-                                    "Attack"
-                                }
+                                class: "tooltip",
+                                div {
+                                    class: "tooltiptext",
+                                    MoveData { mv: Moves::from(digivolution.attack as usize) }
+                                },
+                                "Attack"
                             }
                             for (idx , tech) in digivolution.tech.iter().enumerate() {
                                 if *tech == 0 {

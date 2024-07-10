@@ -1,8 +1,11 @@
 use dioxus::prelude::*;
 
-use crate::data::DIGIVOLUTIONS;
+use crate::components::MoveData;
+use crate::data::{DIGIVOLUTIONS, MOVE_NAMES};
 
-use crate::enums::Digivolutions;
+use crate::enums::{Digivolutions, Moves};
+
+static MISSING: &str = "-";
 
 #[component]
 pub fn DigivolutionsData() -> Element {
@@ -20,6 +23,10 @@ pub fn DigivolutionsData() -> Element {
                         th {
                             colspan: 13,
                             "Bonus stats"
+                        }
+                        th {
+                            colspan: 2,
+                            "DNA Digivolution"
                         }
                     }
                     tr {
@@ -61,6 +68,12 @@ pub fn DigivolutionsData() -> Element {
                         }
                         th {
                             "Drk Res"
+                        }
+                        th {
+                            "With"
+                        }
+                        th {
+                            "Digivolution"
                         }
                     }
                     for digivolution in DIGIVOLUTIONS.get().unwrap() {
@@ -106,6 +119,24 @@ pub fn DigivolutionsData() -> Element {
                             }
                             td {
                                 "{digivolution.wnd_res}"
+                            }
+                            if digivolution.dna_dv_idx > 0 {
+                                td {
+                                    "{(Digivolutions::try_from(digivolution.dna_dv_idx as usize - 1).unwrap()).as_str()}"
+                                }
+                                td {
+                                    class: "tooltip",
+                                    div {
+                                        class: "tooltiptext",
+                                        MoveData { mv: Moves::from(digivolution.dna_dv_tech as usize) }
+                                    },
+                                    "{MOVE_NAMES.get().unwrap().strings[digivolution.dna_dv_tech as usize]}"
+                                }
+                            }
+
+                            if digivolution.dna_dv_idx == 0 {
+                                td { "{MISSING}" }
+                                td { "{MISSING}" }
                             }
                         }
                     }
