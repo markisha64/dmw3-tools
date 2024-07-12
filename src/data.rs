@@ -1,5 +1,6 @@
+use binread::BinRead;
 use serde::Deserialize;
-use std::sync::OnceLock;
+use std::{io::Cursor, sync::OnceLock};
 
 #[derive(Deserialize)]
 pub struct LangFile {
@@ -17,36 +18,35 @@ pub static MOVE_NAMES: OnceLock<LangFile> = OnceLock::new();
 
 pub static ROOKIES: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
 
+fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
+    let mut result = Vec::new();
+
+    let mut reader = &mut Cursor::new(bytes);
+
+    loop {
+        let read_result = T::read(&mut reader);
+
+        match read_result {
+            Ok(r) => result.push(r),
+            Err(_) => break,
+        }
+    }
+
+    result
+}
+
 pub fn init() {
-    let _ = DIGIVOLUTIONS.set(
-        serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(include_str!(
-            "../dump/dmw2003/digivolutions.json"
-        ))
-        .unwrap(),
-    );
+    let _ = DIGIVOLUTIONS.set(read_vec(include_bytes!("../dump/dmw2003/digivolutions")));
 
-    let _ = DIGIVOLUTION_CONDITIONS.set(
-        serde_json::from_str::<Vec<dmw3_structs::DigivolutionConditions>>(include_str!(
-            "../dump/dmw2003/digivolution_conditions.json"
-        ))
-        .unwrap(),
-    );
+    let _ = DIGIVOLUTION_CONDITIONS.set(read_vec(include_bytes!(
+        "../dump/dmw2003/digivolution_conditions"
+    )));
 
-    let _ = MOVE_DATA.set(
-        serde_json::from_str::<Vec<dmw3_structs::MoveData>>(include_str!(
-            "../dump/dmw2003/move_data.json"
-        ))
-        .unwrap(),
-    );
+    let _ = MOVE_DATA.set(read_vec(include_bytes!("../dump/dmw2003/move_data")));
 
     let _ = MOVE_NAMES.set(toml::from_str(include_str!("../dump/dmw2003/essklnam.toml")).unwrap());
 
-    let _ = ROOKIES.set(
-        serde_json::from_str::<Vec<dmw3_structs::DigivolutionData>>(include_str!(
-            "../dump/dmw2003/rookies.json"
-        ))
-        .unwrap(),
-    );
+    let _ = ROOKIES.set(read_vec(include_bytes!("../dump/dmw2003/rookies")));
 }
 
 pub const STAT_MODIFIERS: [[i64; 9]; 6] = [
