@@ -1,8 +1,6 @@
 use binread::BinRead;
-use serde::Deserialize;
 use std::{io::Cursor, sync::OnceLock};
 
-#[derive(Deserialize)]
 pub struct LangFile {
     pub strings: Vec<String>,
 }
@@ -44,7 +42,12 @@ pub fn init() {
 
     let _ = MOVE_DATA.set(read_vec(include_bytes!("../dump/dmw2003/move_data")));
 
-    let _ = MOVE_NAMES.set(toml::from_str(include_str!("../dump/dmw2003/essklnam.toml")).unwrap());
+    let _ = MOVE_NAMES.set(LangFile {
+        strings: include_str!("../dump/dmw2003/move_names.txt")
+            .split('\n')
+            .map(|x| x.into())
+            .collect(),
+    });
 
     let _ = ROOKIES.set(read_vec(include_bytes!("../dump/dmw2003/rookies")));
 }

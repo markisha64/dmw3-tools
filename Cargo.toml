@@ -15,9 +15,7 @@ tracing = "0.1.40"
 dioxus-logger = "0.5.0"
 
 dmw3_structs = { git = "https://github.com/markisha64/dmw3-randomizer/" }
-toml = "0.8.14"
 binread = "2.2.0"
-serde = "1.0.204"
 
 [profile.release]
 opt-level = 's'
