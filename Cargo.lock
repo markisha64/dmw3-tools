@@ -899,7 +899,6 @@ dependencies = [
  "dioxus-logger",
  "dmw3_structs",
  "serde",
- "serde_json",
  "toml",
  "tracing",
 ]
