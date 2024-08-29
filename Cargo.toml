@@ -14,7 +14,7 @@ dioxus = { git = "https://github.com/DioxusLabs/dioxus", features = ["web", "rou
 tracing = "0.1.40"
 dioxus-logger = "0.5.0"
 
-dmw3_structs = { git = "https://github.com/markisha64/dmw3-randomizer/" }
+dmw3_structs = { git = "https://github.com/markisha64/dmw3-util" }
 binread = "2.2.0"
 
 [profile.release]
