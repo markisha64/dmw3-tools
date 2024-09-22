@@ -1,4 +1,4 @@
-use crate::route::Route;
+use crate::{components::Import, route::Route};
 use dioxus::prelude::*;
 
 #[component]
@@ -29,6 +29,9 @@ pub fn Navbar() -> Element {
                         to: Route::DigivolutionsData {},
                         "Digivolution"
                     }
+                }
+                li {
+                    Import{}
                 }
             }
         }

@@ -143,3 +143,18 @@ th {
 .tooltip:hover .tooltiptext {
   display: block;
 }
+
+input[type="file"] {
+  display: none;
+}
+
+.file-upload {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: #000021;
+  border-radius: 5px;
+  /* padding: 2px; */
+  margin: 0px 2px 0px 2px;
+  min-height: 20px;
+  text-align: center;
+  cursor: pointer;
+}

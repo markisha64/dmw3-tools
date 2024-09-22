@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::data::DataParsed;
+use crate::data::{DataParsed, NamesParsed};
 
 use crate::components::MoveData;
 use crate::enums::{Digivolutions, Moves};
@@ -10,8 +10,9 @@ static MISSING: &str = "-";
 #[component]
 pub fn DigivolutionsTech() -> Element {
     let data_parsed = use_context::<Signal<DataParsed>>();
+    let names_parsed = use_context::<Signal<NamesParsed>>();
 
-    let move_names = &data_parsed.read().move_names;
+    let move_names = &names_parsed.read().move_names;
 
     rsx! {
         div {

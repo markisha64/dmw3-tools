@@ -9,11 +9,14 @@ pub struct DataParsed {
     pub digivolutions: Vec<dmw3_structs::DigivolutionData>,
     pub digivolution_conditions: Vec<dmw3_structs::DigivolutionConditions>,
     pub move_data: Vec<dmw3_structs::MoveData>,
-    pub move_names: LangFile,
     pub rookies: Vec<dmw3_structs::DigivolutionData>,
 }
 
-fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
+pub struct NamesParsed {
+    pub move_names: LangFile,
+}
+
+pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
     let mut result = Vec::new();
 
     let mut reader = &mut Cursor::new(bytes);
@@ -37,13 +40,18 @@ pub fn init() -> DataParsed {
             "../dump/dmw2003/digivolution_conditions"
         )),
         move_data: read_vec(include_bytes!("../dump/dmw2003/move_data")),
+        rookies: read_vec(include_bytes!("../dump/dmw2003/rookies")),
+    }
+}
+
+pub fn init_names() -> NamesParsed {
+    NamesParsed {
         move_names: LangFile {
             strings: include_str!("../dump/dmw2003/move_names.txt")
                 .split('\n')
                 .map(|x| x.into())
                 .collect(),
         },
-        rookies: read_vec(include_bytes!("../dump/dmw2003/rookies")),
     }
 }
 

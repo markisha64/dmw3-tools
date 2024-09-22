@@ -16,6 +16,7 @@ dioxus-logger = "0.5.0"
 
 dmw3_structs = { git = "https://github.com/markisha64/dmw3-util" }
 binread = "2.2.0"
+tar = "0.4.41"
 
 [profile.release]
 opt-level = 's'

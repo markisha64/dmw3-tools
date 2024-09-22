@@ -16,6 +16,7 @@ fn main() {
 
 pub fn App() -> Element {
     use_context_provider(|| Signal::new(data::init()));
+    use_context_provider(|| Signal::new(data::init_names()));
 
     rsx! {
         style {
