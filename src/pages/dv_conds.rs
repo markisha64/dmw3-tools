@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
 
-use crate::data::DIGIVOLUTION_CONDITIONS;
 use crate::{
     components::RookieSelect,
+    data::DataParsed,
     enums::{Digivolutions, Rookies},
 };
 
@@ -27,11 +27,13 @@ static MISSING: &str = "-";
 
 #[component]
 pub fn DigivolutionConditions() -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
     let mut rookie = use_signal(|| Rookies::Kotemon);
 
     let c_rookie = rookie();
 
-    let mapped: Vec<(String, String, String, String)> = DIGIVOLUTION_CONDITIONS.get().unwrap()
+    let mapped: Vec<(String, String, String, String)> = data_parsed.read().digivolution_conditions
         [c_rookie as usize]
         .conditions
         .iter()

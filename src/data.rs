@@ -1,20 +1,17 @@
 use binread::BinRead;
-use std::{io::Cursor, sync::OnceLock};
+use std::io::Cursor;
 
 pub struct LangFile {
     pub strings: Vec<String>,
 }
 
-pub static DIGIVOLUTIONS: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
-
-pub static DIGIVOLUTION_CONDITIONS: OnceLock<Vec<dmw3_structs::DigivolutionConditions>> =
-    OnceLock::new();
-
-pub static MOVE_DATA: OnceLock<Vec<dmw3_structs::MoveData>> = OnceLock::new();
-
-pub static MOVE_NAMES: OnceLock<LangFile> = OnceLock::new();
-
-pub static ROOKIES: OnceLock<Vec<dmw3_structs::DigivolutionData>> = OnceLock::new();
+pub struct DataParsed {
+    pub digivolutions: Vec<dmw3_structs::DigivolutionData>,
+    pub digivolution_conditions: Vec<dmw3_structs::DigivolutionConditions>,
+    pub move_data: Vec<dmw3_structs::MoveData>,
+    pub move_names: LangFile,
+    pub rookies: Vec<dmw3_structs::DigivolutionData>,
+}
 
 fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
     let mut result = Vec::new();
@@ -33,23 +30,21 @@ fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
     result
 }
 
-pub fn init() {
-    let _ = DIGIVOLUTIONS.set(read_vec(include_bytes!("../dump/dmw2003/digivolutions")));
-
-    let _ = DIGIVOLUTION_CONDITIONS.set(read_vec(include_bytes!(
-        "../dump/dmw2003/digivolution_conditions"
-    )));
-
-    let _ = MOVE_DATA.set(read_vec(include_bytes!("../dump/dmw2003/move_data")));
-
-    let _ = MOVE_NAMES.set(LangFile {
-        strings: include_str!("../dump/dmw2003/move_names.txt")
-            .split('\n')
-            .map(|x| x.into())
-            .collect(),
-    });
-
-    let _ = ROOKIES.set(read_vec(include_bytes!("../dump/dmw2003/rookies")));
+pub fn init() -> DataParsed {
+    DataParsed {
+        digivolutions: read_vec(include_bytes!("../dump/dmw2003/digivolutions")),
+        digivolution_conditions: read_vec(include_bytes!(
+            "../dump/dmw2003/digivolution_conditions"
+        )),
+        move_data: read_vec(include_bytes!("../dump/dmw2003/move_data")),
+        move_names: LangFile {
+            strings: include_str!("../dump/dmw2003/move_names.txt")
+                .split('\n')
+                .map(|x| x.into())
+                .collect(),
+        },
+        rookies: read_vec(include_bytes!("../dump/dmw2003/rookies")),
+    }
 }
 
 pub const STAT_MODIFIERS: [[i64; 9]; 6] = [

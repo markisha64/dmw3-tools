@@ -2,11 +2,13 @@ use dioxus::prelude::*;
 use std::cmp;
 
 use crate::components;
-use crate::data::DIGIVOLUTIONS;
+use crate::data::DataParsed;
 use crate::enums::Digivolutions;
 
 #[component]
 pub fn TurnStarterChance() -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
     let mut digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
     let mut rookie_speed = use_signal::<i64>(|| 200);
     let mut enemy_speed = use_signal::<i64>(|| 200);
@@ -17,7 +19,8 @@ pub fn TurnStarterChance() -> Element {
 
     let player_speed = match c_digivolution as usize > 7 {
         true => {
-            c_rookie_speed + DIGIVOLUTIONS.get().unwrap()[c_digivolution as usize - 8].spd as i64
+            c_rookie_speed
+                + data_parsed.read().digivolutions[c_digivolution as usize - 8].spd as i64
         }
         _ => c_rookie_speed,
     };

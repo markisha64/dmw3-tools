@@ -1,6 +1,5 @@
-use data::ROOKIES;
-
 use dioxus::prelude::*;
+use dmw3_structs::DigivolutionData;
 
 const HEADERS: [&str; 12] = [
     "Str", "Def", "Spt", "Wis", "Spd", "Fir res", "Wtr res", "Ice res", "Wnd res", "Thd res",
@@ -9,12 +8,11 @@ const HEADERS: [&str; 12] = [
 
 use crate::{
     components,
-    data::{self, HP_MP_MODIFIER, RES_MODIFIERS, STAT_MODIFIERS},
+    data::{self, DataParsed, HP_MP_MODIFIER, RES_MODIFIERS, STAT_MODIFIERS},
     enums::{Rookies, Stage},
 };
 
-fn level_to_exp(level: i64, rookie: Rookies) -> i64 {
-    let rookies = ROOKIES.get().unwrap();
+fn level_to_exp(level: i64, rookie: Rookies, rookies: &Vec<DigivolutionData>) -> i64 {
     let stage = Stage::from(level);
 
     ((level * level * level + level * 5 - 6) * (rookies[rookie as usize].exp_modifier as i64)) / 10
@@ -22,13 +20,13 @@ fn level_to_exp(level: i64, rookie: Rookies) -> i64 {
         + 1
 }
 
-fn exp_to_level(exp: i64, rookie: Rookies) -> i64 {
+fn exp_to_level(exp: i64, rookie: Rookies, rookies: &Vec<DigivolutionData>) -> i64 {
     if exp == 0 {
         return 1;
     }
 
     for i in 0..100 {
-        if level_to_exp(i, rookie) > exp {
+        if level_to_exp(i, rookie, rookies) > exp {
             return i - 1;
         }
     }
@@ -162,6 +160,10 @@ fn stat_gain(old_level: i64, new_level: i64, value: usize) -> StatGain {
 
 #[component]
 pub fn RookieLevel() -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
+    let rookies = &data_parsed.read().rookies;
+
     let mut exp = use_signal(|| 0);
     let mut level: Signal<i64> = use_signal(|| 1);
     let mut target_level = use_signal(|| 2);
@@ -172,34 +174,34 @@ pub fn RookieLevel() -> Element {
     let c_target_level = target_level();
     let c_rookie = rookie();
 
-    let total_xp = level_to_exp(c_target_level, c_rookie);
+    let total_xp = level_to_exp(c_target_level, c_rookie, rookies);
     let missing_xp = std::cmp::max(total_xp - c_exp, 0);
 
     let stat_gain = &[
         stat_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].stat_offsets[0] as usize,
+            rookies[c_rookie as usize].stat_offsets[0] as usize,
         ),
         stat_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].stat_offsets[1] as usize,
+            rookies[c_rookie as usize].stat_offsets[1] as usize,
         ),
         stat_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].stat_offsets[2] as usize,
+            rookies[c_rookie as usize].stat_offsets[2] as usize,
         ),
         stat_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].stat_offsets[3] as usize,
+            rookies[c_rookie as usize].stat_offsets[3] as usize,
         ),
         stat_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].stat_offsets[4] as usize,
+            rookies[c_rookie as usize].stat_offsets[4] as usize,
         ),
     ];
 
@@ -207,50 +209,50 @@ pub fn RookieLevel() -> Element {
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[0] as usize,
+            rookies[c_rookie as usize].res_offsets[0] as usize,
         ),
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[1] as usize,
+            rookies[c_rookie as usize].res_offsets[1] as usize,
         ),
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[2] as usize,
+            rookies[c_rookie as usize].res_offsets[2] as usize,
         ),
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[3] as usize,
+            rookies[c_rookie as usize].res_offsets[3] as usize,
         ),
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[4] as usize,
+            rookies[c_rookie as usize].res_offsets[4] as usize,
         ),
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[5] as usize,
+            rookies[c_rookie as usize].res_offsets[5] as usize,
         ),
         res_gain(
             c_level,
             c_target_level,
-            ROOKIES.get().unwrap()[c_rookie as usize].res_offsets[6] as usize,
+            rookies[c_rookie as usize].res_offsets[6] as usize,
         ),
     ];
 
     let hp_gain = hp_mp_gain(
         c_level,
         c_target_level,
-        ROOKIES.get().unwrap()[c_rookie as usize].hp_modifier as i64,
+        rookies[c_rookie as usize].hp_modifier as i64,
     );
 
     let mp_gain = hp_mp_gain(
         c_level,
         c_target_level,
-        ROOKIES.get().unwrap()[c_rookie as usize].mp_modifier as i64,
+        rookies[c_rookie as usize].mp_modifier as i64,
     );
 
     rsx! {
@@ -264,7 +266,7 @@ pub fn RookieLevel() -> Element {
                         onchange: move |x: FormEvent| {
                             let new_rookie = Rookies::from(&x.data.value()[..]);
                             rookie.set(new_rookie);
-                            let new_level = exp_to_level(c_exp, new_rookie);
+                            let new_level = exp_to_level(c_exp, new_rookie, &data_parsed.read().rookies);
                             let new_target_level = match new_level >= c_target_level {
                                 true => (new_level + 1).clamp(1, 99),
                                 _ => c_target_level,
@@ -281,7 +283,7 @@ pub fn RookieLevel() -> Element {
                         mx: 99999999,
                         cb: move |new_exp| {
                             exp.set(new_exp);
-                            let new_level = exp_to_level(new_exp, c_rookie);
+                            let new_level = exp_to_level(new_exp, c_rookie, &data_parsed.read().rookies);
                             let new_target_level = match new_level >= c_target_level {
                                 true => (new_level + 1).clamp(1, 99),
                                 _ => c_target_level,
@@ -309,7 +311,7 @@ pub fn RookieLevel() -> Element {
                                 _ => c_target_level,
                             };
                             let new_exp = match new_level != c_level {
-                                true => level_to_exp(new_level, c_rookie),
+                                true => level_to_exp(new_level, c_rookie, &data_parsed.read().rookies),
                                 _ => c_exp,
                             };
                             exp.set(new_exp);

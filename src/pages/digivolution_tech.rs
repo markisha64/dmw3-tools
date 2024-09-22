@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::data::{DIGIVOLUTIONS, MOVE_NAMES};
+use crate::data::DataParsed;
 
 use crate::components::MoveData;
 use crate::enums::{Digivolutions, Moves};
@@ -9,6 +9,10 @@ static MISSING: &str = "-";
 
 #[component]
 pub fn DigivolutionsTech() -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
+    let move_names = &data_parsed.read().move_names;
+
     rsx! {
         div {
             class: "row",
@@ -48,7 +52,7 @@ pub fn DigivolutionsTech() -> Element {
                             "Learn level"
                         }
                     }
-                    for digivolution in DIGIVOLUTIONS.get().unwrap() {
+                    for digivolution in &data_parsed.read().digivolutions {
                         tr {
                             td {
                                 "{(Digivolutions::try_from((digivolution.dv_index as usize) - 1).unwrap()).as_str()}"
@@ -85,7 +89,7 @@ pub fn DigivolutionsTech() -> Element {
                                                 mv: Moves::try_from(*tech as usize).unwrap()
                                             }
                                         }
-                                        "{MOVE_NAMES.get().unwrap().strings[*tech as usize]}"
+                                        "{&move_names.strings[*tech as usize]}"
                                     }
                                     td {
                                         "{digivolution.tech_learn_level[idx]}"
@@ -97,7 +101,7 @@ pub fn DigivolutionsTech() -> Element {
                             }
                             td {
                                 class: "tooltip",
-                                "{MOVE_NAMES.get().unwrap().strings[digivolution.ori_tech as usize]}"
+                                "{move_names.strings[digivolution.ori_tech as usize]}"
                                 div {
                                     class: "tooltiptext",
                                     MoveData {

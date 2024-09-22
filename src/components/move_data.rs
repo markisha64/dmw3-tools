@@ -1,10 +1,12 @@
 use dioxus::prelude::*;
 
-use crate::data::MOVE_DATA;
+use crate::data::DataParsed;
 use crate::enums::Moves;
 
 #[component]
 pub fn MoveData(mv: Moves) -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
     let idx = usize::from(mv);
 
     let name = match mv {
@@ -12,7 +14,7 @@ pub fn MoveData(mv: Moves) -> Element {
         Moves::Unnamed(_) => "Attack",
     };
 
-    let data = &MOVE_DATA.get().unwrap()[idx - 1];
+    let data = data_parsed.read().move_data[idx - 1];
 
     rsx! {
         div {

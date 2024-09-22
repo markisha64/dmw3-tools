@@ -1,14 +1,16 @@
 use dioxus::prelude::*;
 
 use crate::components::MoveData;
-use crate::data::{DIGIVOLUTIONS, MOVE_NAMES};
 
+use crate::data::DataParsed;
 use crate::enums::{Digivolutions, Moves};
 
 static MISSING: &str = "-";
 
 #[component]
 pub fn DigivolutionsData() -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
     rsx! {
         div {
             class: "row",
@@ -76,7 +78,7 @@ pub fn DigivolutionsData() -> Element {
                             "Digivolution"
                         }
                     }
-                    for digivolution in DIGIVOLUTIONS.get().unwrap() {
+                    for digivolution in &data_parsed.read().digivolutions {
                         tr {
                             td {
                                 "{(Digivolutions::try_from((digivolution.dv_index as usize) - 1).unwrap()).as_str()}"
@@ -132,7 +134,7 @@ pub fn DigivolutionsData() -> Element {
                                             mv: Moves::from(digivolution.dna_dv_tech as usize)
                                         }
                                     }
-                                    "{MOVE_NAMES.get().unwrap().strings[digivolution.dna_dv_tech as usize]}"
+                                    "{data_parsed.read().move_names.strings[digivolution.dna_dv_tech as usize]}"
                                 }
                             }
 

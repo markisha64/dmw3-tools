@@ -3,11 +3,13 @@ use std::cmp::min;
 use dioxus::prelude::*;
 
 use crate::components;
-use crate::data::{DIGIVOLUTIONS, MOVE_DATA};
+use crate::data::DataParsed;
 use crate::enums::{Digivolutions, Items, Moves, NamedMoves};
 
 #[component]
 pub fn StealChance() -> Element {
+    let data_parsed = use_context::<Signal<DataParsed>>();
+
     let mut digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
     let mut rookie_speed_w_equipment = use_signal::<i64>(|| 200);
     let mut enemy_speed = use_signal::<i64>(|| 200);
@@ -26,7 +28,7 @@ pub fn StealChance() -> Element {
     let player_speed = match c_digivolution as usize > 7 {
         true => {
             c_rookie_speed_w_equipment
-                + DIGIVOLUTIONS.get().unwrap()[c_digivolution as usize - 8].spd as i64
+                + data_parsed.read().digivolutions[c_digivolution as usize - 8].spd as i64
         }
         _ => c_rookie_speed_w_equipment,
     };
@@ -34,7 +36,7 @@ pub fn StealChance() -> Element {
     let speed = player_speed + (player_speed * speed_modifier()) / 128;
 
     let sd = min((speed * 100) / c_enemy_speed, 200);
-    let sr = MOVE_DATA.get().unwrap()[usize::from(c_mv) - 1].effect_rate as i64;
+    let sr = data_parsed.read().move_data[usize::from(c_mv) - 1].effect_rate as i64;
 
     // TODO: dmw3-randomizer read this data
     let asr = match c_item {
