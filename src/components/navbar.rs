@@ -31,6 +31,7 @@ pub fn Navbar() -> Element {
                     }
                 }
                 li {
+                    style: "margin-left: auto;",
                     Import{}
                 }
             }

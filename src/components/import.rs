@@ -10,9 +10,12 @@ pub fn Import() -> Element {
     let mut data_parsed = use_context::<Signal<DataParsed>>();
 
     rsx! {
-        label {
-            class: "file-upload",
-            r#for: "import",
+        a {
+            onclick: |_| {
+                let _ = eval(r#"
+                        document.getElementById("import").click()
+                    "#);
+            },
             "Import"
         }
         input {
