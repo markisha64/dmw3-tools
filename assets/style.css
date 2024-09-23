@@ -146,3 +146,13 @@ th {
 input[type="file"] {
   display: none;
 }
+
+ul.lsn {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+ul.lsn li {
+  margin: 0 15px;
+}

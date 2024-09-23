@@ -10,10 +10,14 @@ pub struct DataParsed {
     pub digivolution_conditions: Vec<dmw3_structs::DigivolutionConditions>,
     pub move_data: Vec<dmw3_structs::MoveData>,
     pub rookies: Vec<dmw3_structs::DigivolutionData>,
+    pub item_shop_data: Vec<dmw3_structs::ItemShopData>,
+    pub shops: Vec<dmw3_structs::Shop>,
+    pub shop_items: Vec<u16>,
 }
 
 pub struct NamesParsed {
     pub move_names: LangFile,
+    pub item_names: LangFile,
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -41,6 +45,9 @@ pub fn init() -> DataParsed {
         )),
         move_data: read_vec(include_bytes!("../dump/dmw2003/move_data")),
         rookies: read_vec(include_bytes!("../dump/dmw2003/rookies")),
+        item_shop_data: read_vec(include_bytes!("../dump/dmw2003/item_shops")),
+        shops: read_vec(include_bytes!("../dump/dmw2003/shops")),
+        shop_items: read_vec(include_bytes!("../dump/dmw2003/shop_items")),
     }
 }
 
@@ -48,6 +55,12 @@ pub fn init_names() -> NamesParsed {
     NamesParsed {
         move_names: LangFile {
             strings: include_str!("../dump/dmw2003/move_names.txt")
+                .split('\n')
+                .map(|x| x.into())
+                .collect(),
+        },
+        item_names: LangFile {
+            strings: include_str!("../dump/dmw2003/item_names.txt")
                 .split('\n')
                 .map(|x| x.into())
                 .collect(),

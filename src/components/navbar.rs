@@ -31,6 +31,12 @@ pub fn Navbar() -> Element {
                     }
                 }
                 li {
+                    Link {
+                        to: Route::Shops {},
+                        "Shops"
+                    }
+                }
+                li {
                     style: "margin-left: auto;",
                     Import{}
                 }

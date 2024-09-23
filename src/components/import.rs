@@ -94,6 +94,36 @@ pub fn Import() -> Element {
                                     data_parsed.write().move_data = move_data;
                                 }
                             }
+
+                            if name == "shops" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let shops = read_vec(&buf[..]);
+                                if shops.len() > 0 {
+                                    data_parsed.write().shops = shops;
+                                }
+                            }
+
+                            if name == "shop_items" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let shop_items = read_vec(&buf[..]);
+                                if shop_items.len() > 0 {
+                                    data_parsed.write().shop_items = shop_items;
+                                }
+                            }
+
+                            if name == "item_shops" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let item_shop_data = read_vec(&buf[..]);
+                                if item_shop_data.len() > 0 {
+                                    data_parsed.write().item_shop_data = item_shop_data;
+                                }
+                            }
                         }
                     }
                 }
