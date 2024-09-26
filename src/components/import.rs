@@ -124,6 +124,16 @@ pub fn Import() -> Element {
                                     data_parsed.write().item_shop_data = item_shop_data;
                                 }
                             }
+
+                            if name == "enemy_stats" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let enemy_stats = read_vec(&buf[..]);
+                                if enemy_stats.len() > 0 {
+                                    data_parsed.write().enemy_stats = enemy_stats;
+                                }
+                            }
                         }
                     }
                 }
