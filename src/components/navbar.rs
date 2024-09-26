@@ -37,6 +37,12 @@ pub fn Navbar() -> Element {
                     }
                 }
                 li {
+                    Link {
+                        to: Route::EnemyStats {},
+                        "Enemy Stats"
+                    }
+                }
+                li {
                     style: "margin-left: auto;",
                     Import{}
                 }
