@@ -113,14 +113,7 @@ pub fn EnemyStats() -> Element {
                                     "{item_names.strings[enemy.droppable_item as usize]}"
                                 }
                                 td {
-                                    div {
-                                        class: "tooltip",
-                                        span {
-                                            class: "tooltiptext",
-                                            "{enemy.drop_rate as f32 / 10.24}%"
-                                        }
-                                        "{enemy.drop_rate}"
-                                    }
+                                    "{enemy.drop_rate} ({enemy.drop_rate as f32 / 10.24}%)"
                                 }
                             }
                             td {
