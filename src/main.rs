@@ -19,10 +19,10 @@ pub fn App() -> Element {
     use_context_provider(|| Signal::new(data::init_names()));
 
     rsx! {
-        style {
-            "{include_str!(\"../assets/style.css\")}"
+        link {
+            rel: "stylesheet",
+            href: "style.css"
         }
-        Router::<route::Route> {
-        }
+        Router::<route::Route> {}
     }
 }
