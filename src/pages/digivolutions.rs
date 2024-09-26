@@ -28,6 +28,10 @@ pub fn DigivolutionsData() -> Element {
                             "Bonus stats"
                         }
                         th {
+                            colspan: 5,
+                            "Status resistances"
+                        }
+                        th {
                             colspan: 2,
                             "DNA Digivolution"
                         }
@@ -71,6 +75,21 @@ pub fn DigivolutionsData() -> Element {
                         }
                         th {
                             "Drk Res"
+                        }
+                        th {
+                            "Psn"
+                        }
+                        th {
+                            "Par"
+                        }
+                        th {
+                            "Cnf"
+                        }
+                        th {
+                            "Slp"
+                        }
+                        th {
+                            "OHKO"
                         }
                         th {
                             "With"
@@ -122,6 +141,21 @@ pub fn DigivolutionsData() -> Element {
                             }
                             td {
                                 "{digivolution.wnd_res}"
+                            }
+                            td {
+                                "{digivolution.psn_rate}"
+                            }
+                            td {
+                                "{digivolution.par_rate}"
+                            }
+                            td {
+                                "{digivolution.cnf_rate}"
+                            }
+                            td {
+                                "{digivolution.slp_rate}"
+                            }
+                            td {
+                                "{digivolution.ko_rate}"
                             }
                             if digivolution.dna_dv_idx > 0 {
                                 td {
