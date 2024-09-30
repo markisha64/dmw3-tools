@@ -22,19 +22,11 @@ pub fn DigivolutionsTech() -> Element {
                 table {
                     tr {
                         th {
-                            rowspan: 2,
                             "Name"
                         }
                         th {
-                            rowspan: 2,
                             "Attack"
                         }
-                        th {
-                            colspan: 17,
-                            "Tech"
-                        }
-                    }
-                    tr {
                         for i in 1..6 {
                             th {
                                 "Tech {i}"

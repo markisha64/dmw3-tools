@@ -162,7 +162,13 @@ ul.lsn li {
 
 th {
   color: #fff;
-  background-color: #000021;
+  background-color: #090994;
+  position: sticky;
+  top: 50px;
+  z-index: 2;
+}
+
+.sticky50 {
   position: sticky;
   top: 50px;
   z-index: 2;

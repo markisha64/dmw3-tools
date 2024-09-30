@@ -77,7 +77,7 @@ pub fn DigivolutionConditions() -> Element {
         div {
             class: "row",
             div {
-                class: "container",
+                class: "container sticky50",
                 RookieSelect {
                     onchange: move |x: FormEvent| {
                         let new_rookie = Rookies::from(&x.data.value()[..]);
