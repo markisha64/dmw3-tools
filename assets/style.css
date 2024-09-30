@@ -159,3 +159,11 @@ ul.lsn {
 ul.lsn li {
   margin: 0 15px;
 }
+
+th {
+  color: #fff;
+  background-color: #000021;
+  position: sticky;
+  top: 50px;
+  z-index: 2;
+}
