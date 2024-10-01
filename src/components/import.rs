@@ -134,6 +134,26 @@ pub fn Import() -> Element {
                                     data_parsed.write().enemy_stats = enemy_stats;
                                 }
                             }
+
+                            if name == "encounters" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let encounters = read_vec(&buf[..]);
+                                if encounters.len() > 0 {
+                                    data_parsed.write().encounters = encounters;
+                                }
+                            }
+
+                            if name == "enemy_parties" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let enemy_parties = read_vec(&buf[..]);
+                                if enemy_parties.len() > 0 {
+                                    data_parsed.write().enemy_parties = enemy_parties;
+                                }
+                            }
                         }
                     }
                 }

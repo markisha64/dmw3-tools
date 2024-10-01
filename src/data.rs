@@ -8,6 +8,8 @@ pub struct LangFile {
 pub struct DataParsed {
     pub digivolutions: Vec<dmw3_structs::DigivolutionData>,
     pub digivolution_conditions: Vec<dmw3_structs::DigivolutionConditions>,
+    pub encounters: Vec<dmw3_structs::EncounterData>,
+    pub enemy_parties: Vec<dmw3_structs::PartyData>,
     pub move_data: Vec<dmw3_structs::MoveData>,
     pub rookies: Vec<dmw3_structs::DigivolutionData>,
     pub item_shop_data: Vec<dmw3_structs::ItemShopData>,
@@ -45,6 +47,8 @@ pub fn init() -> DataParsed {
         digivolution_conditions: read_vec(include_bytes!(
             "../dump/dmw2003/digivolution_conditions"
         )),
+        encounters: read_vec(include_bytes!("../dump/dmw2003/encounters")),
+        enemy_parties: read_vec(include_bytes!("../dump/dmw2003/enemy_parties")),
         move_data: read_vec(include_bytes!("../dump/dmw2003/move_data")),
         rookies: read_vec(include_bytes!("../dump/dmw2003/rookies")),
         item_shop_data: read_vec(include_bytes!("../dump/dmw2003/item_shops")),

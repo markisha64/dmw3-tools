@@ -670,12 +670,12 @@ dependencies = [
 [[package]]
 name = "dmw3_consts"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#78f5dfa2747a9ec39e6782ea298bd42d07a83e04"
+source = "git+https://github.com/markisha64/dmw3-util#273aa78a4a31c6376d028652cd5f741981e2a872"
 
 [[package]]
 name = "dmw3_structs"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#78f5dfa2747a9ec39e6782ea298bd42d07a83e04"
+source = "git+https://github.com/markisha64/dmw3-util#273aa78a4a31c6376d028652cd5f741981e2a872"
 dependencies = [
  "binread",
  "binwrite",

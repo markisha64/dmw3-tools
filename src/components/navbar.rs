@@ -43,6 +43,12 @@ pub fn Navbar() -> Element {
                     }
                 }
                 li {
+                    Link {
+                        to: Route::Parties {},
+                        "Parties"
+                    }
+                }
+                li {
                     style: "margin-left: auto;",
                     Import{}
                 }
