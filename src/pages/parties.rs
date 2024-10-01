@@ -67,6 +67,10 @@ pub fn Parties() -> Element {
                         }
                         th {
                             rowspan: 2,
+                            "Ambush modifier"
+                        }
+                        th {
+                            rowspan: 2,
                             "Type"
                         }
                         th {
@@ -122,6 +126,9 @@ pub fn Parties() -> Element {
                             }
                             td {
                                 "{get_name(party.encounters[2])}"
+                            }
+                            td {
+                                "{party.ambush_rate}"
                             }
                             td {
                                 "{party.p_type}"
