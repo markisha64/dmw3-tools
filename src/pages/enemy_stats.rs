@@ -19,6 +19,7 @@ pub fn EnemyStats() -> Element {
                 class: "container",
                 table {
                     tr {
+                        class: "sticky",
                         th {
                             rowspan: 2,
                             "Name"
@@ -37,6 +38,7 @@ pub fn EnemyStats() -> Element {
                         }
                     }
                     tr {
+                        class: "sticky",
                         th {
                             "Droppable item"
                         }

@@ -19,6 +19,7 @@ pub fn DigivolutionsData() -> Element {
                 class: "container",
                 table {
                     tr {
+                        class: "sticky",
                         th {
                             rowspan: 2,
                             "Name"
@@ -37,6 +38,7 @@ pub fn DigivolutionsData() -> Element {
                         }
                     }
                     tr {
+                        class: "sticky",
                         th {
                             "Str"
                         }

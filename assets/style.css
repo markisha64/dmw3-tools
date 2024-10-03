@@ -160,7 +160,7 @@ ul.lsn li {
   margin: 0 15px;
 }
 
-th {
+tr.sticky>th {
   color: #fff;
   background-color: #090994;
   position: sticky;

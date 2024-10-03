@@ -1,10 +1,7 @@
 use dioxus::prelude::*;
 use dmw3_structs::Pointer;
 
-use crate::components::MoveData;
-
 use crate::data::{DataParsed, NamesParsed};
-use crate::enums::{Digivolutions, Moves};
 
 static MISSING: &str = "-";
 
@@ -49,6 +46,7 @@ pub fn Parties() -> Element {
                 class: "container",
                 table {
                     tr {
+                        class: "sticky",
                         th {
                             rowspan: 2,
                             "Index"
@@ -79,6 +77,7 @@ pub fn Parties() -> Element {
                         }
                     }
                     tr {
+                        class: "sticky",
                         th {
                             "Psn"
                         }

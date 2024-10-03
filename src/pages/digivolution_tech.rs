@@ -21,6 +21,7 @@ pub fn DigivolutionsTech() -> Element {
                 class: "container",
                 table {
                     tr {
+                        class: "sticky",
                         th {
                             "Name"
                         }

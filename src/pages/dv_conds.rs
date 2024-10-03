@@ -89,6 +89,7 @@ pub fn DigivolutionConditions() -> Element {
                 class: "container",
                 table {
                     tr {
+                        class: "sticky",
                         th {
                             "Digivolution"
                         }
