@@ -52,17 +52,22 @@ pub fn Models() -> Element {
 
                                     let buf = dmw3_model_to_gltf::create_gltf(&header, &unpacked).unwrap();
 
+                                    let new_file_name = match file_name.rfind('.') {
+                                        Some(pos) => &file_name[..pos],
+                                        None => file_name,
+                                    };
+
                                     let _eval = eval(format!(r"
                                         const textContent = `{}`;
                                         const blob = new Blob([textContent], {{ type: 'model/gltf+json' }});
                                         const link = document.createElement('a');
 
-                                        link.download = 'model.gltf';
+                                        link.download = '{}.gltf';
                                         link.href = URL.createObjectURL(blob);
 
                                         link.click();
                                         link.remove();
-                                    ", String::from_utf8(buf).unwrap()).as_str());
+                                    ", String::from_utf8(buf).unwrap(), new_file_name).as_str());
                                 }
                             }
                         }
