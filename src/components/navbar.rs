@@ -31,6 +31,12 @@ pub fn Navbar() -> Element {
                     }
                 }
                 li {
+                    Link {
+                        to: Route::Models {},
+                        "Modding"
+                    }
+                }
+                li {
                     style: "margin-left: auto;",
                     Import{}
                 }
