@@ -176,6 +176,10 @@ pub fn Parties() -> Element {
                                 }
                                 th {
                                     rowspan: 2,
+                                    "Level"
+                                }
+                                th {
+                                    rowspan: 2,
                                     "Multiplier"
                                 }
                                 th {
@@ -256,6 +260,9 @@ pub fn Parties() -> Element {
                                             }
                                             td {
                                                 "{encounter.max_mp}"
+                                            }
+                                            td {
+                                                "{encounter.lv}"
                                             }
                                             td {
                                                 "{encounter.multiplier} ({(encounter.multiplier as f32) / 0.16}%)"
