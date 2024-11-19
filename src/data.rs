@@ -1,19 +1,8 @@
 use binread::BinRead;
-use dmw3_structs::{StageEncounter, StageEncounterArea};
-use std::{
-    collections::{HashMap, HashSet},
-    io::{Cursor, Read},
-};
-use tar::Archive;
+use std::io::Cursor;
 
 pub struct LangFile {
     pub strings: Vec<String>,
-}
-
-pub struct MapObject {
-    pub file_name: String,
-    pub stage_encounter_areas: Vec<StageEncounterArea>,
-    pub stage_encounters: Vec<Vec<StageEncounter>>,
 }
 
 pub struct DataParsed {
@@ -27,7 +16,6 @@ pub struct DataParsed {
     pub shops: Vec<dmw3_structs::Shop>,
     pub shop_items: Vec<u16>,
     pub enemy_stats: Vec<dmw3_structs::EnemyStats>,
-    pub map_objects: Vec<MapObject>,
 }
 
 pub struct NamesParsed {
@@ -53,64 +41,6 @@ pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
     result
 }
 
-pub fn init_maps() -> Vec<MapObject> {
-    let cursor = Cursor::new(include_bytes!("../dump/dmw2003/maps.tar"));
-
-    let mut archive = Archive::new(cursor);
-
-    let mut mapper: HashMap<String, Vec<u8>> = HashMap::new();
-
-    let mut folders: HashSet<_> = HashSet::new();
-
-    let mut result = Vec::new();
-
-    for entry in archive.entries().unwrap() {
-        let mut file = entry.unwrap();
-
-        let path = file.path().unwrap().into_owned();
-
-        let name = path.file_name().unwrap().to_string_lossy();
-
-        if !name.starts_with(".") {
-            if name.starts_with("WSTAG") {
-                folders.insert(
-                    path.file_name()
-                        .unwrap()
-                        .to_os_string()
-                        .into_string()
-                        .unwrap(),
-                );
-            } else {
-                let mut buf = Vec::new();
-                file.read_to_end(&mut buf).unwrap();
-
-                mapper.insert(path.into_os_string().into_string().unwrap(), buf);
-            }
-        }
-
-        for folder in &folders {
-            if mapper.contains_key(&format!("maps/{folder}/areas"))
-                && mapper.contains_key(&format!("maps/{folder}/encounters"))
-            {
-                let areas = read_vec(&mapper[&format!("maps/{folder}/areas")][..]);
-                let encounters_pre: Vec<StageEncounter> =
-                    read_vec(&mapper[&format!("maps/{folder}/encounters")][..]);
-
-                result.push(MapObject {
-                    file_name: folder.clone(),
-                    stage_encounter_areas: areas,
-                    stage_encounters: encounters_pre
-                        .chunks_exact(8)
-                        .map(|x| Vec::from(x))
-                        .collect(),
-                })
-            }
-        }
-    }
-
-    result
-}
-
 pub fn init() -> DataParsed {
     DataParsed {
         digivolutions: read_vec(include_bytes!("../dump/dmw2003/digivolutions")),
@@ -125,7 +55,6 @@ pub fn init() -> DataParsed {
         shops: read_vec(include_bytes!("../dump/dmw2003/shops")),
         shop_items: read_vec(include_bytes!("../dump/dmw2003/shop_items")),
         enemy_stats: read_vec(include_bytes!("../dump/dmw2003/enemy_stats")),
-        map_objects: init_maps(),
     }
 }
 
