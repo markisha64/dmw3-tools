@@ -8,20 +8,8 @@ pub fn Navbar() -> Element {
             ul {
                 li {
                     Link {
-                        to: Route::TurnStarterChance {},
-                        "Turn Starter Chance"
-                    }
-                }
-                li {
-                    Link {
-                        to: Route::StealChance {},
-                        "Steal Chance"
-                    }
-                }
-                li {
-                    Link {
                         to: Route::RookieLevel {},
-                        "Rookie Level"
+                        "Calculators"
                     }
                 }
                 li {
@@ -32,20 +20,8 @@ pub fn Navbar() -> Element {
                 }
                 li {
                     Link {
-                        to: Route::Shops {},
-                        "Shops"
-                    }
-                }
-                li {
-                    Link {
-                        to: Route::EnemyStats {},
-                        "Enemy Stats"
-                    }
-                }
-                li {
-                    Link {
                         to: Route::Parties {},
-                        "Parties"
+                        "Other data"
                     }
                 }
                 li {

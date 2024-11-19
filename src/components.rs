@@ -1,3 +1,5 @@
+mod calculators;
+mod data;
 mod digivolution;
 mod digivolution_select;
 mod import;
@@ -11,6 +13,8 @@ mod rookie_select;
 mod speed_modifier;
 mod stat_boost;
 
+pub use calculators::Calculators;
+pub use data::OtherData;
 pub use digivolution::DigivolutionMenu;
 pub use digivolution_select::DigivolutionSelect;
 pub use import::Import;
