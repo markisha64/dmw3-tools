@@ -30,6 +30,12 @@ pub fn Calculators() -> Element {
                         "Steal Chance"
                     }
                 }
+                li {
+                    Link {
+                        to: Route::Ambush {},
+                        "Ambush"
+                    }
+                }
             }
         }
         Outlet::<Route> {
