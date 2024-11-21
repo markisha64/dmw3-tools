@@ -142,7 +142,7 @@ pub fn DigivolutionsData() -> Element {
                                 "{digivolution.mch_res}"
                             }
                             td {
-                                "{digivolution.wnd_res}"
+                                "{digivolution.drk_res}"
                             }
                             td {
                                 "{digivolution.psn_rate}"
