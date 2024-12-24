@@ -911,7 +911,7 @@ dependencies = [
 [[package]]
 name = "dmw3-model-to-gltf"
 version = "0.0.0"
-source = "git+https://github.com/markisha64/dmw3-model-to-gltf#170ce0b8e9fdfce7f4246e535b2edd8506309b8b"
+source = "git+https://github.com/markisha64/dmw3-model-to-gltf#1a212f0fa86f24f651d9bf6fe84bb376fc490b24"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
