@@ -17,33 +17,30 @@ pub fn MapEncounters() -> Element {
 
     rsx! {
         div {
-            class: "row",
-            div {
-                class: "column",
-                for i in 0..(map_object.stage_encounter_areas.len() / 5) {
-                    div {
-                        class: "container",
-                        table {
-                            tr {
-                                th { "Area" }
-                                for k in 0..8 {
-                                    th { "Team {k}" }
-                                }
+            class: "column",
+            for i in 0..(map_object.stage_encounter_areas.len() / 5) {
+                div {
+                    class: "container",
+                    table {
+                        tr {
+                            th { "Area" }
+                            for k in 0..8 {
+                                th { "Team {k}" }
                             }
-                            for j in 0..5 {
-                                tr {
-                                    td { "{j}" }
-                                    for k in 0..8 {
-                                        td {
-                                            class: "tooltip",
-                                            div {
-                                                class: "tooltiptext",
-                                                PartyData {
-                                                    team_id: map_object.stage_encounters[i * 5 + j][k].team_id
-                                                }
+                        }
+                        for j in 0..5 {
+                            tr {
+                                td { "{j}" }
+                                for k in 0..8 {
+                                    td {
+                                        class: "tooltip",
+                                        div {
+                                            class: "tooltiptext",
+                                            PartyData {
+                                                team_id: map_object.stage_encounters[i * 5 + j][k].team_id
                                             }
-                                            "{map_object.stage_encounters[i * 5 + j][k].team_id}"
                                         }
+                                        "{map_object.stage_encounters[i * 5 + j][k].team_id}"
                                     }
                                 }
                             }
