@@ -48,18 +48,46 @@ pub fn Import() -> Element {
                                 .unwrap()
                                 .into_owned();
 
+                            let path_string = path.as_os_str().to_str().unwrap();
+
                             let name = path.file_name()
                                 .unwrap()
                                 .to_string_lossy();
 
-                            tracing::info!("file name {}", name.as_ref());
+                            if path_string.starts_with("maps") {
+                                let parts = path_string.split('/').collect::<Vec<&str>>();
+
+                                let map_name = String::from(parts[1]);
+
+                                let temp_ref = &mut data_parsed.write().map_objects;
+                                let map_object = temp_ref.get_mut(&map_name).unwrap();
+
+                                if name == "stage_encounter_areas" {
+                                    let mut buf = Vec::new();
+                                    file.read_to_end(&mut buf).unwrap();
+
+                                    let stage_encounter_areas = read_vec(&buf[..]);
+                                    if stage_encounter_areas.len() > 0 {
+                                        map_object.stage_encounter_areas = stage_encounter_areas;
+                                    }
+                                }
+
+                                if name == "stage_encounters" {
+                                    let mut buf = Vec::new();
+                                    file.read_to_end(&mut buf).unwrap();
+
+                                    let stage_encounters = read_vec(&buf[..]);
+                                    if stage_encounters.len() > 0 {
+                                        map_object.stage_encounters = stage_encounters;
+                                    }
+                                }
+                            }
 
                             if name == "digivolutions" {
                                 let mut buf = Vec::new();
                                 file.read_to_end(&mut buf).unwrap();
 
                                 let digivolutions = read_vec(&buf[..]);
-                                tracing::info!("dvs len {}", digivolutions.len());
                                 if digivolutions.len() > 0 {
                                     data_parsed.write().digivolutions = digivolutions;
                                 }

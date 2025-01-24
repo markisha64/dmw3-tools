@@ -1,9 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::components::{Calculators, DigivolutionMenu, ModdingMenu, Navbar, OtherData};
+use crate::components::{Calculators, DigivolutionMenu, MapsMenu, ModdingMenu, Navbar, OtherData};
 use crate::pages::{
     Ambush, DigivolutionConditions, DigivolutionsData, DigivolutionsTech, EnemyStats, Index,
-    Models, Parties, RookieLevel, Shops, StealChance, TurnStarterChance,
+    MapEncounters, Models, Parties, RookieLevel, Shops, StealChance, TurnStarterChance,
 };
 
 #[derive(Routable, PartialEq, Clone)]
@@ -41,6 +41,13 @@ pub enum Route {
 
         #[route("/enemy_stats")]
         EnemyStats {},
+    #[end_nest]
+    #[end_layout]
+
+    #[nest("/maps")]
+    #[layout(MapsMenu)]
+        #[route("/encounters")]
+        MapEncounters {},
     #[end_nest]
     #[end_layout]
 

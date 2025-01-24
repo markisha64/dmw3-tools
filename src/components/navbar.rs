@@ -26,6 +26,12 @@ pub fn Navbar() -> Element {
                 }
                 li {
                     Link {
+                        to: Route::MapEncounters {},
+                        "Maps"
+                    }
+                }
+                li {
+                    Link {
                         to: Route::Models {},
                         "Modding"
                     }

@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dmw3_structs::{EncounterData, EnemyStats, PartyData, Pointer};
+use dmw3_structs::{EncounterData, EnemyStats, Pointer};
 
 use crate::data::{DataParsed, NamesParsed};
 

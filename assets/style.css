@@ -50,6 +50,15 @@ nav ul li a {
   padding: 14px 20px;
 }
 
+nav ul li select {
+  display: block;
+  color: white;
+  text-decoration: none;
+  background-color: #000021;
+  padding: 14px 20px;
+  border-radius: 4px;
+}
+
 nav ul li a:hover {
   background-color: #575757;
   border-radius: 4px;
