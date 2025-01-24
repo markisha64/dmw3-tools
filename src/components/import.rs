@@ -1,6 +1,7 @@
 use std::io::{Cursor, Read};
 
 use dioxus::prelude::*;
+use dmw3_structs::StageEncounter;
 use tar::Archive;
 
 use crate::data::{read_vec, DataParsed};
@@ -76,9 +77,12 @@ pub fn Import() -> Element {
                                     let mut buf = Vec::new();
                                     file.read_to_end(&mut buf).unwrap();
 
-                                    let stage_encounters = read_vec(&buf[..]);
+                                    let stage_encounters: Vec<StageEncounter> = read_vec(&buf[..]);
                                     if stage_encounters.len() > 0 {
-                                        map_object.stage_encounters = stage_encounters;
+                                        map_object.stage_encounters = stage_encounters
+                                        .chunks_exact(8)
+                                        .map(|x| Vec::from(x))
+                                        .collect();
                                     }
                                 }
                             }
