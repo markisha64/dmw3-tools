@@ -32,15 +32,23 @@ pub fn MapEncounters() -> Element {
                             tr {
                                 td { "{j}" }
                                 for k in 0..8 {
-                                    td {
-                                        class: "tooltip",
-                                        div {
-                                            class: "tooltiptext",
-                                            PartyData {
-                                                team_id: map_object.stage_encounters[i * 5 + j][k].team_id
-                                            }
+                                    if map_object.stage_encounters[i * 5 + j][k].team_id == 0 {
+                                        td {
+                                            "-"
                                         }
-                                        "{map_object.stage_encounters[i * 5 + j][k].team_id}"
+                                    }
+
+                                    if map_object.stage_encounters[i * 5 + j][k].team_id != 0 {
+                                        td {
+                                            class: "tooltip",
+                                            div {
+                                                class: "tooltiptext",
+                                                PartyData {
+                                                    team_id: map_object.stage_encounters[i * 5 + j][k].team_id
+                                                }
+                                            }
+                                            "{map_object.stage_encounters[i * 5 + j][k].team_id}"
+                                        }
                                     }
                                 }
                             }
