@@ -1,5 +1,5 @@
 use binread::BinRead;
-use dmw3_structs::{Pointer, StageEncounter, StageEncounterArea};
+use dmw3_structs::{StageEncounter, StageEncounterArea};
 use std::{
     collections::{HashMap, HashSet},
     io::{Cursor, Read},
@@ -27,19 +27,12 @@ pub struct DataParsed {
     pub shop_items: Vec<u16>,
     pub enemy_stats: Vec<dmw3_structs::EnemyStats>,
     pub map_objects: HashMap<String, MapObject>,
-    pub encounters_pointer: Pointer,
 }
 
 pub struct NamesParsed {
     pub move_names: LangFile,
     pub item_names: LangFile,
     pub digimon_names: LangFile,
-}
-
-pub fn read_single<T: BinRead>(bytes: &[u8]) -> T {
-    let mut reader = &mut Cursor::new(bytes);
-
-    T::read(&mut reader).unwrap()
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -135,7 +128,6 @@ pub fn init() -> DataParsed {
         shop_items: read_vec(include_bytes!("../dump/dmw2003/shop_items")),
         enemy_stats: read_vec(include_bytes!("../dump/dmw2003/enemy_stats")),
         map_objects: init_maps(),
-        encounters_pointer: read_single(include_bytes!("../dump/dmw2003/encounters_pointer")),
     }
 }
 

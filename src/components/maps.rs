@@ -3,7 +3,6 @@ use crate::{
     route::Route,
 };
 use dioxus::prelude::*;
-use tracing::info;
 
 #[derive(Clone)]
 pub struct SelectedMap(pub String);
