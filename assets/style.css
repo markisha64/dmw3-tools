@@ -65,7 +65,7 @@ nav ul li a:hover {
 }
 
 html {
-  background-image: url('/bg.webp');
+  background-image: url('/assets/bg.webp');
   padding: 2px;
   animation: bg 3s linear infinite;
   color: white;

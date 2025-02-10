@@ -16,7 +16,7 @@ pub fn Models() -> Element {
                     class: "container",
                     button {
                         onclick: |_| {
-                            let _ = eval(r#"
+                            let _ = document::eval(r#"
                                     document.getElementById("converter").click()
                                 "#);
                         },
@@ -57,7 +57,7 @@ pub fn Models() -> Element {
                                         None => file_name,
                                     };
 
-                                    let _eval = eval(format!(r"
+                                    let _eval = document::eval(format!(r"
                                         const textContent = `{}`;
                                         const blob = new Blob([textContent], {{ type: 'model/gltf+json' }});
                                         const link = document.createElement('a');

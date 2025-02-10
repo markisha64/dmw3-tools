@@ -13,7 +13,7 @@ pub fn Import() -> Element {
     rsx! {
         a {
             onclick: |_| {
-                let _ = eval(r#"
+                let _ = document::eval(r#"
                         document.getElementById("import").click()
                     "#);
             },

@@ -20,7 +20,7 @@ pub fn StatBoost(
         "{lb}"
         button {
             onclick: move |_| {
-                let _e = eval(
+                let _e = document::eval(
                     format!("document.getElementById(\"{id}\").showModal();").as_str(),
                 );
             },
@@ -30,7 +30,7 @@ pub fn StatBoost(
             id,
             span {
                 onclick: move |_| {
-                    let _e = eval(format!("document.getElementById(\"{id}\").close();").as_str());
+                    let _e = document::eval(format!("document.getElementById(\"{id}\").close();").as_str());
                 },
                 class: "close",
                 "Close"
@@ -38,7 +38,7 @@ pub fn StatBoost(
             for option in options {
                 button {
                     onclick: move |_| {
-                        let _e = eval(format!("document.getElementById(\"{id}\").close();").as_str());
+                        let _e = document::eval(format!("document.getElementById(\"{id}\").close();").as_str());
                         let new_value = (c_value + option.1).clamp(-64, 128);
                         value.set(new_value);
                         stacks.write().push(*option);

@@ -13,7 +13,9 @@ pub fn MapEncounters() -> Element {
     let data_parsed = use_context::<Signal<DataParsed>>();
     let map_objects = &data_parsed.read().map_objects;
 
-    let map_object = map_objects.get(selected_map)?;
+    let map_object = map_objects
+        .get(selected_map)
+        .context("failed to get map objects")?;
 
     rsx! {
         div {
