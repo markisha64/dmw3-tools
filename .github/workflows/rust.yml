@@ -29,14 +29,16 @@ jobs:
           ~/.cargo
         key: linux-cargo-${{ hashFiles('Cargo.lock') }}
         restore-keys: linux-cargo-${{ hashFiles('Cargo.lock') }}
+    - name: Get binstall
+      run: cargo install cargo-binstall
     - name: Get cli tool
-      run: cargo install dioxus-cli@0.6.3
+      run: cargo binstall dioxus-cli@0.6.3
     - name: Uncomment base_path
       run: sed -i 's/# base_path/base_path/' Dioxus.toml
     - name: Fix bg url
       run: sed -i 's|bg.webp|dmw3-tools/bg.webp|g' assets/style.css
-    - name: Build
-      run: dx build --release
+    - name: Bundle
+      run: dx bundle --release
     - name: Fix client side routing
       run: cp dist/public/index.html dist/public/404.html
     - name: Upload artifact
