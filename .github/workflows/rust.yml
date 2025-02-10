@@ -35,8 +35,6 @@ jobs:
       run: cargo binstall dioxus-cli@0.6.3
     - name: Uncomment base_path
       run: sed -i 's/# base_path/base_path/' Dioxus.toml
-    - name: Fix bg url
-      run: sed -i 's|bg.webp|dmw3-tools/bg.webp|g' assets/style.css
     - name: Bundle
       run: dx bundle --release
     - name: Fix client side routing
