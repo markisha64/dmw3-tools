@@ -30,7 +30,7 @@ jobs:
         key: linux-cargo-${{ hashFiles('Cargo.lock') }}
         restore-keys: linux-cargo-${{ hashFiles('Cargo.lock') }}
     - name: Get cli tool
-      run: cargo install dioxus-cli@0.5.7 --locked
+      run: cargo install dioxus-cli@0.6.3
     - name: Uncomment base_path
       run: sed -i 's/# base_path/base_path/' Dioxus.toml
     - name: Fix bg url
