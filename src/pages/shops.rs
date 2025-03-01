@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::data::{DataParsed, NamesParsed};
+use dmw3_consts::SHOP_NAMES_MAPPED;
 
 #[component]
 pub fn Shops() -> Element {
@@ -9,6 +10,7 @@ pub fn Shops() -> Element {
 
     let start_pointer = data_parsed.read().shops[0].items;
     let item_names = &names_parsed.read().item_names;
+    let shop_names = &names_parsed.read().shop_names;
 
     let item_shop_data = &data_parsed.read().item_shop_data;
     let shop_items = &data_parsed.read().shop_items;
@@ -42,7 +44,7 @@ pub fn Shops() -> Element {
             for (idx, shop) in shops.iter().enumerate() {
                 div {
                     class: "container",
-                    "Shop {idx + 1}",
+                    "{shop_names.strings[SHOP_NAMES_MAPPED[idx] as usize]}",
                     ul {
                         class: "lsn",
                         for item_data in shop {

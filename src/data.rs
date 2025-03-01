@@ -33,6 +33,7 @@ pub struct NamesParsed {
     pub move_names: LangFile,
     pub item_names: LangFile,
     pub digimon_names: LangFile,
+    pub shop_names: LangFile,
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -147,6 +148,12 @@ pub fn init_names() -> NamesParsed {
         },
         digimon_names: LangFile {
             strings: include_str!("../dump/dmw2003/digimon_names.txt")
+                .split('\n')
+                .map(|x| x.into())
+                .collect(),
+        },
+        shop_names: LangFile {
+            strings: include_str!("../dump/dmw2003/shop_names.txt")
                 .split('\n')
                 .map(|x| x.into())
                 .collect(),
