@@ -19,11 +19,9 @@ pub fn Shops() -> Element {
         .read()
         .shops
         .iter()
-        .take(29) // idk man i guess last shops is not a shop
+        .take(30)
         .map(|shop| {
             let begin_index = ((shop.items.value - start_pointer.value) / 2) as usize;
-
-            tracing::info!("{begin_index}");
 
             (0..shop.item_count as usize)
                 .map(|y| {
