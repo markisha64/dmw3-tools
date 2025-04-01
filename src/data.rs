@@ -13,6 +13,7 @@ pub struct LangFile {
 pub struct MapObject {
     pub stage_encounter_areas: Vec<StageEncounterArea>,
     pub stage_encounters: Vec<Vec<StageEncounter>>,
+    pub stage_id: u16,
 }
 
 pub struct DataParsed {
@@ -27,6 +28,7 @@ pub struct DataParsed {
     pub shop_items: Vec<u16>,
     pub enemy_stats: Vec<dmw3_structs::EnemyStats>,
     pub map_objects: HashMap<String, MapObject>,
+    pub screen_name_mapping: Vec<dmw3_structs::ScreenNameMapping>,
 }
 
 pub struct NamesParsed {
@@ -34,6 +36,7 @@ pub struct NamesParsed {
     pub item_names: LangFile,
     pub digimon_names: LangFile,
     pub shop_names: LangFile,
+    pub screen_names: LangFile,
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -91,11 +94,15 @@ pub fn init_maps() -> HashMap<String, MapObject> {
         for folder in &folders {
             if mapper.contains_key(&format!("maps/{folder}/stage_encounter_areas"))
                 && mapper.contains_key(&format!("maps/{folder}/stage_encounters"))
+                && mapper.contains_key(&format!("maps/{folder}/stage_id"))
             {
                 let stage_encounter_areas =
                     read_vec(&mapper[&format!("maps/{folder}/stage_encounter_areas")][..]);
                 let stage_encounters: Vec<StageEncounter> =
                     read_vec(&mapper[&format!("maps/{folder}/stage_encounters")][..]);
+
+                let stage_id_bytes = &mapper[&format!("maps/{folder}/stage_id")];
+                let stage_id: u16 = u16::from_le_bytes([stage_id_bytes[0], stage_id_bytes[1]]);
 
                 result.insert(
                     folder.clone(),
@@ -105,6 +112,7 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                             .chunks_exact(8)
                             .map(|x| Vec::from(x))
                             .collect(),
+                        stage_id,
                     },
                 );
             }
@@ -129,6 +137,7 @@ pub fn init() -> DataParsed {
         shop_items: read_vec(include_bytes!("../dump/dmw2003/shop_items")),
         enemy_stats: read_vec(include_bytes!("../dump/dmw2003/enemy_stats")),
         map_objects: init_maps(),
+        screen_name_mapping: read_vec(include_bytes!("../dump/dmw2003/screen_name_mapping")),
     }
 }
 
@@ -154,6 +163,12 @@ pub fn init_names() -> NamesParsed {
         },
         shop_names: LangFile {
             strings: include_str!("../dump/dmw2003/shop_names.txt")
+                .split('\n')
+                .map(|x| x.into())
+                .collect(),
+        },
+        screen_names: LangFile {
+            strings: include_str!("../dump/dmw2003/screen_names.txt")
                 .split('\n')
                 .map(|x| x.into())
                 .collect(),
