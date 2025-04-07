@@ -44,7 +44,7 @@ pub fn MapsMenu() -> Element {
                 li {
                     Link {
                         to: Route::MapEncounters {},
-                        "Maps"
+                        "Encounters"
                     }
                 }
                 li {
