@@ -116,15 +116,15 @@ pub fn Import() -> Element {
                                     }
                                 }
 
-                                if name == "entity_conditions" {
-                                    let mut buf = Vec::new();
-                                    file.read_to_end(&mut buf).unwrap();
+                                // if name == "entity_conditions" {
+                                //     let mut buf = Vec::new();
+                                //     file.read_to_end(&mut buf).unwrap();
 
-                                    let entity_conditions: Vec<u32> = read_vec(&buf[..]);
-                                    if entity_conditions.len() > 0 {
-                                        map_object.entity_conditions = entity_conditions;
-                                    }
-                                }
+                                //     let entity_conditions: Vec<u32> = read_vec(&buf[..]);
+                                //     if entity_conditions.len() > 0 {
+                                //         map_object.entity_conditions = entity_conditions;
+                                //     }
+                                // }
                             }
 
                             if name == "digivolutions" {

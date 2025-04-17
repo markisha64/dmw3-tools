@@ -17,7 +17,7 @@ pub struct MapObject {
     pub entities: Vec<EntityData>,
     pub entity_logics: Vec<EntityLogic>,
     pub scripts_conditions: Vec<u32>,
-    pub entity_conditions: Vec<u32>,
+    // pub entity_conditions: Vec<u32>,
 }
 
 pub struct DataParsed {
@@ -102,7 +102,6 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                 && mapper.contains_key(&format!("maps/{folder}/entities"))
                 && mapper.contains_key(&format!("maps/{folder}/entity_logics"))
                 && mapper.contains_key(&format!("maps/{folder}/scripts_conditions"))
-                && mapper.contains_key(&format!("maps/{folder}/entitiy_conditions"))
             {
                 let stage_encounter_areas =
                     read_vec(&mapper[&format!("maps/{folder}/stage_encounter_areas")][..]);
@@ -125,9 +124,9 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                         scripts_conditions: read_vec(
                             &mapper[&format!("maps/{folder}/scripts_conditions")],
                         ),
-                        entity_conditions: read_vec(
-                            &mapper[&format!("maps/{folder}/entity_conditions")],
-                        ),
+                        // entity_conditions: read_vec(
+                        //     &mapper[&format!("maps/{folder}/entity_conditions")],
+                        // ),
                         stage_id,
                     },
                 );

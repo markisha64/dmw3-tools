@@ -48,6 +48,12 @@ pub fn MapsMenu() -> Element {
                     }
                 }
                 li {
+                    Link {
+                        to: Route::MapEntities {},
+                        "Entities"
+                    }
+                }
+                li {
                     style: "margin-left: auto;",
                     select {
                         onchange: move |x: Event<FormData>| {
