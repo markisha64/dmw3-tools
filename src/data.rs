@@ -1,5 +1,5 @@
 use binread::BinRead;
-use dmw3_structs::{StageEncounter, StageEncounterArea};
+use dmw3_structs::{EntityData, EntityLogic, StageEncounter, StageEncounterArea};
 use std::{
     collections::{HashMap, HashSet},
     io::{Cursor, Read},
@@ -14,6 +14,10 @@ pub struct MapObject {
     pub stage_encounter_areas: Vec<StageEncounterArea>,
     pub stage_encounters: Vec<Vec<StageEncounter>>,
     pub stage_id: u16,
+    pub entities: Vec<EntityData>,
+    pub entity_logics: Vec<EntityLogic>,
+    pub scripts_conditions: Vec<u32>,
+    pub entity_conditions: Vec<u32>,
 }
 
 pub struct DataParsed {
@@ -95,6 +99,10 @@ pub fn init_maps() -> HashMap<String, MapObject> {
             if mapper.contains_key(&format!("maps/{folder}/stage_encounter_areas"))
                 && mapper.contains_key(&format!("maps/{folder}/stage_encounters"))
                 && mapper.contains_key(&format!("maps/{folder}/stage_id"))
+                && mapper.contains_key(&format!("maps/{folder}/entities"))
+                && mapper.contains_key(&format!("maps/{folder}/entity_logics"))
+                && mapper.contains_key(&format!("maps/{folder}/scripts_conditions"))
+                && mapper.contains_key(&format!("maps/{folder}/entitiy_conditions"))
             {
                 let stage_encounter_areas =
                     read_vec(&mapper[&format!("maps/{folder}/stage_encounter_areas")][..]);
@@ -112,6 +120,14 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                             .chunks_exact(8)
                             .map(|x| Vec::from(x))
                             .collect(),
+                        entities: read_vec(&mapper[&format!("maps/{folder}/entities")]),
+                        entity_logics: read_vec(&mapper[&format!("maps/{folder}/entity_logics")]),
+                        scripts_conditions: read_vec(
+                            &mapper[&format!("maps/{folder}/scripts_conditions")],
+                        ),
+                        entity_conditions: read_vec(
+                            &mapper[&format!("maps/{folder}/entity_conditions")],
+                        ),
                         stage_id,
                     },
                 );

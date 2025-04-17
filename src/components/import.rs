@@ -1,7 +1,7 @@
 use std::io::{Cursor, Read};
 
 use dioxus::prelude::*;
-use dmw3_structs::StageEncounter;
+use dmw3_structs::{EntityData, EntityLogic, StageEncounter};
 use tar::Archive;
 
 use crate::data::{read_vec, DataParsed};
@@ -83,6 +83,46 @@ pub fn Import() -> Element {
                                         .chunks_exact(8)
                                         .map(|x| Vec::from(x))
                                         .collect();
+                                    }
+                                }
+
+                                if name == "entities" {
+                                    let mut buf = Vec::new();
+                                    file.read_to_end(&mut buf).unwrap();
+
+                                    let entities: Vec<EntityData> = read_vec(&buf[..]);
+                                    if entities.len() > 0 {
+                                        map_object.entities = entities;
+                                    }
+                                }
+
+                                if name == "entity_logics" {
+                                    let mut buf = Vec::new();
+                                    file.read_to_end(&mut buf).unwrap();
+
+                                    let entity_logics: Vec<EntityLogic> = read_vec(&buf[..]);
+                                    if entity_logics.len() > 0 {
+                                        map_object.entity_logics = entity_logics;
+                                    }
+                                }
+
+                                if name == "scripts_conditions" {
+                                    let mut buf = Vec::new();
+                                    file.read_to_end(&mut buf).unwrap();
+
+                                    let scripts_conditions: Vec<u32> = read_vec(&buf[..]);
+                                    if scripts_conditions.len() > 0 {
+                                        map_object.scripts_conditions = scripts_conditions;
+                                    }
+                                }
+
+                                if name == "entity_conditions" {
+                                    let mut buf = Vec::new();
+                                    file.read_to_end(&mut buf).unwrap();
+
+                                    let entity_conditions: Vec<u32> = read_vec(&buf[..]);
+                                    if entity_conditions.len() > 0 {
+                                        map_object.entity_conditions = entity_conditions;
                                     }
                                 }
                             }
