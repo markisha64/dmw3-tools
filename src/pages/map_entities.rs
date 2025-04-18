@@ -4,7 +4,7 @@ use tracing::info;
 
 use crate::{
     components::{PartyData, SelectedMap},
-    data::DataParsed,
+    data::{DataParsed, NamesParsed},
 };
 
 struct MappedEntityLogic {
@@ -19,13 +19,62 @@ struct MappedEntity {
     logics: Vec<MappedEntityLogic>,
 }
 
+fn conditionToString(condition: u32) -> String {
+    let c_type = condition >> 8 & 0xfe;
+    let value = condition & 0x1ff;
+
+    match c_type {
+        2 => format!("Item box #{} opened", value),
+        32 => format!("Area #{} visited", value),
+        _ => "Unknown".to_string(),
+    }
+}
+
+#[derive(Copy, Clone)]
+enum ScriptSet {
+    Set,
+    Unset,
+}
+
+impl Into<&'static str> for ScriptSet {
+    fn into(self) -> &'static str {
+        match self {
+            Self::Set => "Set",
+            Self::Unset => "Unset",
+        }
+    }
+}
+
+fn scriptToString(script: u32, set: ScriptSet, item_names: &Vec<String>) -> String {
+    let c_type = script >> 8 & 0xfe;
+    let value = script & 0x1ff;
+    let set_s: &str = set.into();
+
+    match c_type {
+        2 => format!("{} flag item box #{} opened", set_s, value),
+        32 => format!("{} flag area #{} visited", set_s, value),
+        128..=143 => {
+            let add_s = match set {
+                ScriptSet::Set => "Add",
+                ScriptSet::Unset => "Remove",
+            };
+
+            format!("{} \"{}\"", add_s, item_names[value as usize])
+        }
+        _ => "Unknown".to_string(),
+    }
+}
+
 #[component]
 pub fn MapEntities() -> Element {
     let selected_map_state = use_context::<Signal<SelectedMap>>();
     let selected_map = &selected_map_state.read().0;
 
     let data_parsed = use_context::<Signal<DataParsed>>();
+    let names_parsed = use_context::<Signal<NamesParsed>>();
     let map_objects = &data_parsed.read().map_objects;
+
+    let item_names = &names_parsed.read().item_names.strings;
 
     let map_object = map_objects
         .get(selected_map)
@@ -154,7 +203,7 @@ pub fn MapEntities() -> Element {
                         ul {
                             for condition in &entity.conditions {
                                 li {
-                                    "{condition}"
+                                    "{conditionToString(*condition)}"
                                 }
                             }
                         }
@@ -188,7 +237,7 @@ pub fn MapEntities() -> Element {
                                             "Conditions"
                                         },
                                         for condition in &logic.conditions {
-                                            li { "{condition}" }
+                                            li { "{conditionToString(*condition)}" }
                                         }
                                     }
                                 }
@@ -200,7 +249,7 @@ pub fn MapEntities() -> Element {
                                             "Script"
                                         },
                                         for script in &logic.scripts {
-                                            li { "{script}" }
+                                            li { "{scriptToString((*script), ScriptSet::Set, item_names)}" }
                                         }
                                     }
                                 }
