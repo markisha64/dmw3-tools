@@ -182,3 +182,51 @@ tr.sticky>th {
   top: 50px;
   z-index: 2;
 }
+
+.hidden {
+  display: none;
+}
+
+.entity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.entity-info {
+  font-size: 16px;
+}
+
+.entity-conditions {
+  margin-left: auto;
+  padding-left: 1rem;
+  min-width: 200px;
+}
+
+.entity-conditions ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.logic-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.logic-column {
+  flex: 1;
+  border-radius: 4px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.logic-column-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
