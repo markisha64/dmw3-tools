@@ -42,7 +42,7 @@ pub fn MapEntities() -> Element {
         .entities
         .iter()
         .find(|x| !x.conditions.null())
-        .map(|x| x.logic.value)
+        .map(|x| x.conditions.value)
         .unwrap_or(0);
 
     let scripts = map_object
@@ -117,17 +117,18 @@ pub fn MapEntities() -> Element {
                 }
             }
 
-            // if !entity.conditions.null() {
-            //     let conditions_idx = ((entity.conditions.value - script_cond_min) / 0x4) as usize;
+            if !entity.conditions.null() {
+                let conditions_idx =
+                    ((entity.conditions.value - first_entity_conditions) / 0x4) as usize;
 
-            //     for condition in &map_object.entity_conditions[conditions_idx..] {
-            //         if *condition == 0x0000ffff {
-            //             break;
-            //         }
+                for condition in &map_object.entity_conditions[conditions_idx..] {
+                    if *condition == 0x0000ffff {
+                        break;
+                    }
 
-            //         conditions.push(*condition);
-            //     }
-            // }
+                    conditions.push(*condition);
+                }
+            }
 
             return MappedEntity {
                 data: entity.clone(),
