@@ -21,6 +21,8 @@ dmw3_model = { git = "https://github.com/markisha64/dmw3-util" }
 dmw3-model-to-gltf = { git = "https://github.com/markisha64/dmw3-model-to-gltf" }
 binread = "2.2.0"
 tar = "0.4.41"
+toml = "0.8.20"
+serde = { version = "1.0.219", features = ["derive"] }
 
 [profile.release]
 opt-level = 's'

@@ -11,7 +11,7 @@ use crate::{
 struct MappedEntityLogic {
     conditions: Vec<ScriptConditionStep>,
     scripts: Vec<ScriptConditionStep>,
-    conversation: Vec<()>,
+    conversation: usize,
 }
 
 struct MappedEntity {
@@ -112,6 +112,14 @@ pub fn MapEntities() -> Element {
         .get(selected_map)
         .context("failed to get map objects")?;
 
+    let talk_files = &names_parsed.read().talk_files;
+
+    let talk_file = talk_files
+        .iter()
+        .find(|(idx, _)| *idx == map_object.talk_file)
+        .map(|(_, l)| l)
+        .context("failed to find talk file")?;
+
     let first_logic = map_object
         .entities
         .iter()
@@ -193,7 +201,7 @@ pub fn MapEntities() -> Element {
                     logics.push(MappedEntityLogic {
                         conditions,
                         scripts,
-                        conversation: Vec::new(),
+                        conversation: logic.text_index as usize,
                     });
                 }
             }
@@ -292,8 +300,9 @@ pub fn MapEntities() -> Element {
                                             class: "logic-column-title",
                                             "Conversation"
                                         },
-                                        for _ in &logic.conversation {
-                                            li { "" }
+                                        li {
+                                            style: "white-space: pre-line;",
+                                            "{talk_file.strings[logic.conversation]}"
                                         }
                                     }
                                 }

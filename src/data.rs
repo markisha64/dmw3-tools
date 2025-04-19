@@ -2,12 +2,14 @@ use binread::BinRead;
 use dmw3_structs::{
     EntityData, EntityLogic, ScriptConditionStep, StageEncounter, StageEncounterArea,
 };
+use serde::Deserialize;
 use std::{
     collections::{HashMap, HashSet},
     io::{Cursor, Read},
 };
 use tar::Archive;
 
+#[derive(Deserialize)]
 pub struct LangFile {
     pub strings: Vec<String>,
 }
@@ -19,6 +21,7 @@ pub struct MapObject {
     pub entities: Vec<EntityData>,
     pub entity_logics: Vec<EntityLogic>,
     pub scripts_conditions: Vec<ScriptConditionStep>,
+    pub talk_file: u16,
     pub entity_conditions: Vec<ScriptConditionStep>,
 }
 
@@ -43,6 +46,7 @@ pub struct NamesParsed {
     pub digimon_names: LangFile,
     pub shop_names: LangFile,
     pub screen_names: LangFile,
+    pub talk_files: Vec<(u16, LangFile)>,
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -101,6 +105,7 @@ pub fn init_maps() -> HashMap<String, MapObject> {
             if mapper.contains_key(&format!("maps/{folder}/stage_encounter_areas"))
                 && mapper.contains_key(&format!("maps/{folder}/stage_encounters"))
                 && mapper.contains_key(&format!("maps/{folder}/stage_id"))
+                && mapper.contains_key(&format!("maps/{folder}/talk_file"))
                 && mapper.contains_key(&format!("maps/{folder}/entities"))
                 && mapper.contains_key(&format!("maps/{folder}/entity_logics"))
                 && mapper.contains_key(&format!("maps/{folder}/scripts_conditions"))
@@ -113,6 +118,9 @@ pub fn init_maps() -> HashMap<String, MapObject> {
 
                 let stage_id_bytes = &mapper[&format!("maps/{folder}/stage_id")];
                 let stage_id: u16 = u16::from_le_bytes([stage_id_bytes[0], stage_id_bytes[1]]);
+
+                let talk_file_bytes = &mapper[&format!("maps/{folder}/talk_file")];
+                let talk_file: u16 = u16::from_le_bytes([talk_file_bytes[0], talk_file_bytes[1]]);
 
                 result.insert(
                     folder.clone(),
@@ -131,6 +139,7 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                             &mapper[&format!("maps/{folder}/entity_conditions")],
                         ),
                         stage_id,
+                        talk_file,
                     },
                 );
             }
@@ -161,36 +170,53 @@ pub fn init() -> DataParsed {
 
 pub fn init_names() -> NamesParsed {
     NamesParsed {
-        move_names: LangFile {
-            strings: include_str!("../dump/dmw2003/move_names.txt")
-                .split('\n')
-                .map(|x| x.into())
-                .collect(),
-        },
-        item_names: LangFile {
-            strings: include_str!("../dump/dmw2003/item_names.txt")
-                .split('\n')
-                .map(|x| x.into())
-                .collect(),
-        },
-        digimon_names: LangFile {
-            strings: include_str!("../dump/dmw2003/digimon_names.txt")
-                .split('\n')
-                .map(|x| x.into())
-                .collect(),
-        },
-        shop_names: LangFile {
-            strings: include_str!("../dump/dmw2003/shop_names.txt")
-                .split('\n')
-                .map(|x| x.into())
-                .collect(),
-        },
-        screen_names: LangFile {
-            strings: include_str!("../dump/dmw2003/screen_names.txt")
-                .split('\n')
-                .map(|x| x.into())
-                .collect(),
-        },
+        move_names: toml::from_str(include_str!("../dump/dmw2003/essklnam.toml")).unwrap(),
+        item_names: toml::from_str(include_str!("../dump/dmw2003/esitmnam.toml")).unwrap(),
+        digimon_names: toml::from_str(include_str!("../dump/dmw2003/esdignam.toml")).unwrap(),
+        shop_names: toml::from_str(include_str!("../dump/dmw2003/esshpnam.toml")).unwrap(),
+        screen_names: toml::from_str(include_str!("../dump/dmw2003/esstname.toml")).unwrap(),
+        talk_files: vec![
+            (
+                197,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk00.toml")).unwrap(),
+            ),
+            (
+                204,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk01.toml")).unwrap(),
+            ),
+            (
+                211,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk02.toml")).unwrap(),
+            ),
+            (
+                218,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk03.toml")).unwrap(),
+            ),
+            (
+                225,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk04.toml")).unwrap(),
+            ),
+            (
+                232,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk05.toml")).unwrap(),
+            ),
+            (
+                239,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk06.toml")).unwrap(),
+            ),
+            (
+                246,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk07.toml")).unwrap(),
+            ),
+            (
+                253,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk08.toml")).unwrap(),
+            ),
+            (
+                260,
+                toml::from_str(include_str!("../dump/dmw2003/talk/estalk09.toml")).unwrap(),
+            ),
+        ],
     }
 }
 
