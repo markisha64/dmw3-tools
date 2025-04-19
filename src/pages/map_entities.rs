@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dmw3_structs::EntityData;
+use dmw3_structs::{EntityData, ScriptConditionStep};
 use tracing::info;
 
 use crate::{
@@ -8,55 +8,49 @@ use crate::{
 };
 
 struct MappedEntityLogic {
-    conditions: Vec<u32>,
-    scripts: Vec<u32>,
+    conditions: Vec<ScriptConditionStep>,
+    scripts: Vec<ScriptConditionStep>,
     conversation: Vec<()>,
 }
 
 struct MappedEntity {
     data: EntityData,
-    conditions: Vec<u32>,
+    conditions: Vec<ScriptConditionStep>,
     logics: Vec<MappedEntityLogic>,
 }
 
-fn conditionToString(condition: u32) -> String {
-    let c_type = condition >> 8 & 0xfe;
-    let value = condition & 0x1ff;
+fn conditionToString(condition: ScriptConditionStep) -> String {
+    let c_type = condition.bitfield >> 8 & 0xfe;
+    let value = condition.bitfield & 0x1ff;
+    let set_s: &str = match condition.flag {
+        0 => "unset",
+        _ => "set",
+    };
 
-    match c_type {
-        2 => format!("Item box #{} opened", value),
-        32 => format!("Area #{} visited", value),
+    match c_type & 0xfe {
+        2 => format!("Flag item box #{} opened is {}", value, set_s),
+        32 => format!("Flag area #{} visited is {}", value, set_s),
         _ => "Unknown".to_string(),
     }
 }
 
-#[derive(Copy, Clone)]
-enum ScriptSet {
-    Set,
-    Unset,
-}
-
-impl Into<&'static str> for ScriptSet {
-    fn into(self) -> &'static str {
-        match self {
-            Self::Set => "Set",
-            Self::Unset => "Unset",
-        }
-    }
-}
-
-fn scriptToString(script: u32, set: ScriptSet, item_names: &Vec<String>) -> String {
-    let c_type = script >> 8 & 0xfe;
-    let value = script & 0x1ff;
-    let set_s: &str = set.into();
+fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> String {
+    let c_type = script.bitfield >> 8 & 0xfe;
+    let value = script.bitfield & 0x1ff;
+    let set_s: &str = match script.flag {
+        0 => "Unset",
+        _ => "Set",
+    };
 
     match c_type {
         2 => format!("{} flag item box #{} opened", set_s, value),
+        4 => format!("{} flag auction #{} done", set_s, value),
         32 => format!("{} flag area #{} visited", set_s, value),
+        116 => format!("Start scripted battle #{}", value),
         128..=143 => {
-            let add_s = match set {
-                ScriptSet::Set => "Add",
-                ScriptSet::Unset => "Remove",
+            let add_s = match script.flag {
+                0 => "Remove",
+                _ => "Add",
             };
 
             format!("{} \"{}\"", add_s, item_names[value as usize])
@@ -138,7 +132,7 @@ pub fn MapEntities() -> Element {
                             ((logic.conditions.value - script_cond_min) / 0x4) as usize;
 
                         for condition in &map_object.scripts_conditions[conditions_idx..] {
-                            if *condition == 0x0000ffff {
+                            if condition.is_last_step() {
                                 break;
                             }
 
@@ -150,7 +144,7 @@ pub fn MapEntities() -> Element {
                         let scripts_idx = ((logic.script.value - script_cond_min) / 0x4) as usize;
 
                         for script in &map_object.scripts_conditions[scripts_idx..] {
-                            if *script == 0x0000ffff {
+                            if script.is_last_step() {
                                 break;
                             }
 
@@ -171,7 +165,7 @@ pub fn MapEntities() -> Element {
                     ((entity.conditions.value - first_entity_conditions) / 0x4) as usize;
 
                 for condition in &map_object.entity_conditions[conditions_idx..] {
-                    if *condition == 0x0000ffff {
+                    if condition.is_last_step() {
                         break;
                     }
 
@@ -199,7 +193,7 @@ pub fn MapEntities() -> Element {
                     }
                     div {
                         class: "entity-conditions",
-                        "Conditions: "
+                        "Requirements: "
                         ul {
                             for condition in &entity.conditions {
                                 li {
@@ -249,7 +243,7 @@ pub fn MapEntities() -> Element {
                                             "Script"
                                         },
                                         for script in &logic.scripts {
-                                            li { "{scriptToString((*script), ScriptSet::Set, item_names)}" }
+                                            li { "{scriptToString(*script, item_names)}" }
                                         }
                                     }
                                 }

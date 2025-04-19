@@ -1,7 +1,7 @@
 use std::io::{Cursor, Read};
 
 use dioxus::prelude::*;
-use dmw3_structs::{EntityData, EntityLogic, StageEncounter};
+use dmw3_structs::{EntityData, EntityLogic, ScriptConditionStep, StageEncounter};
 use tar::Archive;
 
 use crate::data::{read_vec, DataParsed};
@@ -110,7 +110,7 @@ pub fn Import() -> Element {
                                     let mut buf = Vec::new();
                                     file.read_to_end(&mut buf).unwrap();
 
-                                    let scripts_conditions: Vec<u32> = read_vec(&buf[..]);
+                                    let scripts_conditions: Vec<ScriptConditionStep> = read_vec(&buf[..]);
                                     if scripts_conditions.len() > 0 {
                                         map_object.scripts_conditions = scripts_conditions;
                                     }

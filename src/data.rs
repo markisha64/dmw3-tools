@@ -1,5 +1,7 @@
 use binread::BinRead;
-use dmw3_structs::{EntityData, EntityLogic, StageEncounter, StageEncounterArea};
+use dmw3_structs::{
+    EntityData, EntityLogic, ScriptConditionStep, StageEncounter, StageEncounterArea,
+};
 use std::{
     collections::{HashMap, HashSet},
     io::{Cursor, Read},
@@ -16,8 +18,8 @@ pub struct MapObject {
     pub stage_id: u16,
     pub entities: Vec<EntityData>,
     pub entity_logics: Vec<EntityLogic>,
-    pub scripts_conditions: Vec<u32>,
-    pub entity_conditions: Vec<u32>,
+    pub scripts_conditions: Vec<ScriptConditionStep>,
+    pub entity_conditions: Vec<ScriptConditionStep>,
 }
 
 pub struct DataParsed {
