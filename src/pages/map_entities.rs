@@ -20,7 +20,7 @@ struct MappedEntity {
     logics: Vec<MappedEntityLogic>,
 }
 
-fn conditionToString(condition: ScriptConditionStep) -> String {
+fn conditionToString(condition: ScriptConditionStep, item_names: &Vec<String>) -> String {
     let c_type = condition.bitfield >> 8 & 0xfe;
     let value = condition.bitfield & 0x1ff;
     let set_s: &str = match condition.flag {
@@ -42,6 +42,7 @@ fn conditionToString(condition: ScriptConditionStep) -> String {
         26 => format!("Flag UNK-8 #{} is {}", value, set_s),
         28 => format!("Flag NPC #{} is {}", value, set_s),
         32 => format!("Flag area #{} visited is {}", value, set_s),
+        64 => format!("Flag story #{} is {}", value, set_s),
         96 => {
             let op = match condition.flag {
                 0 => "≠",
@@ -57,6 +58,14 @@ fn conditionToString(condition: ScriptConditionStep) -> String {
             };
 
             format!("Total charisma {} {}", op, CHARISMA_VALUES[value as usize])
+        }
+        128..=143 => {
+            let add_s = match condition.flag {
+                0 => "Item not equipped or in inventory",
+                _ => "Item equipped or in Inventory",
+            };
+
+            format!("{} \"{}\"", add_s, item_names[value as usize])
         }
         _ => "Unknown".to_string(),
     }
@@ -84,6 +93,7 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
         26 => format!("{} flag UNK-8 #{}", set_s, value),
         28 => format!("{} flag NPC #{}", set_s, value),
         32 => format!("{} flag area #{} visited", set_s, value),
+        64 => format!("{} flag story #{}", set_s, value),
         116 => format!("Start scripted battle #{}", value),
         128..=143 => {
             let add_s = match script.flag {
@@ -93,6 +103,7 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
 
             format!("{} \"{}\"", add_s, item_names[value as usize])
         }
+        144 => format!("Start cutscene #{}", value),
         _ => "Unknown".to_string(),
     }
 }
@@ -243,7 +254,7 @@ pub fn MapEntities() -> Element {
                         ul {
                             for condition in &entity.conditions {
                                 li {
-                                    "{conditionToString(*condition)}"
+                                    "{conditionToString(*condition, item_names)}"
                                 }
                             }
                         }
@@ -277,7 +288,7 @@ pub fn MapEntities() -> Element {
                                             "Conditions"
                                         },
                                         for condition in &logic.conditions {
-                                            li { "{conditionToString(*condition)}" }
+                                            li { "{conditionToString(*condition, item_names)}" }
                                         }
                                     }
                                 }
