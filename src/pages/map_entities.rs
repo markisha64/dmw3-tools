@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use dmw3_consts::CHARISMA_VALUES;
 use dmw3_structs::{EntityData, ScriptConditionStep};
 use tracing::info;
 
@@ -28,8 +29,35 @@ fn conditionToString(condition: ScriptConditionStep) -> String {
     };
 
     match c_type & 0xfe {
+        0 => format!("Flag UNK-0 #{} is {}", value, set_s),
         2 => format!("Flag item box #{} opened is {}", value, set_s),
+        4 => format!("Flag auction #{} done is {}", value, set_s),
+        6 => format!("Flag UNK-1 #{} is {}", value, set_s),
+        8 => format!("Flag UNK-2 #{} is {}", value, set_s),
+        10 => format!("Flag UNK-3 #{} is {}", value, set_s),
+        12 => format!("Flag UNK-4 #{} is {}", value, set_s),
+        14 => format!("Flag UNK-5 #{} is {}", value, set_s),
+        16 => format!("Flag UNK-6 #{} is {}", value, set_s),
+        24 => format!("Flag UNK-7 #{} is {}", value, set_s),
+        26 => format!("Flag UNK-8 #{} is {}", value, set_s),
+        28 => format!("Flag NPC #{} is {}", value, set_s),
         32 => format!("Flag area #{} visited is {}", value, set_s),
+        96 => {
+            let op = match condition.flag {
+                0 => "≠",
+                _ => "=",
+            };
+
+            format!("Quest {} #{}", op, value)
+        }
+        114 => {
+            let op = match condition.flag {
+                0 => "<",
+                _ => "≥",
+            };
+
+            format!("Total charisma {} {}", op, CHARISMA_VALUES[value as usize])
+        }
         _ => "Unknown".to_string(),
     }
 }
@@ -43,8 +71,18 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
     };
 
     match c_type {
+        0 => format!("{} flag UNK-0 #{}", set_s, value),
         2 => format!("{} flag item box #{} opened", set_s, value),
         4 => format!("{} flag auction #{} done", set_s, value),
+        6 => format!("{} flag UNK-1 #{}", set_s, value),
+        8 => format!("{} flag UNK-2 #{}", set_s, value),
+        10 => format!("{} flag UNK-3 #{}", set_s, value),
+        12 => format!("{} flag UNK-4 #{}", set_s, value),
+        14 => format!("{} flag UNK-5 #{}", set_s, value),
+        16 => format!("{} flag UNK-6 #{}", set_s, value),
+        24 => format!("{} flag UNK-7 #{}", set_s, value),
+        26 => format!("{} flag UNK-8 #{}", set_s, value),
+        28 => format!("{} flag NPC #{}", set_s, value),
         32 => format!("{} flag area #{} visited", set_s, value),
         116 => format!("Start scripted battle #{}", value),
         128..=143 => {
