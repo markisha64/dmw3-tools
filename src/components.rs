@@ -1,4 +1,5 @@
 mod calculators;
+mod card_game;
 mod data;
 mod digivolution;
 mod digivolution_select;
@@ -16,6 +17,7 @@ mod speed_modifier;
 mod stat_boost;
 
 pub use calculators::Calculators;
+pub use card_game::CardGame;
 pub use data::OtherData;
 pub use digivolution::DigivolutionMenu;
 pub use digivolution_select::DigivolutionSelect;

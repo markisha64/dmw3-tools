@@ -20,6 +20,12 @@ pub fn Navbar() -> Element {
                 }
                 li {
                     Link {
+                        to: Route::CardShops {},
+                        "Card Game"
+                    }
+                }
+                li {
+                    Link {
                         to: Route::Parties {},
                         "Other data"
                     }

@@ -1,9 +1,11 @@
 use dioxus::prelude::*;
 
-use crate::components::{Calculators, DigivolutionMenu, MapsMenu, ModdingMenu, Navbar, OtherData};
+use crate::components::{
+    Calculators, CardGame, DigivolutionMenu, MapsMenu, ModdingMenu, Navbar, OtherData,
+};
 use crate::pages::{
-    Ambush, DigivolutionConditions, DigivolutionsData, DigivolutionsTech, EnemyStats, Index,
-    MapEncounters, MapEntities, Models, Parties, RookieLevel, Shops, StealChance,
+    Ambush, CardShops, DigivolutionConditions, DigivolutionsData, DigivolutionsTech, EnemyStats,
+    Index, MapEncounters, MapEntities, Models, Parties, RookieLevel, Shops, StealChance,
     TurnStarterChance,
 };
 
@@ -42,6 +44,13 @@ pub enum Route {
 
         #[route("/enemy_stats")]
         EnemyStats {},
+    #[end_nest]
+    #[end_layout]
+
+    #[nest("/card_game")]
+    #[layout(CardGame)]
+        #[route("/shops")]
+        CardShops {},
     #[end_nest]
     #[end_layout]
 
