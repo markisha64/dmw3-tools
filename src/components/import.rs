@@ -226,6 +226,66 @@ pub fn Import() -> Element {
                                     data_parsed.write().enemy_parties = enemy_parties;
                                 }
                             }
+
+                            if name == "card_shops" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let card_shops = read_vec(&buf[..]);
+                                if card_shops.len() > 0 {
+                                    data_parsed.write().card_shops = card_shops;
+                                }
+                            }
+
+                            if name == "card_shop_items" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let card_shop_items = read_vec(&buf[..]);
+                                if card_shop_items.len() > 0 {
+                                    data_parsed.write().card_shop_items = card_shop_items;
+                                }
+                            }
+
+                            if name == "card_pricing" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let card_pricing = read_vec(&buf[..]);
+                                if card_pricing.len() > 0 {
+                                    data_parsed.write().card_pricing = card_pricing;
+                                }
+                            }
+
+                            if name == "booster_data" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let booster_data = read_vec(&buf[..]);
+                                if booster_data.len() > 0 {
+                                    data_parsed.write().booster_data = booster_data;
+                                }
+                            }
+
+                            if name == "booster_data_items" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let booster_data_items = read_vec(&buf[..]);
+                                if booster_data_items.len() > 0 {
+                                    data_parsed.write().booster_data_items = booster_data_items;
+                                }
+                            }
+
+                            if name == "starting_folder" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let starting_folder = read_vec(&buf[..]);
+                                if starting_folder.len() > 0 {
+                                    data_parsed.write().starting_folder = starting_folder;
+                                }
+                            }
                         }
                     }
                 }
