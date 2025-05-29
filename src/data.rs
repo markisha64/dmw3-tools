@@ -1,6 +1,7 @@
 use binread::BinRead;
 use dmw3_structs::{
-    EntityData, EntityLogic, ScriptConditionStep, StageEncounter, StageEncounterArea,
+    BoosterData, CardPricing, CardShopData, EntityData, EntityLogic, ScriptConditionStep,
+    StageEncounter, StageEncounterArea,
 };
 use serde::Deserialize;
 use std::{
@@ -38,6 +39,13 @@ pub struct DataParsed {
     pub enemy_stats: Vec<dmw3_structs::EnemyStats>,
     pub map_objects: HashMap<String, MapObject>,
     pub screen_name_mapping: Vec<dmw3_structs::ScreenNameMapping>,
+
+    pub card_shops: Vec<CardShopData>,
+    pub card_shop_items: Vec<u16>,
+    pub card_pricing: Vec<CardPricing>,
+    pub booster_data: Vec<BoosterData>,
+    pub booster_data_items: Vec<u32>,
+    pub starting_folder: Vec<u32>,
 }
 
 pub struct NamesParsed {
@@ -47,6 +55,8 @@ pub struct NamesParsed {
     pub shop_names: LangFile,
     pub screen_names: LangFile,
     pub talk_files: Vec<(u16, LangFile)>,
+
+    pub card_names: LangFile,
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -165,6 +175,13 @@ pub fn init() -> DataParsed {
         enemy_stats: read_vec(include_bytes!("../dump/dmw2003/enemy_stats")),
         map_objects: init_maps(),
         screen_name_mapping: read_vec(include_bytes!("../dump/dmw2003/screen_name_mapping")),
+
+        card_shops: read_vec(include_bytes!("../dump/dmw2003/card_shops")),
+        card_shop_items: read_vec(include_bytes!("../dump/dmw2003/card_shop_items")),
+        card_pricing: read_vec(include_bytes!("../dump/dmw2003/card_pricing")),
+        booster_data: read_vec(include_bytes!("../dump/dmw2003/booster_data")),
+        booster_data_items: read_vec(include_bytes!("../dump/dmw2003/booster_data_items")),
+        starting_folder: read_vec(include_bytes!("../dump/dmw2003/starting_folder")),
     }
 }
 
@@ -217,6 +234,7 @@ pub fn init_names() -> NamesParsed {
                 toml::from_str(include_str!("../dump/dmw2003/talk/estalk09.toml")).unwrap(),
             ),
         ],
+        card_names: toml::from_str(include_str!("../dump/dmw2003/escardnm.toml")).unwrap(),
     }
 }
 
