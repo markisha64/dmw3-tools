@@ -1,4 +1,5 @@
 mod ambush;
+mod boosters;
 mod card_shops;
 mod digivolution_tech;
 mod digivolutions;
@@ -15,6 +16,7 @@ mod steal_chance;
 mod turn_starter_chance;
 
 pub use ambush::Ambush;
+pub use boosters::Boosters;
 pub use card_shops::CardShops;
 pub use digivolution_tech::DigivolutionsTech;
 pub use digivolutions::DigivolutionsData;

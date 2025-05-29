@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use tracing::info;
 
 use crate::data::{DataParsed, NamesParsed};
 

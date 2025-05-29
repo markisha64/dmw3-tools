@@ -18,6 +18,12 @@ pub fn CardGame() -> Element {
                         "Shops"
                     }
                 }
+                li {
+                    Link {
+                        to: Route::Boosters {},
+                        "Boosters"
+                    }
+                }
             }
         }
         Outlet::<Route> {
