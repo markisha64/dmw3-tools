@@ -61,8 +61,8 @@ fn conditionToString(condition: ScriptConditionStep, item_names: &Vec<String>) -
         }
         128..=143 => {
             let add_s = match condition.flag {
-                0 => "Item not equipped or in inventory",
-                _ => "Item equipped or in Inventory",
+                0 => "Doesn't own item",
+                _ => "Owns item",
             };
 
             format!("{} \"{}\"", add_s, item_names[value as usize])
