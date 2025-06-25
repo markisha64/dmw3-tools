@@ -110,49 +110,49 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                 mapper.insert(path.into_os_string().into_string().unwrap(), buf);
             }
         }
+    }
 
-        for folder in &folders {
-            if mapper.contains_key(&format!("maps/{folder}/stage_encounter_areas"))
-                && mapper.contains_key(&format!("maps/{folder}/stage_encounters"))
-                && mapper.contains_key(&format!("maps/{folder}/stage_id"))
-                && mapper.contains_key(&format!("maps/{folder}/talk_file"))
-                && mapper.contains_key(&format!("maps/{folder}/entities"))
-                && mapper.contains_key(&format!("maps/{folder}/entity_logics"))
-                && mapper.contains_key(&format!("maps/{folder}/scripts_conditions"))
-                && mapper.contains_key(&format!("maps/{folder}/entity_conditions"))
-            {
-                let stage_encounter_areas =
-                    read_vec(&mapper[&format!("maps/{folder}/stage_encounter_areas")][..]);
-                let stage_encounters: Vec<StageEncounter> =
-                    read_vec(&mapper[&format!("maps/{folder}/stage_encounters")][..]);
+    for folder in &folders {
+        if mapper.contains_key(&format!("maps/{folder}/stage_encounter_areas"))
+            && mapper.contains_key(&format!("maps/{folder}/stage_encounters"))
+            && mapper.contains_key(&format!("maps/{folder}/stage_id"))
+            && mapper.contains_key(&format!("maps/{folder}/talk_file"))
+            && mapper.contains_key(&format!("maps/{folder}/entities"))
+            && mapper.contains_key(&format!("maps/{folder}/entity_logics"))
+            && mapper.contains_key(&format!("maps/{folder}/scripts_conditions"))
+            && mapper.contains_key(&format!("maps/{folder}/entity_conditions"))
+        {
+            let stage_encounter_areas =
+                read_vec(&mapper[&format!("maps/{folder}/stage_encounter_areas")][..]);
+            let stage_encounters: Vec<StageEncounter> =
+                read_vec(&mapper[&format!("maps/{folder}/stage_encounters")][..]);
 
-                let stage_id_bytes = &mapper[&format!("maps/{folder}/stage_id")];
-                let stage_id: u16 = u16::from_le_bytes([stage_id_bytes[0], stage_id_bytes[1]]);
+            let stage_id_bytes = &mapper[&format!("maps/{folder}/stage_id")];
+            let stage_id: u16 = u16::from_le_bytes([stage_id_bytes[0], stage_id_bytes[1]]);
 
-                let talk_file_bytes = &mapper[&format!("maps/{folder}/talk_file")];
-                let talk_file: u16 = u16::from_le_bytes([talk_file_bytes[0], talk_file_bytes[1]]);
+            let talk_file_bytes = &mapper[&format!("maps/{folder}/talk_file")];
+            let talk_file: u16 = u16::from_le_bytes([talk_file_bytes[0], talk_file_bytes[1]]);
 
-                result.insert(
-                    folder.clone(),
-                    MapObject {
-                        stage_encounter_areas,
-                        stage_encounters: stage_encounters
-                            .chunks_exact(8)
-                            .map(|x| Vec::from(x))
-                            .collect(),
-                        entities: read_vec(&mapper[&format!("maps/{folder}/entities")]),
-                        entity_logics: read_vec(&mapper[&format!("maps/{folder}/entity_logics")]),
-                        scripts_conditions: read_vec(
-                            &mapper[&format!("maps/{folder}/scripts_conditions")],
-                        ),
-                        entity_conditions: read_vec(
-                            &mapper[&format!("maps/{folder}/entity_conditions")],
-                        ),
-                        stage_id,
-                        talk_file,
-                    },
-                );
-            }
+            result.insert(
+                folder.clone(),
+                MapObject {
+                    stage_encounter_areas,
+                    stage_encounters: stage_encounters
+                        .chunks_exact(8)
+                        .map(|x| Vec::from(x))
+                        .collect(),
+                    entities: read_vec(&mapper[&format!("maps/{folder}/entities")]),
+                    entity_logics: read_vec(&mapper[&format!("maps/{folder}/entity_logics")]),
+                    scripts_conditions: read_vec(
+                        &mapper[&format!("maps/{folder}/scripts_conditions")],
+                    ),
+                    entity_conditions: read_vec(
+                        &mapper[&format!("maps/{folder}/entity_conditions")],
+                    ),
+                    stage_id,
+                    talk_file,
+                },
+            );
         }
     }
 
