@@ -38,8 +38,6 @@ pub fn MoveSelectAll(onchange: EventHandler<FormEvent>) -> Element {
     let rookies = &data_parsed.read().rookies;
     let enemies = &data_parsed.read().enemy_stats;
 
-    tracing::info!("{}", playable.len());
-
     let moves = (1..443)
         .map(|mv| {
             if move_names.strings[mv] == "a" {
