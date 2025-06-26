@@ -25,6 +25,7 @@ pub fn HitChance() -> Element {
     let mut enemy_level = use_signal::<i64>(|| 1);
     let mut move_enemy = use_signal::<Moves>(|| Moves::Unnamed(1)); // Attack (Kotemon)
     let mut enemy_wisdom = use_signal::<i64>(|| 200);
+    let mut galacticmon = use_signal::<bool>(|| false);
 
     let c_digivolution = digivolution();
     let c_rookie_speed_w_equipment = rookie_speed_w_equipment();
@@ -34,6 +35,7 @@ pub fn HitChance() -> Element {
     let c_aa = adittional_accuraccy();
     let c_player_level = player_level();
     let c_player_wisdom = player_wisdom();
+    let c_galacticmon = galacticmon();
 
     let player_speed_dv = match c_digivolution as usize > 7 {
         true => {
@@ -58,22 +60,31 @@ pub fn HitChance() -> Element {
     let ldp = c_player_level - c_enemy_level;
     let lde = c_enemy_level - c_player_level;
 
-    // TODO: magic
-    // let wdp = c_player_wisdom - c_enemy_wisdom;
-    // let wde = c_enemy_wisdom - c_player_wisdom;
+    let wdp = c_player_wisdom - c_enemy_wisdom;
+    let wde = c_enemy_wisdom - c_player_wisdom;
 
     let player_move = &move_data[usize::from(c_mv) - 1];
 
-    let playerAddRange = match player_move.hit_effect < 2 {
-        true => (player_move.accuracy) as i64 * ((sdp / 8) + ldp - c_acr),
-        _ => (player_move.accuracy) as i64 * ((sdp / 8) + ldp),
+    // TODO: turn match true into match move == physical
+    let playerAddRange = match true {
+        true => match player_move.hit_effect < 2 {
+            true => (player_move.accuracy) as i64 * ((sdp / 8) + ldp - c_acr),
+            _ => (player_move.accuracy) as i64 * ((sdp / 8) + ldp),
+        },
+        false => (player_move.accuracy) as i64 * (wdp / 8),
     };
 
     let enemy_move = &move_data[usize::from(c_mv_enemy) - 1];
 
-    let enemyAddRange = (player_move.accuracy) as i64 * ((sde / 8) + lde);
+    let enemyAddRange = match true {
+        true => (player_move.accuracy) as i64 * ((sde / 8) + lde),
+        false => (enemy_move.accuracy) as i64 * (wde / 8),
+    };
 
-    let rangePlayer = (player_move.accuracy as i64 + (playerAddRange / 128)).clamp(1, 128);
+    let rangePlayer = match c_galacticmon {
+        true => 85,
+        false => (player_move.accuracy as i64 + (playerAddRange / 128)).clamp(1, 128),
+    };
     let rangeEnemy = (enemy_move.accuracy as i64 + (enemyAddRange / 128)).clamp(32, 128);
 
     let rangePlayerP = (rangePlayer as f32 / 0.0128) / 100.0;
@@ -233,6 +244,17 @@ pub fn HitChance() -> Element {
                         cb: move |x: i64| {
                             enemy_level.set(x);
                         }
+                    }
+                    label {
+                        "Galacticmon phase 3"
+                    }
+                    input {
+                        r#type: "checkbox",
+                        r#checked: c_galacticmon,
+                        disabled: false,
+                        onchange: move |evt: Event<FormData>| {
+                            galacticmon.set(evt.data.value() == "true");
+                        },
                     }
                 }
                 div {
