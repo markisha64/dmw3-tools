@@ -63,7 +63,6 @@ pub fn HitChance() -> Element {
     // let wde = c_enemy_wisdom - c_player_wisdom;
 
     let player_move = &move_data[usize::from(c_mv) - 1];
-    tracing::info!("{:?}", player_move);
 
     let playerAddRange = match player_move.hit_effect < 2 {
         true => (player_move.accuracy) as i64 * ((sdp / 8) + ldp - c_acr),
