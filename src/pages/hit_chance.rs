@@ -18,13 +18,13 @@ pub fn HitChance() -> Element {
     let mut adittional_accuraccy = use_signal::<i64>(|| 0);
     let mut player_level = use_signal::<i64>(|| 1);
     let mut move_player = use_signal::<Moves>(|| Moves::Unnamed(1)); // Attack (Kotemon)
-                                                                     // let mut player_wisdom = use_signal::<i64>(|| 200);
+    let mut player_wisdom = use_signal::<i64>(|| 200);
 
     let mut enemy_speed_base = use_signal::<i64>(|| 200);
     let mut speed_modifier_enemy = use_signal::<i64>(|| 0);
     let mut enemy_level = use_signal::<i64>(|| 1);
     let mut move_enemy = use_signal::<Moves>(|| Moves::Unnamed(1)); // Attack (Kotemon)
-                                                                    // let mut enemy_wisdom = use_signal::<i64>(|| 200);
+    let mut enemy_wisdom = use_signal::<i64>(|| 200);
 
     let c_digivolution = digivolution();
     let c_rookie_speed_w_equipment = rookie_speed_w_equipment();
@@ -33,7 +33,7 @@ pub fn HitChance() -> Element {
     let c_ae = adittional_evasiveness();
     let c_aa = adittional_accuraccy();
     let c_player_level = player_level();
-    // let c_player_wisdom = player_wisdom();
+    let c_player_wisdom = player_wisdom();
 
     let player_speed_dv = match c_digivolution as usize > 7 {
         true => {
@@ -48,7 +48,7 @@ pub fn HitChance() -> Element {
     let c_enemy_speed_base = enemy_speed_base();
     let c_mv_enemy = move_enemy();
     let c_enemy_level = enemy_level();
-    // let c_enemy_wisdom = enemy_wisdom();
+    let c_enemy_wisdom = enemy_wisdom();
 
     let enemy_speed = c_enemy_speed_base + (c_enemy_speed_base * speed_modifier_enemy()) / 128;
 
@@ -106,6 +106,16 @@ pub fn HitChance() -> Element {
                         value: c_rookie_speed_w_equipment,
                         cb: move |x: i64| {
                             rookie_speed_w_equipment.set(x);
+                        }
+                    }
+                    components::NumberField {
+                        label: "Rookie wisdom",
+                        disabled: false,
+                        mn: 1,
+                        mx: 999,
+                        value: c_player_wisdom,
+                        cb: move |x: i64| {
+                            player_wisdom.set(x);
                         }
                     }
                     form {
@@ -203,6 +213,16 @@ pub fn HitChance() -> Element {
                         value: c_enemy_speed_base,
                         cb: move |x: i64| {
                             enemy_speed_base.set(x);
+                        }
+                    }
+                    components::NumberField {
+                        label: "Enemy wisdom",
+                        disabled: false,
+                        mn: 1,
+                        mx: 999,
+                        value: c_enemy_wisdom,
+                        cb: move |x: i64| {
+                            enemy_wisdom.set(x);
                         }
                     }
                     components::NumberField {
