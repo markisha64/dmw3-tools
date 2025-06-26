@@ -1,10 +1,9 @@
 use dioxus::prelude::*;
 use dmw3_consts::CHARISMA_VALUES;
 use dmw3_structs::{EntityData, ScriptConditionStep};
-use tracing::info;
 
 use crate::{
-    components::{PartyData, SelectedMap},
+    components::SelectedMap,
     data::{DataParsed, NamesParsed},
 };
 

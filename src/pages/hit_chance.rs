@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use dmw3_structs::MoveData;
 
 use crate::components;
 use crate::data::DataParsed;
@@ -65,20 +66,19 @@ pub fn HitChance() -> Element {
 
     let player_move = &move_data[usize::from(c_mv) - 1];
 
-    // TODO: turn match true into match move == physical
-    let playerAddRange = match true {
+    let playerAddRange = match player_move.move_type == 2 {
         true => match player_move.hit_effect < 2 {
             true => (player_move.accuracy) as i64 * ((sdp / 8) + ldp - c_acr),
             _ => (player_move.accuracy) as i64 * ((sdp / 8) + ldp),
         },
-        false => (player_move.accuracy) as i64 * (wdp / 8),
+        false => (player_move.accuracy) as i64 * ((wdp / 8) + ldp),
     };
 
     let enemy_move = &move_data[usize::from(c_mv_enemy) - 1];
 
-    let enemyAddRange = match true {
-        true => (player_move.accuracy) as i64 * ((sde / 8) + lde),
-        false => (enemy_move.accuracy) as i64 * (wde / 8),
+    let enemyAddRange = match enemy_move.move_type == 2 {
+        true => (enemy_move.accuracy) as i64 * ((sde / 8) + lde),
+        false => (enemy_move.accuracy) as i64 * ((wde / 8) + lde),
     };
 
     let rangePlayer = match c_galacticmon {
@@ -107,6 +107,7 @@ pub fn HitChance() -> Element {
                             let s: usize = x.data.value().parse().unwrap();
                             move_player.set(Moves::from(s));
                         },
+                        filter: |x: MoveData| x.move_type == 2 || x.move_type == 3
                     }
                     components::NumberField {
                         label: "Rookie speed",
@@ -214,6 +215,7 @@ pub fn HitChance() -> Element {
                             let s: usize = x.data.value().parse().unwrap();
                             move_enemy.set(Moves::from(s));
                         },
+                        filter: |x: MoveData| x.move_type == 2 || x.move_type == 3
                     }
                     components::NumberField {
                         label: "Enemy speed",

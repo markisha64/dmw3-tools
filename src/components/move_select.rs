@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use dmw3_structs::MoveData;
 
 use crate::{
     data::{DataParsed, NamesParsed},
@@ -27,7 +28,10 @@ pub fn MoveSelect(onchange: EventHandler<FormEvent>, set: &'static [Moves]) -> E
 }
 
 #[component]
-pub fn MoveSelectAll(onchange: EventHandler<FormEvent>) -> Element {
+pub fn MoveSelectAll(
+    onchange: EventHandler<FormEvent>,
+    filter: Callback<MoveData, bool>,
+) -> Element {
     let data_parsed = use_context::<Signal<DataParsed>>();
     let names_parsed = use_context::<Signal<NamesParsed>>();
 
@@ -37,8 +41,10 @@ pub fn MoveSelectAll(onchange: EventHandler<FormEvent>) -> Element {
     let playable = &data_parsed.read().digivolutions;
     let rookies = &data_parsed.read().rookies;
     let enemies = &data_parsed.read().enemy_stats;
+    let move_data = &data_parsed.read().move_data;
 
     let moves = (1..443)
+        .filter(|x| filter.call(move_data[*x]))
         .map(|mv| {
             if move_names.strings[mv] == "a" {
                 let attack = enemies
