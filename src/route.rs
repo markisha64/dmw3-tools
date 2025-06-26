@@ -5,7 +5,7 @@ use crate::components::{
 };
 use crate::pages::{
     Ambush, Boosters, CardShops, DigivolutionConditions, DigivolutionsData, DigivolutionsTech,
-    EnemyStats, Index, MapEncounters, MapEntities, Models, Parties, RookieLevel, Shops,
+    EnemyStats, HitChance, Index, MapEncounters, MapEntities, Models, Parties, RookieLevel, Shops,
     StealChance, TurnStarterChance,
 };
 
@@ -25,6 +25,9 @@ pub enum Route {
 
         #[route("/stealChance")]
         StealChance {},
+
+        #[route("/hitChance")]
+        HitChance {},
 
         #[route("/rookieLevel")]
         RookieLevel {},

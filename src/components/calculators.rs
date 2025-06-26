@@ -32,6 +32,12 @@ pub fn Calculators() -> Element {
                 }
                 li {
                     Link {
+                        to: Route::HitChance {},
+                        "Hit Chance"
+                    }
+                }
+                li {
+                    Link {
                         to: Route::Ambush {},
                         "Ambush"
                     }

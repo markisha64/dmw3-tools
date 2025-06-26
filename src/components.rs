@@ -28,6 +28,7 @@ pub use maps::SelectedMap;
 pub use modding::ModdingMenu;
 pub use move_data::MoveData;
 pub use move_select::MoveSelect;
+pub use move_select::MoveSelectAll;
 pub use navbar::Navbar;
 pub use number_field::NumberField;
 pub use party_data::PartyData;
