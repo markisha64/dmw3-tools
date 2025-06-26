@@ -1,31 +1,41 @@
-use std::cmp::min;
-
 use dioxus::prelude::*;
 
 use crate::components;
 use crate::data::DataParsed;
-use crate::enums::{Digivolutions, Items, Moves, NamedMoves};
+use crate::enums::{Digivolutions, Moves};
 
 #[component]
 pub fn HitChance() -> Element {
     let data_parsed = use_context::<Signal<DataParsed>>();
 
+    let move_data = &data_parsed.read().move_data;
+
     let mut digivolution = use_signal::<Digivolutions>(|| Digivolutions::Kotemon);
     let mut rookie_speed_w_equipment = use_signal::<i64>(|| 200);
-    let mut enemy_speed = use_signal::<i64>(|| 200);
-    let mut drop_rate = use_signal::<i64>(|| 128);
-    let mut mv = use_signal::<Moves>(|| Moves::Named(NamedMoves::PickingClaw));
-    let mut item = use_signal::<Items>(|| Items::NoItem);
-    let mut speed_modifier = use_signal::<i64>(|| 0);
+    let mut speed_modifier_player = use_signal::<i64>(|| 0);
+    let mut acr = use_signal::<i64>(|| 0);
+    let mut adittional_evasiveness = use_signal::<i64>(|| 0);
+    let mut adittional_accuraccy = use_signal::<i64>(|| 0);
+    let mut player_level = use_signal::<i64>(|| 1);
+    let mut move_player = use_signal::<Moves>(|| Moves::Unnamed(1)); // Attack (Kotemon)
+                                                                     // let mut player_wisdom = use_signal::<i64>(|| 200);
+
+    let mut enemy_speed_base = use_signal::<i64>(|| 200);
+    let mut speed_modifier_enemy = use_signal::<i64>(|| 0);
+    let mut enemy_level = use_signal::<i64>(|| 1);
+    let mut move_enemy = use_signal::<Moves>(|| Moves::Unnamed(1)); // Attack (Kotemon)
+                                                                    // let mut enemy_wisdom = use_signal::<i64>(|| 200);
 
     let c_digivolution = digivolution();
     let c_rookie_speed_w_equipment = rookie_speed_w_equipment();
-    let c_enemy_speed = enemy_speed();
-    let c_drop_rate = drop_rate();
-    let c_mv = mv();
-    let c_item = item();
+    let c_mv = move_player();
+    let c_acr = acr();
+    let c_ae = adittional_evasiveness();
+    let c_aa = adittional_accuraccy();
+    let c_player_level = player_level();
+    // let c_player_wisdom = player_wisdom();
 
-    let player_speed = match c_digivolution as usize > 7 {
+    let player_speed_dv = match c_digivolution as usize > 7 {
         true => {
             c_rookie_speed_w_equipment
                 + data_parsed.read().digivolutions[c_digivolution as usize - 8].spd as i64
@@ -33,21 +43,42 @@ pub fn HitChance() -> Element {
         _ => c_rookie_speed_w_equipment,
     };
 
-    let speed = player_speed + (player_speed * speed_modifier()) / 128;
+    let player_speed = player_speed_dv + (player_speed_dv * speed_modifier_player()) / 128;
 
-    let sd = min((speed * 100) / c_enemy_speed, 200);
-    let sr = data_parsed.read().move_data[usize::from(c_mv) - 1].effect_rate as i64;
+    let c_enemy_speed_base = enemy_speed_base();
+    let c_mv_enemy = move_enemy();
+    let c_enemy_level = enemy_level();
+    // let c_enemy_wisdom = enemy_wisdom();
 
-    // TODO: dmw3-randomizer read this data
-    let asr = match c_item {
-        Items::NoItem => 0,
-        Items::HackSticker => 32,
-        Items::HackSystem => 64,
+    let enemy_speed = c_enemy_speed_base + (c_enemy_speed_base * speed_modifier_enemy()) / 128;
+
+    let sdp = player_speed + c_aa - enemy_speed;
+    let sde = enemy_speed - player_speed - c_ae;
+
+    let ldp = c_player_level - c_enemy_level;
+    let lde = c_enemy_level - c_player_level;
+
+    // TODO: magic
+    // let wdp = c_player_wisdom - c_enemy_wisdom;
+    // let wde = c_enemy_wisdom - c_player_wisdom;
+
+    let player_move = &move_data[usize::from(c_mv) - 1];
+    tracing::info!("{:?}", player_move);
+
+    let playerAddRange = match player_move.hit_effect < 2 {
+        true => (player_move.accuracy) as i64 * ((sdp / 8) + ldp - c_acr),
+        _ => (player_move.accuracy) as i64 * ((sdp / 8) + ldp),
     };
 
-    let range = min((c_drop_rate * sd * (((sr + asr) * 100) / 64)) / 10000, 1024);
+    let enemy_move = &move_data[usize::from(c_mv_enemy) - 1];
 
-    let range_p = (range as f32 / 0.1024).round() / 100.0;
+    let enemyAddRange = (player_move.accuracy) as i64 * ((sde / 8) + lde);
+
+    let rangePlayer = (player_move.accuracy as i64 + (playerAddRange / 128)).clamp(1, 128);
+    let rangeEnemy = (enemy_move.accuracy as i64 + (enemyAddRange / 128)).clamp(32, 128);
+
+    let rangePlayerP = (rangePlayer as f32 / 0.0128) / 100.0;
+    let rangeEnemyP = (rangeEnemy as f32 / 0.0128) / 100.0;
 
     rsx! {
         div {
@@ -63,7 +94,8 @@ pub fn HitChance() -> Element {
                     }
                     components::MoveSelectAll {
                         onchange: move |x: FormEvent| {
-                            mv.set(Moves::from(&x.data.value()[..]));
+                            let s: usize = x.data.value().parse().unwrap();
+                            move_player.set(Moves::from(s));
                         },
                     }
                     components::NumberField {
@@ -76,20 +108,79 @@ pub fn HitChance() -> Element {
                             rookie_speed_w_equipment.set(x);
                         }
                     }
-                    components::ItemSelect {
-                        onchange: move |x: FormEvent| {
-                            item.set(Items::from(&x.data.value()[..]));
-                        },
-                        set: &[Items::NoItem, Items::HackSticker, Items::HackSystem],
-                        label: None
+                    form {
+                        label {
+                            "Additional Crit Rate"
+                        }
+                        select {
+                            onchange: move |x| {
+                                acr.set(x.value().parse().unwrap());
+                            },
+                            option {
+                                value: 0,
+                                selected: "selected",
+                                "None"
+                            }
+                            option {
+                                value: 32,
+                                "Shuriken/Search Crest"
+                            }
+                            option {
+                                value: 64,
+                                "Saber Fang"
+                            }
+                        }
+                    }
+                    components::NumberField {
+                        label: "Additional Evasiveness",
+                        disabled: false,
+                        mn: 0,
+                        mx: 256,
+                        value: c_ae,
+                        cb: move |x: i64| {
+                            adittional_evasiveness.set(x);
+                        }
+                    }
+                    form {
+                        label {
+                            "Additional Accuracy"
+                        }
+                        select {
+                            onchange: move |x| {
+                                adittional_accuraccy.set(x.value().parse().unwrap());
+                            },
+                            option {
+                                value: 0,
+                                selected: "selected",
+                                "None"
+                            }
+                            option {
+                                value: 32,
+                                "Glasses"
+                            }
+                            option {
+                                value: 64,
+                                "Goggles"
+                            }
+                        }
+                    }
+                    components::NumberField {
+                        label: "Player Level",
+                        disabled: false,
+                        mn: 1,
+                        mx: 99,
+                        value: c_player_level,
+                        cb: move |x: i64| {
+                            player_level.set(x);
+                        }
                     }
                 }
                 div {
                     class: "container",
                     components::SpeedModifier {
-                        id: "steal_chance_speed_boost",
+                        id: "hit_chance_speed_boost",
                         cb: move |new_modifier: i64| {
-                            speed_modifier.set(new_modifier);
+                            speed_modifier_player.set(new_modifier);
                         }
                     }
                 }
@@ -98,24 +189,39 @@ pub fn HitChance() -> Element {
                 class: "column",
                 div {
                     class: "container",
+                    components::MoveSelectAll {
+                        onchange: move |x: FormEvent| {
+                            let s: usize = x.data.value().parse().unwrap();
+                            move_enemy.set(Moves::from(s));
+                        },
+                    }
                     components::NumberField {
                         label: "Enemy speed",
                         disabled: false,
                         mn: 1,
                         mx: 999,
-                        value: c_enemy_speed,
+                        value: c_enemy_speed_base,
                         cb: move |x: i64| {
-                            enemy_speed.set(x);
+                            enemy_speed_base.set(x);
                         }
                     }
                     components::NumberField {
-                        label: "Drop rate",
+                        label: "Enemy Level",
                         disabled: false,
                         mn: 1,
-                        mx: 1023,
-                        value: c_drop_rate,
+                        mx: 99,
+                        value: c_enemy_level,
                         cb: move |x: i64| {
-                            drop_rate.set(x);
+                            enemy_level.set(x);
+                        }
+                    }
+                }
+                div {
+                    class: "container",
+                    components::SpeedModifier {
+                        id: "hit_chance_speed_boost_enemy",
+                        cb: move |new_modifier: i64| {
+                            speed_modifier_enemy.set(new_modifier);
                         }
                     }
                 }
@@ -124,7 +230,11 @@ pub fn HitChance() -> Element {
                 class: "column",
                 div {
                     class: "container",
-                    "Chance to successfuly steal {range}/1024 ({range_p} %)"
+                    "Chance per player hit {rangePlayer}/128 ({rangePlayerP} %)"
+                }
+                div {
+                    class: "container",
+                    "Chance per enemy hit {rangeEnemy}/128 ({rangeEnemyP} %)"
                 }
             }
         }

@@ -58,13 +58,16 @@ pub fn MoveSelectAll(onchange: EventHandler<FormEvent>) -> Element {
                             .to_string()
                     }));
 
-                return match attack {
-                    Some(x) => format!("Attack ({})", x),
-                    None => "Attack".to_string(),
-                };
+                return (
+                    mv,
+                    match attack {
+                        Some(x) => format!("Attack ({})", x),
+                        None => "Attack".to_string(),
+                    },
+                );
             }
 
-            move_names.strings[mv].clone()
+            (mv, move_names.strings[mv].clone())
         })
         .collect::<Vec<_>>();
 
@@ -75,11 +78,11 @@ pub fn MoveSelectAll(onchange: EventHandler<FormEvent>) -> Element {
             }
             select {
                 onchange: move |x| onchange.call(x),
-                for mv in moves {
+                for (mv, name) in moves {
                     option {
                         value: mv,
                         selected: "selected",
-                        "{mv}"
+                        "{name}"
                     }
                 }
             }
