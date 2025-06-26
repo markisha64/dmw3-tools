@@ -85,7 +85,13 @@ pub fn HitChance() -> Element {
         true => 85,
         false => (player_move.accuracy as i64 + (playerAddRange / 128)).clamp(1, 128),
     };
-    let rangeEnemy = (enemy_move.accuracy as i64 + (enemyAddRange / 128)).clamp(32, 128);
+    let rangeEnemy = (enemy_move.accuracy as i64 + (enemyAddRange / 128)).clamp(
+        match enemy_move.move_type == 2 {
+            true => 32,
+            false => 1,
+        },
+        128,
+    );
 
     let rangePlayerP = (rangePlayer as f32 / 0.0128) / 100.0;
     let rangeEnemyP = (rangeEnemy as f32 / 0.0128) / 100.0;
