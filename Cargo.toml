@@ -23,6 +23,7 @@ binread = "2.2.0"
 tar = "0.4.41"
 toml = "0.8.20"
 serde = { version = "1.0.219", features = ["derive"] }
+regex = "1.11.1"
 
 [profile.release]
 opt-level = 's'

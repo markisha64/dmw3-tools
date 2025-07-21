@@ -1,6 +1,9 @@
+use std::collections::HashMap;
+
 use dioxus::prelude::*;
 use dmw3_consts::CHARISMA_VALUES;
 use dmw3_structs::{EntityData, ScriptConditionStep};
+use regex::Regex;
 
 use crate::{
     components::SelectedMap,
@@ -17,6 +20,13 @@ struct MappedEntity {
     data: EntityData,
     conditions: Vec<ScriptConditionStep>,
     logics: Vec<MappedEntityLogic>,
+    name: String,
+}
+
+fn get_entity_name(str: &String) -> Option<String> {
+    let re = Regex::new(r"\[name\](.*?)\[name\]").ok()?;
+
+    re.captures(str).map(|x| x[1].to_string())
 }
 
 fn conditionToString(condition: ScriptConditionStep, item_names: &Vec<String>) -> String {
@@ -28,18 +38,18 @@ fn conditionToString(condition: ScriptConditionStep, item_names: &Vec<String>) -
     };
 
     match c_type & 0xfe {
-        0 => format!("Flag UNK-0 #{} is {}", value, set_s),
+        0 => format!("Flag \"Tamer\" #{} is {}", value, set_s),
         2 => format!("Flag item box #{} opened is {}", value, set_s),
         4 => format!("Flag auction #{} done is {}", value, set_s),
-        6 => format!("Flag UNK-1 #{} is {}", value, set_s),
+        6 => format!("Flag \"DDNA Megas\" #{} is {}", value, set_s),
         8 => format!("Flag UNK-2 #{} is {}", value, set_s),
-        10 => format!("Flag UNK-3 #{} is {}", value, set_s),
+        10 => format!("Flag \"Bosses\" #{} is {}", value, set_s),
         12 => format!("Flag UNK-4 #{} is {}", value, set_s),
-        14 => format!("Flag UNK-5 #{} is {}", value, set_s),
+        14 => format!("Flag \"Battled Tamer\" #{} is {}", value, set_s),
         16 => format!("Flag UNK-6 #{} is {}", value, set_s),
         24 => format!("Flag UNK-7 #{} is {}", value, set_s),
-        26 => format!("Flag UNK-8 #{} is {}", value, set_s),
-        28 => format!("Flag NPC #{} is {}", value, set_s),
+        26 => format!("Flag \"NPC I\" #{} is {}", value, set_s),
+        28 => format!("Flag \"NPC II\" #{} is {}", value, set_s),
         32 => format!("Flag area #{} visited is {}", value, set_s),
         64 => format!("Flag story #{} is {}", value, set_s),
         96 => {
@@ -79,18 +89,18 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
     };
 
     match c_type {
-        0 => format!("{} flag UNK-0 #{}", set_s, value),
+        0 => format!("{} flag \"Tamer\" #{}", set_s, value),
         2 => format!("{} flag item box #{} opened", set_s, value),
         4 => format!("{} flag auction #{} done", set_s, value),
-        6 => format!("{} flag UNK-1 #{}", set_s, value),
+        6 => format!("{} \"DDNA Megas\" #{}", set_s, value),
         8 => format!("{} flag UNK-2 #{}", set_s, value),
-        10 => format!("{} flag UNK-3 #{}", set_s, value),
+        10 => format!("{} flag \"Bosses\" #{}", set_s, value),
         12 => format!("{} flag UNK-4 #{}", set_s, value),
-        14 => format!("{} flag UNK-5 #{}", set_s, value),
+        14 => format!("{} flag \"Battled Tamer\" #{}", set_s, value),
         16 => format!("{} flag UNK-6 #{}", set_s, value),
         24 => format!("{} flag UNK-7 #{}", set_s, value),
-        26 => format!("{} flag UNK-8 #{}", set_s, value),
-        28 => format!("{} flag NPC #{}", set_s, value),
+        26 => format!("{} flag \"NPC I\" #{}", set_s, value),
+        28 => format!("{} flag \"NPC II\" #{}", set_s, value),
         32 => format!("{} flag area #{} visited", set_s, value),
         64 => format!("{} flag story #{}", set_s, value),
         116 => format!("Start scripted battle #{}", value),
@@ -165,7 +175,7 @@ pub fn MapEntities() -> Element {
         .map(|x| x.value)
         .unwrap_or(0);
 
-    let entities = map_object
+    let mut entities = map_object
         .entities
         .iter()
         .map(|entity| {
@@ -233,9 +243,38 @@ pub fn MapEntities() -> Element {
                 data: entity.clone(),
                 conditions,
                 logics,
+                name: "-".to_string(),
             };
         })
         .collect::<Vec<_>>();
+
+    let sprite_logics = entities.iter().fold(HashMap::new(), |mut a, b| {
+        let rf = a.entry(b.data.sprite).or_insert_with(Vec::new);
+
+        rf.extend(b.logics.iter());
+
+        a
+    });
+
+    let sprite_names = sprite_logics
+        .iter()
+        .map(|(k, v)| {
+            let value = v
+                .iter()
+                .filter(|x| x.conversation != 0)
+                .find_map(|x| get_entity_name(&talk_file.strings[x.conversation]));
+
+            (*k, value)
+        })
+        .collect::<HashMap<_, _>>();
+
+    for entity in entities.iter_mut() {
+        entity.name = sprite_names
+            .get(&entity.data.sprite)
+            .map(|x| x.clone())
+            .flatten()
+            .unwrap_or("-".to_string());
+    }
 
     rsx! {
         for (idx, entity) in entities.iter().enumerate() {
@@ -245,7 +284,7 @@ pub fn MapEntities() -> Element {
                     class: "entity-header",
                     div {
                         class: "entity-info",
-                        "X: {entity.data.x}, Y: {entity.data.y}, Sprite: {entity.data.sprite}"
+                        "X: {entity.data.x}, Y: {entity.data.y}, Sprite: {entity.data.sprite}, Name: {entity.name}"
                     }
                     div {
                         class: "entity-conditions",
