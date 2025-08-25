@@ -42,6 +42,12 @@ pub fn Calculators() -> Element {
                         "Ambush"
                     }
                 }
+                li {
+                    Link {
+                        to: Route::RunAway {},
+                        "Run Away"
+                    }
+                }
             }
         }
         Outlet::<Route> {
