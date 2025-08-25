@@ -1,6 +1,10 @@
 use dioxus::prelude::*;
 
-use crate::{components, data::DataParsed, enums::Digivolutions};
+use crate::{
+    components,
+    data::DataParsed,
+    enums::{Digivolutions, Items},
+};
 
 #[component]
 pub fn RunAway() -> Element {
@@ -13,6 +17,7 @@ pub fn RunAway() -> Element {
     let mut player_speed_modifier = use_signal::<i64>(|| 0);
     let mut player_frozen = use_signal(|| false);
     let mut binder_crest = use_signal(|| false);
+    let mut run_items = use_signal(|| Items::NoItem);
 
     let mut enemy_level = use_signal::<i64>(|| 1);
     let mut enemy_speed = use_signal::<i64>(|| 200);
@@ -27,6 +32,7 @@ pub fn RunAway() -> Element {
     let c_player_speed_modifier = player_speed_modifier();
     let c_player_frozen = player_frozen();
     let c_binder_crest = binder_crest();
+    let c_run_items = run_items();
 
     let c_enemy_level = enemy_level();
     let c_enemy_speed = enemy_speed();
@@ -59,7 +65,13 @@ pub fn RunAway() -> Element {
         player_range += (f_player_speed - f_enemy_speed) / 10
     }
 
-    player_range = player_range.clamp(0, 128);
+    let aer = match c_run_items {
+        Items::RunnerSandals => 16,
+        Items::RunnerShoes => 32,
+        _ => 0,
+    };
+
+    player_range = (player_range + aer).clamp(0, 128);
 
     let mut enemy_range = 64;
 
@@ -140,6 +152,13 @@ pub fn RunAway() -> Element {
                         onchange: move |evt: Event<FormData>| {
                             binder_crest.set(evt.data.value() == "true");
                         },
+                    }
+                    components::ItemSelect {
+                        onchange: move |x: FormEvent| {
+                            run_items.set(Items::from(&x.data.value()[..]));
+                        },
+                        set: &[Items::NoItem, Items::RunnerSandals, Items::RunnerShoes],
+                        label: None
                     }
                 }
                 div {

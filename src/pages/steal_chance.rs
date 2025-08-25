@@ -43,6 +43,7 @@ pub fn StealChance() -> Element {
         Items::NoItem => 0,
         Items::HackSticker => 32,
         Items::HackSystem => 64,
+        _ => 0,
     };
 
     let range = min((c_drop_rate * sd * (((sr + asr) * 100) / 64)) / 10000, 1024);

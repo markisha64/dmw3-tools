@@ -1212,6 +1212,8 @@ pub enum Items {
     NoItem = 0,
     HackSticker = 1,
     HackSystem = 2,
+    RunnerSandals = 3,
+    RunnerShoes = 4,
 }
 
 impl From<Items> for &str {
@@ -1220,6 +1222,8 @@ impl From<Items> for &str {
             Items::NoItem => "No item",
             Items::HackSticker => "Hack Sticker",
             Items::HackSystem => "Hack System",
+            Items::RunnerSandals => "Runner Sandals",
+            Items::RunnerShoes => "Runner Shoes",
         }
     }
 }
@@ -1230,6 +1234,8 @@ impl From<&str> for Items {
             "No item" => Items::NoItem,
             "Hack Sticker" => Items::HackSticker,
             "Hack System" => Items::HackSystem,
+            "Runner Sandals" => Items::RunnerSandals,
+            "Runner Shoes" => Items::RunnerShoes,
             _ => Items::HackSticker,
         }
     }
