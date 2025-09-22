@@ -1,4 +1,6 @@
 use binread::BinRead;
+use dmw3_grids::Grid;
+use dmw3_pack::Packed;
 use dmw3_structs::{
     BoosterData, CardPricing, CardShopData, EntityData, EntityLogic, ScriptConditionStep,
     StageEncounter, StageEncounterArea,
@@ -24,7 +26,7 @@ pub struct MapObject {
     pub scripts_conditions: Vec<ScriptConditionStep>,
     pub talk_file: u16,
     pub entity_conditions: Vec<ScriptConditionStep>,
-    pub grids: Vec<u8>,
+    pub grids: Vec<Grid>,
 }
 
 pub struct DataParsed {
@@ -75,6 +77,65 @@ pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
     }
 
     result
+}
+
+fn read_blocks<T: BinRead>(data: &Vec<u8>, l: usize) -> anyhow::Result<Vec<T>> {
+    let mut cursor = Cursor::new(&data[..]);
+    let mut rv = Vec::new();
+
+    for _ in 0..(data.len() / l) {
+        rv.push(T::read(&mut cursor)?);
+    }
+
+    Ok(rv)
+}
+
+fn read_grids(bytes: Vec<u8>) -> Vec<Grid> {
+    let grids_packed = Packed::from(bytes);
+
+    grids_packed
+        .files
+        .iter()
+        .skip(1)
+        .flat_map(|bytes| {
+            let grid_raw = Packed::from(bytes.clone());
+
+            if grid_raw.files.len() != 6 {
+                return None;
+            }
+
+            let grid_info = dmw3_grids::GridInfo {
+                width: grid_raw.files[0][0],
+                height: grid_raw.files[0][1],
+                blocks_128_indices: grid_raw.files[0][2..].into(),
+            };
+
+            let mut blocks = Vec::new();
+
+            for c in 0..grid_raw.files[5].len() / 64 {
+                let mut block: [[u8; 8]; 8] = [[0; 8]; 8];
+
+                for i in 0..8 {
+                    for j in 0..8 {
+                        block[i][j] = grid_raw.files[5][c * 64 + i * 8 + j];
+                    }
+                }
+
+                blocks.push(block);
+            }
+
+            let grid_s = Grid {
+                info: grid_info,
+                blocks_64_indices: read_blocks::<[[u8; 2]; 2]>(&grid_raw.files[1], 4).ok()?,
+                blocks_32_indices: read_blocks::<[[u16; 2]; 2]>(&grid_raw.files[2], 8).ok()?,
+                blocks_16_indices: read_blocks::<[[u16; 2]; 2]>(&grid_raw.files[3], 8).ok()?,
+                blocks_8_indices: read_blocks::<[[u16; 2]; 2]>(&grid_raw.files[4], 8).ok()?,
+                blocks_8: blocks,
+            };
+
+            Some(grid_s)
+        })
+        .collect()
 }
 
 pub fn init_maps() -> HashMap<String, MapObject> {
@@ -153,7 +214,7 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                     ),
                     stage_id,
                     talk_file,
-                    grids: mapper[&format!("maps/{folder}/grids")].clone(),
+                    grids: read_grids(mapper[&format!("maps/{folder}/grids")].clone()),
                 },
             );
         }

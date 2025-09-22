@@ -1,47 +1,25 @@
 use dioxus::prelude::*;
-use dmw3_pack::Packed;
 use regex::Regex;
-use tracing::info;
 
-use crate::{
-    components::{PartyData, SelectedMap},
-    data::DataParsed,
-};
+use crate::{components::SelectedMap, data::DataParsed};
 
 #[component]
 pub fn MapGrids() -> Element {
     let selected_map_state = use_context::<Signal<SelectedMap>>();
     let data_parsed = use_context::<Signal<DataParsed>>();
+    let mut selected_grid_signal = use_signal(|| 0usize);
+
     let map_objects = &data_parsed.read().map_objects;
 
     let selected_map = &selected_map_state.read().0;
+    let selected_grid = selected_grid_signal();
 
     let map_object = map_objects
         .get(selected_map)
         .context("failed to get map objects")?;
 
-    let packed = Packed::from(map_object.grids.clone());
-
-    let (width, height) = packed
-        .files
-        .get(1)
-        .map(|x| {
-            let grid_raw = Packed::from(x.clone());
-
-            let grid_info = dmw3_grids::GridInfo {
-                width: grid_raw.files[0][0],
-                height: grid_raw.files[0][1],
-                blocks_128_indices: grid_raw.files[0][2..].into(),
-            };
-
-            (
-                (grid_info.width as u32) * 128,
-                (grid_info.height as u32) * 128,
-            )
-        })
-        .unwrap_or((1408, 1408));
-
-    tracing::info!("{} {}", width, height);
+    let width = map_object.grids[selected_grid].info.width;
+    let height = map_object.grids[selected_grid].info.height;
 
     use_effect(|| {
         let selected_map_state = use_context::<Signal<SelectedMap>>();
@@ -73,11 +51,31 @@ pub fn MapGrids() -> Element {
 
     rsx! {
         div {
-            class: "container",
-            canvas {
-                width,
-                height,
-                id: "grid-canvas"
+            class: "row",
+            div {
+                class: "container",
+                canvas {
+                    width,
+                    height,
+                    id: "grid-canvas"
+                }
+            }
+            div {
+                class: "container",
+                label {
+                    "Grid"
+                }
+                select {
+                    onchange: move |x| {
+                        selected_grid_signal.set(x.parsed().unwrap());
+                    },
+                    for i in 0..map_object.grids.len() {
+                        option {
+                            value: i,
+                            "Grid {i}"
+                        }
+                    }
+                }
             }
         }
     }
