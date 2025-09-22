@@ -17,6 +17,7 @@ pub struct LangFile {
     pub strings: Vec<String>,
 }
 
+#[derive(Clone)]
 pub struct MapObject {
     pub stage_encounter_areas: Vec<StageEncounterArea>,
     pub stage_encounters: Vec<Vec<StageEncounter>>,
@@ -29,6 +30,7 @@ pub struct MapObject {
     pub grids: Vec<Grid>,
 }
 
+#[derive(Clone)]
 pub struct DataParsed {
     pub digivolutions: Vec<dmw3_structs::DigivolutionData>,
     pub digivolution_conditions: Vec<dmw3_structs::DigivolutionConditions>,
@@ -96,8 +98,11 @@ fn read_grids(bytes: Vec<u8>) -> Vec<Grid> {
     grids_packed
         .files
         .iter()
-        .skip(1)
         .flat_map(|bytes| {
+            if bytes.is_empty() {
+                return None;
+            }
+
             let grid_raw = Packed::from(bytes.clone());
 
             if grid_raw.files.len() != 6 {
