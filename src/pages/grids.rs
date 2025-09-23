@@ -121,7 +121,7 @@ pub fn MapGrids() -> Element {
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
 
                 const img = new Image()
-                img.src = "/assets/backgrounds/S{}PACK.png"
+                img.src = "/assets/backgrounds/S{}PACK.webp"
                 img.onload = function() {{
                     ctx.drawImage(img, 0, 0);
 
