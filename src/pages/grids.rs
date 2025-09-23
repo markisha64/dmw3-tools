@@ -34,7 +34,10 @@ pub fn MapGrids() -> Element {
         .get(selected_map)
         .context("failed to get map objects")?;
 
-    let grid = &map_object.grids[selected_grid];
+    let grid = map_object
+        .grids
+        .get(selected_grid)
+        .unwrap_or(&map_object.grids.first().unwrap());
 
     let width = grid.info.width as u32 * 128;
     let height = grid.info.height as u32 * 128;
@@ -49,7 +52,7 @@ pub fn MapGrids() -> Element {
         .collect::<HashSet<_>>();
 
     use_effect(move || {
-        let selected_grid = selected_grid_signal();
+        let mut selected_grid = selected_grid_signal();
 
         let map_objects = &data_parsed.read().map_objects;
 
@@ -61,6 +64,17 @@ pub fn MapGrids() -> Element {
             .unwrap();
 
         let re = Regex::new("WSTAG(\\d\\d\\d)\\.PRO").unwrap();
+
+        if selected_grid >= map_object.grids.len() {
+            document::eval(
+                r#"
+                const elt = document.getElementById("grids-selector");
+                elt.selectedIndex = 0;
+            "#,
+            );
+
+            selected_grid = 0;
+        }
 
         if let Some(stage_number) = re.captures(&selected_map) {
             let grid = &map_object.grids[selected_grid];
@@ -136,6 +150,7 @@ pub fn MapGrids() -> Element {
                     "Grid"
                 }
                 select {
+                    id: "grids-selector",
                     onchange: move |x| {
                         selected_grid_signal.set(x.parsed().unwrap());
                     },
