@@ -1,7 +1,9 @@
-use std::collections::{HashMap, HashSet};
+use std::{collections::HashSet, io::Cursor};
 
+use base64::{engine::general_purpose, Engine};
 use dioxus::prelude::*;
 use dmw3_grids::get_grid_value;
+use image::{ImageBuffer, Rgba};
 use regex::Regex;
 
 use crate::{components::SelectedMap, data::DataParsed};
@@ -85,29 +87,33 @@ pub fn MapGrids() -> Element {
 
             let width = grid.info.width as u32 * 128;
             let height = grid.info.height as u32 * 128;
+            let mut img: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::new(width, height);
 
-            let mut values = HashMap::<String, Vec<(u32, u32)>>::new();
+            for (x, y, pixel) in img.enumerate_pixels_mut() {
+                let v = get_grid_value(grid, x, y);
 
-            for i in 0..width {
-                for j in 0..height {
-                    let value = get_grid_value(grid, i, j);
+                if v != 0 {
+                    let (r, g, b) = to_color(v);
 
-                    if value > 0 {
-                        let (r, g, b) = to_color(value);
-
-                        values
-                            .entry(format!("{},{},{}", r, g, b))
-                            .and_modify(|x| x.push((i, j)))
-                            .or_insert(vec![(i, j)]);
-                    }
+                    *pixel = Rgba([r, g, b, 128]);
                 }
             }
 
+            let mut buf = Cursor::new(Vec::new());
+
+            image::DynamicImage::ImageRgba8(img)
+                .write_to(&mut buf, image::ImageFormat::Png)
+                .unwrap();
+
+            let png_bytes = buf.into_inner();
+
+            let b64 = general_purpose::STANDARD.encode(&png_bytes);
+
+            let data_uri = format!("data:image/png;base64,{}", b64);
+
             let e = document::eval(&format!(
                 r#"
-                const points = await dioxus.recv()
-
-                console.log(points)
+                const data_uri = await dioxus.recv()
                 
                 const canvas = document.getElementById("grid-canvas")
                 const ctx = canvas.getContext("2d")
@@ -119,21 +125,18 @@ pub fn MapGrids() -> Element {
                 img.onload = function() {{
                     ctx.drawImage(img, 0, 0);
 
-                    for (const color_s in points) {{
-                        const [r, g, b] = color_s.split(",")   
+                    const overlay = new Image()
+                    overlay.src = data_uri
 
-                        ctx.fillStyle = `rgba(${{r}}, ${{g}}, ${{b}}, 0.5)`
-
-                        for (const [x, y] of points[color_s]) {{
-                            ctx.fillRect(x, y, 1, 1)   
-                        }}
+                    overlay.onload = function() {{
+                        ctx.drawImage(overlay, 0, 0)
                     }}
                 }}
             "#,
                 &stage_number[1]
             ));
 
-            let _ = e.send(values);
+            let _ = e.send(data_uri);
         }
     });
 
