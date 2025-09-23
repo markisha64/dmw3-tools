@@ -44,10 +44,14 @@ pub fn MapGrids() -> Element {
 
     let values = (0..width)
         .flat_map(|x| (0..height).map(move |y| (x, y)))
-        .map(|(x, y)| {
+        .flat_map(|(x, y)| {
             let v = get_grid_value(grid, x, y);
 
-            (v, to_color(v))
+            if v == 0 {
+                return None;
+            }
+
+            Some((v, to_color(v)))
         })
         .collect::<HashSet<_>>();
 
