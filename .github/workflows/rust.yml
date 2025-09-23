@@ -37,6 +37,8 @@ jobs:
       run: sed -i 's/# base_path/base_path/' Dioxus.toml
     - name: Fix bg url
       run: sed -i 's|assets|dmw3-tools/assets|g' assets/style.css
+    - name: Fix backgrounds url
+      run: sed -i 's|assets|dmw3-tools/assets|g' src/pages/grids.rs
     - name: Bundle
       run: dx bundle --release
     - name: Fix client side routing
