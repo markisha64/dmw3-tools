@@ -3,8 +3,8 @@ use dmw3_consts::CHARISMA_VALUES;
 use dmw3_grids::Grid;
 use dmw3_pack::Packed;
 use dmw3_structs::{
-    BoosterData, CardPricing, CardShopData, EntityData, EntityLogic, ScriptConditionStep,
-    StageEncounter, StageEncounterArea,
+    BoosterData, CardPricing, CardShopData, ComplexScriptConditionStep, EntityData, EntityLogic,
+    QuestRange, ScriptConditionStep, StageEncounter, StageEncounterArea,
 };
 use serde::Deserialize;
 use std::{
@@ -53,7 +53,9 @@ pub struct DataParsed {
     pub booster_data_items: Vec<u32>,
     pub starting_folder: Vec<u32>,
 
+    pub quest_ranges: Vec<QuestRange>,
     pub charisma_reqs: [u32; 15],
+    pub complex_steps: Vec<ComplexScriptConditionStep>,
 }
 
 pub struct NamesParsed {
@@ -255,7 +257,9 @@ pub fn init() -> DataParsed {
         booster_data_items: read_vec(include_bytes!("../dump/dmw2003/booster_data_items")),
         starting_folder: read_vec(include_bytes!("../dump/dmw2003/starting_folder")),
 
+        quest_ranges: read_vec(include_bytes!("../dump/dmw2003/quest_ranges")),
         charisma_reqs: CHARISMA_VALUES,
+        complex_steps: read_vec(include_bytes!("../dump/dmw2003/complex_steps")),
     }
 }
 

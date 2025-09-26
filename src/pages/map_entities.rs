@@ -31,8 +31,12 @@ fn get_entity_name(str: &String) -> Option<String> {
 fn conditionToString(
     condition: ScriptConditionStep,
     item_names: &Vec<String>,
-    charisma_reqs: &[u32; 15],
+    data_parsed: &DataParsed,
 ) -> String {
+    let charisma_reqs = &data_parsed.charisma_reqs;
+    let complex_steps = &data_parsed.complex_steps;
+    let quest_ranges = &data_parsed.quest_ranges;
+
     let c_type = condition.bitfield >> 8 & 0xfe;
     let value = condition.bitfield & 0x1ff;
     let set_s: &str = match condition.flag {
@@ -62,6 +66,39 @@ fn conditionToString(
             };
 
             format!("Quest {} #{}", op, value)
+        }
+        112 => {
+            let complex_step = complex_steps.iter().find(|x| x.id == value as u8);
+
+            tracing::info!("value {value}");
+
+            match complex_step {
+                Some(step) => {
+                    let _cs_op = step.operation_and_type & 0b00001111;
+                    let cs_type = step.operation_and_type & 0b11110000;
+
+                    tracing::info!("{:?}", step);
+
+                    if cs_type == 32 {
+                        "Unknown complex step".to_string()
+                    } else if cs_type < 33 {
+                        "Unknown complex step".to_string()
+                    } else if cs_type == 64 {
+                        "Unknown complex step".to_string()
+                    } else if cs_type < 65 {
+                        if cs_type != 48 {
+                            return "Unknown complex step".to_string();
+                        }
+
+                        let range = &quest_ranges[step.value as usize];
+
+                        format!("#{} <= Quest <= #{}", range.min, range.max)
+                    } else {
+                        "Unknown complex step".to_string()
+                    }
+                }
+                None => "Unknown complex step".to_string(),
+            }
         }
         114 => {
             let op = match condition.flag {
@@ -129,7 +166,10 @@ pub fn MapEntities() -> Element {
     let names_parsed = use_context::<Signal<NamesParsed>>();
     let map_objects = &data_parsed.read().map_objects;
 
-    let charisma_reqs = &data_parsed.read().charisma_reqs;
+    tracing::info!("{:?}", &data_parsed.read().complex_steps);
+
+    let dp = &data_parsed();
+
     let item_names = &names_parsed.read().item_names.strings;
 
     let map_object = map_objects
@@ -296,7 +336,7 @@ pub fn MapEntities() -> Element {
                         ul {
                             for condition in &entity.conditions {
                                 li {
-                                    "{conditionToString(*condition, item_names, charisma_reqs)}"
+                                    "{conditionToString(*condition, item_names, dp)}"
                                 }
                             }
                         }
@@ -330,7 +370,7 @@ pub fn MapEntities() -> Element {
                                             "Conditions"
                                         },
                                         for condition in &logic.conditions {
-                                            li { "{conditionToString(*condition, item_names, charisma_reqs)}" }
+                                            li { "{conditionToString(*condition, item_names, dp)}" }
                                         }
                                     }
                                 }
