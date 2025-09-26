@@ -1,4 +1,5 @@
 use binread::BinRead;
+use dmw3_consts::CHARISMA_VALUES;
 use dmw3_grids::Grid;
 use dmw3_pack::Packed;
 use dmw3_structs::{
@@ -51,6 +52,8 @@ pub struct DataParsed {
     pub booster_data: Vec<BoosterData>,
     pub booster_data_items: Vec<u32>,
     pub starting_folder: Vec<u32>,
+
+    pub charisma_reqs: [u32; 15],
 }
 
 pub struct NamesParsed {
@@ -251,6 +254,8 @@ pub fn init() -> DataParsed {
         booster_data: read_vec(include_bytes!("../dump/dmw2003/booster_data")),
         booster_data_items: read_vec(include_bytes!("../dump/dmw2003/booster_data_items")),
         starting_folder: read_vec(include_bytes!("../dump/dmw2003/starting_folder")),
+
+        charisma_reqs: CHARISMA_VALUES,
     }
 }
 

@@ -286,6 +286,18 @@ pub fn Import() -> Element {
                                     data_parsed.write().starting_folder = starting_folder;
                                 }
                             }
+
+                            if name == "charisma_reqs" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let charisma_reqs = read_vec(&buf[..]);
+                                if charisma_reqs.len() > 0 {
+                                    if let Ok(charisma_reqs) = charisma_reqs.try_into() {
+                                        data_parsed.write().charisma_reqs = charisma_reqs;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

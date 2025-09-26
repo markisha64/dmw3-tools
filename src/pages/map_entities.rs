@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use dioxus::prelude::*;
-use dmw3_consts::CHARISMA_VALUES;
 use dmw3_structs::{EntityData, ScriptConditionStep};
 use regex::Regex;
 
@@ -29,7 +28,11 @@ fn get_entity_name(str: &String) -> Option<String> {
     re.captures(str).map(|x| x[1].to_string())
 }
 
-fn conditionToString(condition: ScriptConditionStep, item_names: &Vec<String>) -> String {
+fn conditionToString(
+    condition: ScriptConditionStep,
+    item_names: &Vec<String>,
+    charisma_reqs: &[u32; 15],
+) -> String {
     let c_type = condition.bitfield >> 8 & 0xfe;
     let value = condition.bitfield & 0x1ff;
     let set_s: &str = match condition.flag {
@@ -66,7 +69,7 @@ fn conditionToString(condition: ScriptConditionStep, item_names: &Vec<String>) -
                 _ => "≥",
             };
 
-            format!("Total charisma {} {}", op, CHARISMA_VALUES[value as usize])
+            format!("Total charisma {} {}", op, charisma_reqs[value as usize])
         }
         128..=143 => {
             let add_s = match condition.flag {
@@ -126,6 +129,7 @@ pub fn MapEntities() -> Element {
     let names_parsed = use_context::<Signal<NamesParsed>>();
     let map_objects = &data_parsed.read().map_objects;
 
+    let charisma_reqs = &data_parsed.read().charisma_reqs;
     let item_names = &names_parsed.read().item_names.strings;
 
     let map_object = map_objects
@@ -292,7 +296,7 @@ pub fn MapEntities() -> Element {
                         ul {
                             for condition in &entity.conditions {
                                 li {
-                                    "{conditionToString(*condition, item_names)}"
+                                    "{conditionToString(*condition, item_names, charisma_reqs)}"
                                 }
                             }
                         }
@@ -326,7 +330,7 @@ pub fn MapEntities() -> Element {
                                             "Conditions"
                                         },
                                         for condition in &logic.conditions {
-                                            li { "{conditionToString(*condition, item_names)}" }
+                                            li { "{conditionToString(*condition, item_names, charisma_reqs)}" }
                                         }
                                     }
                                 }
