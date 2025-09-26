@@ -140,6 +140,7 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
         32 => format!("{} flag area #{} visited", set_s, value),
         64 => format!("{} flag story #{}", set_s, value),
         116 => format!("Start scripted battle #{}", value),
+        118 => format!("Start card battle #{}", value),
         128..=143 => {
             let add_s = match script.flag {
                 0 => "Remove",
