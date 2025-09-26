@@ -70,14 +70,10 @@ fn conditionToString(
         112 => {
             let complex_step = complex_steps.iter().find(|x| x.id == value as u8);
 
-            tracing::info!("value {value}");
-
             match complex_step {
                 Some(step) => {
                     let _cs_op = step.operation_and_type & 0b00001111;
                     let cs_type = step.operation_and_type & 0b11110000;
-
-                    tracing::info!("{:?}", step);
 
                     if cs_type == 32 {
                         "Unknown complex step".to_string()
@@ -92,7 +88,7 @@ fn conditionToString(
 
                         let range = &quest_ranges[step.value as usize];
 
-                        format!("#{} <= Quest <= #{}", range.min, range.max)
+                        format!("#{} ≤ Quest ≤ #{}", range.min, range.max)
                     } else {
                         "Unknown complex step".to_string()
                     }
@@ -165,8 +161,6 @@ pub fn MapEntities() -> Element {
     let data_parsed = use_context::<Signal<DataParsed>>();
     let names_parsed = use_context::<Signal<NamesParsed>>();
     let map_objects = &data_parsed.read().map_objects;
-
-    tracing::info!("{:?}", &data_parsed.read().complex_steps);
 
     let dp = &data_parsed();
 
