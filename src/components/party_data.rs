@@ -13,6 +13,7 @@ pub fn PartyData(team_id: u32) -> Element {
     let parties = &data_parsed.read().enemy_parties;
     let enemy_stats = &data_parsed.read().enemy_stats;
     let encounters = &data_parsed.read().encounters;
+    let party_exp_bits = &data_parsed.read().party_exp_bits;
 
     let digimon_names = &names_parsed.read().digimon_names;
 
@@ -76,6 +77,18 @@ pub fn PartyData(team_id: u32) -> Element {
                         th {
                             colspan: 11,
                             "Immunities"
+                        }
+                        th {
+                            rowspan: 2,
+                            "Digivolution EXP"
+                        }
+                        th {
+                            rowspan: 2,
+                            "EXP"
+                        }
+                        th {
+                            rowspan: 2,
+                            "Bits"
                         }
                     }
                     tr {
@@ -155,6 +168,15 @@ pub fn PartyData(team_id: u32) -> Element {
                         }
                         td {
                             "{party.escape_immunity}"
+                        }
+                        td {
+                            "{party_exp_bits[team_id as usize].dv_exp}"
+                        }
+                        td {
+                            "{party_exp_bits[team_id as usize].exp}"
+                        }
+                        td {
+                            "{party_exp_bits[team_id as usize].bits}"
                         }
                     }
                 }

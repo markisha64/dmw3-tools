@@ -227,6 +227,16 @@ pub fn Import() -> Element {
                                 }
                             }
 
+                            if name == "party_exp_bits" {
+                                let mut buf = Vec::new();
+                                file.read_to_end(&mut buf).unwrap();
+
+                                let party_exp_bits = read_vec(&buf[..]);
+                                if party_exp_bits.len() > 0 {
+                                    data_parsed.write().party_exp_bits = party_exp_bits;
+                                }
+                            }
+
                             if name == "card_shops" {
                                 let mut buf = Vec::new();
                                 file.read_to_end(&mut buf).unwrap();
