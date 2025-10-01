@@ -4,9 +4,9 @@ use crate::components::{
     Calculators, CardGame, DigivolutionMenu, MapsMenu, ModdingMenu, Navbar, OtherData,
 };
 use crate::pages::{
-    Ambush, Boosters, CardShops, DigivolutionConditions, DigivolutionsData, DigivolutionsTech,
-    EnemyStats, HitChance, Index, MapEncounters, MapEntities, MapGrids, Models, Parties,
-    RookieLevel, RunAway, Shops, StealChance, TurnStarterChance,
+    Ambush, Blasts, Boosters, CardShops, DigivolutionConditions, DigivolutionsData,
+    DigivolutionsTech, EnemyStats, HitChance, Index, MapEncounters, MapEntities, MapGrids, Models,
+    Parties, RookieLevel, RunAway, Shops, StealChance, TurnStarterChance,
 };
 
 #[derive(Routable, PartialEq, Clone)]
@@ -84,6 +84,9 @@ pub enum Route {
 
         #[route("/tech")]
         DigivolutionsTech {},
+
+        #[route("/blasts")]
+        Blasts {},
     #[end_nest]
     #[end_layout]
 

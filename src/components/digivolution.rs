@@ -30,6 +30,12 @@ pub fn DigivolutionMenu() -> Element {
                         "Tech"
                     }
                 }
+                li {
+                    Link {
+                        to: Route::Blasts {},
+                        "Blasts"
+                    }
+                }
             }
         }
         Outlet::<Route> {
