@@ -230,3 +230,13 @@ tr.sticky>th {
   border-bottom: 1px solid #ddd;
   padding-bottom: 5px;
 }
+
+.mild-green {
+  background-color: #789885;
+  color: black;
+}
+
+.mild-red {
+  background-color: #D8807D;
+  color: black;
+}

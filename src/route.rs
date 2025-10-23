@@ -6,7 +6,7 @@ use crate::components::{
 use crate::pages::{
     Ambush, Blasts, Boosters, CardShops, DigivolutionConditions, DigivolutionsData,
     DigivolutionsTech, EnemyStats, HitChance, Index, MapEncounters, MapEntities, MapGrids, Models,
-    Parties, RookieLevel, RunAway, Shops, StealChance, TurnStarterChance,
+    Parties, RTARunAway, RookieLevel, RunAway, Shops, StealChance, TurnStarterChance,
 };
 
 #[derive(Routable, PartialEq, Clone)]
@@ -37,6 +37,9 @@ pub enum Route {
 
         #[route("/runAway")]
         RunAway {},
+
+        #[route("/rtaRun")]
+        RTARunAway {},
     #[end_nest]
     #[end_layout]
 

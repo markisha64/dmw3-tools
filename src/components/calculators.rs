@@ -48,6 +48,12 @@ pub fn Calculators() -> Element {
                         "Run Away"
                     }
                 }
+                li {
+                    Link {
+                        to: Route::RTARunAway {},
+                        "RTA Run Away"
+                    }
+                }
             }
         }
         Outlet::<Route> {
