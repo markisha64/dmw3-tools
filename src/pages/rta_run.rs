@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 
 use dioxus::prelude::*;
 
@@ -14,10 +14,69 @@ struct EventValues {
     max: i64,
 }
 
-#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[derive(Debug)]
+struct EventQueue {
+    inner: Vec<Option<(BattleEvent, i64)>>,
+}
+
+impl EventQueue {
+    fn push(&mut self, event: (BattleEvent, i64)) {
+        let empty = self.inner.iter_mut().find(|x| x.is_none());
+
+        if let Some(slot) = empty {
+            *slot = Some(event);
+        } else {
+            self.inner.push(Some(event));
+        }
+    }
+
+    fn remove_run(&mut self) -> Option<BattleEvent> {
+        for revt in self.inner.iter_mut() {
+            if let Some(evt) = revt {
+                if let BattleEvent::RunAwayAttempt(i) = evt.0 {
+                    *revt = None;
+                    return Some(BattleEvent::RunAwayAttempt(i));
+                }
+            }
+        }
+
+        None
+    }
+
+    fn pop(&mut self) -> Option<(BattleEvent, i64)> {
+        let event = self
+            .inner
+            .iter()
+            .enumerate()
+            .rev()
+            .filter_map(|(idx, opt)| match opt {
+                Some(i) => Some((idx, i.clone())),
+                None => None,
+            })
+            .min_by(|x1, x2| (x1.1 .1).cmp(&(x2.1 .1)));
+
+        if let Some((idx, evt)) = event {
+            self.inner[idx] = None;
+
+            return Some(evt);
+        }
+
+        None
+    }
+
+    fn decrease(&mut self, delay: i64) {
+        for event in self.inner.iter_mut() {
+            if let Some(evt) = event {
+                *evt = (evt.0, evt.1 - delay);
+            }
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Debug)]
 enum BattleEvent {
-    EnemyTurnChange,
     PlayerTurnChange,
+    EnemyTurnChange,
     RunAwayAttempt(i64),
 }
 
@@ -50,7 +109,7 @@ fn F(n: usize, speed_1: i64, speed_2: i64) -> i64 {
 
     let fb = F(n - 1, speed_1, speed_2);
 
-    (fb * fb + speed_1 * speed_2) / (2 * fb)
+    (fb + (speed_1 * speed_2) / fb) / 2
 }
 
 fn TurnEventDelay(speed: i64, speed_1: i64, speed_2: i64, evt: &'static EventValues) -> i64 {
@@ -122,9 +181,9 @@ pub fn RTARunAway() -> Element {
 
     let f_enemy_speed = c_enemy_speed;
 
-    let mut events: BTreeMap<BattleEvent, i64> = BTreeMap::new();
+    let mut events = EventQueue { inner: Vec::new() };
 
-    events.insert(
+    events.push((
         BattleEvent::PlayerTurnChange,
         TurnEventDelay(
             f_enemy_speed,
@@ -132,35 +191,27 @@ pub fn RTARunAway() -> Element {
             f_enemy_speed,
             &SPEED_EVENT_VALUES,
         ),
-    );
+    ));
 
-    events.insert(
+    events.push((
         BattleEvent::EnemyTurnChange,
         TurnEventDelay(
-            f_player_speed,
+            f_enemy_speed,
             f_player_speed,
             f_enemy_speed,
             &SPEED_EVENT_VALUES,
         ) / 2,
-    );
+    ));
 
     let mut turns = vec![BattleEvent::PlayerTurnChange];
 
     for _ in 0..c_events_simulated {
-        let (evt, delay) = events
-            .iter()
-            .min_by(|(_, delay_1), (_, delay_2)| delay_1.cmp(delay_2))
-            .context("events empty")?;
+        let (evt, delay) = events.pop().context("no events")?;
 
-        let evt = *evt;
-        let delay = *delay;
+        events.decrease(delay);
 
         match evt {
             BattleEvent::EnemyTurnChange => {
-                for (_, delay_for_update) in events.iter_mut() {
-                    *delay_for_update -= delay;
-                }
-
                 let ndelay = TurnEventDelay(
                     f_player_speed,
                     f_player_speed,
@@ -168,14 +219,10 @@ pub fn RTARunAway() -> Element {
                     &SPEED_EVENT_VALUES,
                 );
 
-                events.entry(evt).and_modify(|x| *x = ndelay).or_insert(0);
+                events.push((evt, ndelay));
                 turns.push(BattleEvent::EnemyTurnChange);
             }
             BattleEvent::PlayerTurnChange => {
-                for (_, delay_for_update) in events.iter_mut() {
-                    *delay_for_update -= delay;
-                }
-
                 let ndelay = TurnEventDelay(
                     f_enemy_speed,
                     f_player_speed,
@@ -183,16 +230,17 @@ pub fn RTARunAway() -> Element {
                     &SPEED_EVENT_VALUES,
                 );
 
-                events.entry(evt).and_modify(|x| *x = ndelay).or_insert(0);
+                events.push((evt, ndelay));
                 turns.push(BattleEvent::PlayerTurnChange);
             }
             _ => {}
         }
     }
 
-    let mut run_events: BTreeMap<BattleEvent, i64> = BTreeMap::new();
+    let mut run_events = EventQueue { inner: Vec::new() };
+    let mut run_turns = vec![BattleEvent::PlayerTurnChange];
 
-    run_events.insert(
+    run_events.push((
         BattleEvent::PlayerTurnChange,
         TurnEventDelay(
             f_enemy_speed,
@@ -200,21 +248,19 @@ pub fn RTARunAway() -> Element {
             f_enemy_speed,
             &SPEED_EVENT_VALUES,
         ),
-    );
+    ));
 
-    run_events.insert(
+    run_events.push((
         BattleEvent::EnemyTurnChange,
         TurnEventDelay(
-            f_player_speed,
+            f_enemy_speed,
             f_player_speed,
             f_enemy_speed,
             &SPEED_EVENT_VALUES,
         ) / 2,
-    );
+    ));
 
-    let mut run_turns = vec![BattleEvent::PlayerTurnChange];
-
-    run_events.insert(
+    run_events.push((
         BattleEvent::RunAwayAttempt(1),
         TurnEventDelay(
             f_enemy_speed,
@@ -222,20 +268,12 @@ pub fn RTARunAway() -> Element {
             f_enemy_speed,
             &RUN_EVENT_VALUES,
         ),
-    );
+    ));
 
     for _ in 0..c_events_simulated {
-        let (evt, delay) = run_events
-            .iter()
-            .min_by(|(_, delay_1), (_, delay_2)| delay_1.cmp(delay_2))
-            .context("events empty")?;
+        let (evt, delay) = run_events.pop().context("events empty")?;
 
-        let evt = *evt;
-        let delay = *delay;
-
-        for (_, delay_for_update) in run_events.iter_mut() {
-            *delay_for_update -= delay;
-        }
+        run_events.decrease(delay);
 
         match evt {
             BattleEvent::EnemyTurnChange => {
@@ -246,10 +284,7 @@ pub fn RTARunAway() -> Element {
                     &SPEED_EVENT_VALUES,
                 );
 
-                run_events
-                    .entry(evt)
-                    .and_modify(|x| *x = ndelay)
-                    .or_insert(0);
+                run_events.push((evt, ndelay));
                 run_turns.push(BattleEvent::EnemyTurnChange);
             }
             BattleEvent::PlayerTurnChange => {
@@ -260,20 +295,13 @@ pub fn RTARunAway() -> Element {
                     &SPEED_EVENT_VALUES,
                 );
 
-                run_events
-                    .entry(evt)
-                    .and_modify(|x| *x = ndelay)
-                    .or_insert(0);
+                run_events.push((evt, ndelay));
+                run_turns.push(BattleEvent::PlayerTurnChange);
 
-                let run_attempt = *run_events
-                    .iter()
-                    .find(|(x, _)| matches!(x, BattleEvent::RunAwayAttempt(_)))
-                    .context("missing run event")?
-                    .0;
-
-                if let BattleEvent::RunAwayAttempt(i) = run_attempt {
-                    run_events.remove(&run_attempt);
-                    run_events.insert(
+                if let BattleEvent::RunAwayAttempt(i) =
+                    run_events.remove_run().context("missing run event")?
+                {
+                    run_events.push((
                         BattleEvent::RunAwayAttempt(i + 1),
                         TurnEventDelay(
                             f_enemy_speed,
@@ -281,10 +309,8 @@ pub fn RTARunAway() -> Element {
                             f_enemy_speed,
                             &RUN_EVENT_VALUES,
                         ),
-                    );
+                    ));
                 }
-
-                run_turns.push(BattleEvent::PlayerTurnChange);
             }
             BattleEvent::RunAwayAttempt(i) => {
                 let ndelay = TurnEventDelay(
@@ -294,10 +320,7 @@ pub fn RTARunAway() -> Element {
                     &RUN_EVENT_VALUES,
                 );
 
-                run_events
-                    .entry(evt)
-                    .and_modify(|x| *x = ndelay)
-                    .or_insert(0);
+                run_events.push((evt, ndelay));
                 run_turns.push(BattleEvent::RunAwayAttempt(i));
             }
         }
