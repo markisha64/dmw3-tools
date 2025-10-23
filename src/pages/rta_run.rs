@@ -1,5 +1,3 @@
-use std::collections::{BTreeMap, VecDeque};
-
 use dioxus::prelude::*;
 
 use crate::{
@@ -18,6 +16,11 @@ struct EventValues {
 struct EventQueue {
     inner: Vec<Option<(BattleEvent, i64)>>,
 }
+
+const HITTING_PENALTY: f64 = 8.0;
+const RUN_AWAY_MENUING_PENALTY: f64 = 1.0;
+// left here for noting
+const _EXP_PENALTY: f64 = 6.0;
 
 impl EventQueue {
     fn push(&mut self, event: (BattleEvent, i64)) {
@@ -342,6 +345,38 @@ pub fn RTARunAway() -> Element {
         })
         .collect::<Vec<_>>();
 
+    let mut run_penalty = 0.00;
+    let mut current_odds = 1.00;
+
+    for evt in &run_turns {
+        match evt {
+            // nothing because we are just running (trivial)
+            BattleEvent::PlayerTurnChange => {
+                run_penalty += current_odds * RUN_AWAY_MENUING_PENALTY;
+            }
+            // assume hit
+            BattleEvent::EnemyTurnChange => {
+                run_penalty += current_odds * HITTING_PENALTY;
+            }
+            BattleEvent::RunAwayAttempt(i) => {
+                current_odds *= 1.0
+                    - (GetPlayerChance(
+                        *i,
+                        f_player_speed,
+                        f_enemy_speed,
+                        false,
+                        c_rookie_level,
+                        c_enemy_level,
+                        c_run_items,
+                    ) as f64)
+                        / 128.0;
+            }
+        }
+    }
+
+    let formated_pen = format!("{:.2}", run_penalty);
+    let formated_odds = format!("{:.2}", 100.0 - (current_odds * 100.0));
+
     rsx! {
         div {
             class: "row",
@@ -487,6 +522,29 @@ pub fn RTARunAway() -> Element {
                             }
                         }
                     }
+                }
+            }
+            div {
+                class: "column",
+                div {
+                    class: "container",
+                    "RTA Penalties"
+                }
+                div {
+                    class: "container",
+                    "One Shot ~14s"
+                }
+                div {
+                    class: "container",
+                    "One Hit + Counter ~30s"
+                }
+                div {
+                    class: "container",
+                    "Average Run Away Penalty {formated_pen}s"
+                }
+                div {
+                    class: "container",
+                    "Run Away Chance In Simulated Events {formated_odds}%"
                 }
             }
         }
