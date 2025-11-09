@@ -5,6 +5,8 @@ use crate::{
     data::DataParsed,
 };
 
+const COUNTERS_PER_STEP: [i64; 6] = [2000, 3, 4, 6, 9, 18];
+
 #[component]
 pub fn MapEncounters() -> Element {
     let selected_map_state = use_context::<Signal<SelectedMap>>();
@@ -29,6 +31,9 @@ pub fn MapEncounters() -> Element {
                             for k in 0..8 {
                                 th { "Team {k}" }
                             }
+                            th {
+                                "Counter Per Step"
+                            }
                         }
                         for j in 0..5 {
                             tr {
@@ -51,6 +56,15 @@ pub fn MapEncounters() -> Element {
                                             }
                                             "{map_object.stage_encounters[i * 5 + j][k].team_id}"
                                         }
+                                    }
+                                }
+                                if map_object.stage_encounter_areas[j].steps_inddex != 0 {
+                                    td {
+                                        "{COUNTERS_PER_STEP[map_object.stage_encounter_areas[j].steps_inddex as usize]}"
+                                    }
+                                } else {
+                                    td {
+                                        "-"
                                     }
                                 }
                             }
