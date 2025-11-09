@@ -160,6 +160,7 @@ pub fn RTARunAway() -> Element {
     let mut rookie_level = use_signal::<i64>(|| 1);
     let mut rookie_speed = use_signal::<i64>(|| 200);
     let mut run_items = use_signal(|| Items::NoItem);
+    let mut counter_crest = use_signal(|| false);
 
     let mut enemy_level = use_signal::<i64>(|| 1);
     let mut enemy_speed = use_signal::<i64>(|| 200);
@@ -170,6 +171,7 @@ pub fn RTARunAway() -> Element {
     let c_rookie_level = rookie_level();
     let c_player_speed = rookie_speed();
     let c_run_items = run_items();
+    let c_counter_crest = counter_crest();
 
     let c_enemy_level = enemy_level();
     let c_enemy_speed = enemy_speed();
@@ -357,6 +359,10 @@ pub fn RTARunAway() -> Element {
             // assume hit
             BattleEvent::EnemyTurnChange => {
                 run_penalty += current_odds * HITTING_PENALTY;
+
+                if c_counter_crest {
+                    run_penalty += current_odds * HITTING_PENALTY;
+                }
             }
             BattleEvent::RunAwayAttempt(i) => {
                 current_odds *= 1.0
@@ -415,6 +421,17 @@ pub fn RTARunAway() -> Element {
                         },
                         set: &[Items::NoItem, Items::RunnerSandals, Items::RunnerShoes],
                         label: None
+                    }
+                    label {
+                        "Counter Crest"
+                    }
+                    input {
+                        r#type: "checkbox",
+                        r#checked: c_counter_crest,
+                        disabled: false,
+                        onchange: move |evt: Event<FormData>| {
+                            counter_crest.set(evt.data.value() == "true");
+                        },
                     }
                 }
                 div {
