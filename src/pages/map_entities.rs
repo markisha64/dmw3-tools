@@ -142,6 +142,10 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
         116 => format!("Start scripted battle #{}", value),
         118 => format!("Start card battle #{}", value),
         120 => format!("Start stronger card battle #{}", value),
+        122 => match 29 < value {
+            true => format!("Inn ({value})"),
+            _ => format!("Shop ({value})"),
+        },
         128..=143 => {
             let add_s = match script.flag {
                 0 => "Remove",
@@ -324,7 +328,7 @@ pub fn MapEntities() -> Element {
                     class: "entity-header",
                     div {
                         class: "entity-info",
-                        "X: {entity.data.x}, Y: {entity.data.y}, Sprite: {entity.data.sprite}, Name: {entity.name}"
+                        "X: {entity.data.x}, Y: {entity.data.y}, Sprite: {entity.data.sprite}, Name: {entity.name}, Idx: {idx}"
                     }
                     div {
                         class: "entity-conditions",
