@@ -26,17 +26,11 @@ pub fn Import() -> Element {
             accept: ".tar",
             multiple: false,
             oninput: move |event| {
+                let files = event.files();
+
                 async move {
-                    if let Some(file_engine) = &event.files() {
-                        let file_name = &file_engine.files()[0];
-
-                        let file_option = file_engine.read_file(file_name.as_str()).await;
-
-                        if file_option.is_none() {
-                            return ();
-                        }
-
-                        let file = file_option.unwrap();
+                    if let Some(file_data) = files.first() {
+                        let file = file_data.read_bytes().await.unwrap();
 
                         let cursor = Cursor::new(&file[..]);
 

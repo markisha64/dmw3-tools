@@ -30,16 +30,10 @@ pub fn Models() -> Element {
                         multiple: false,
                         oninput: move |event| {
                             async move {
-                                if let Some(file_engine) = &event.files() {
-                                    let file_name = &file_engine.files()[0];
+                                if let Some(file_data) = event.files().first() {
+                                    let file_name = file_data.name();
 
-                                    let file_option = file_engine.read_file(file_name.as_str()).await;
-
-                                    if file_option.is_none() {
-                                        return ();
-                                    }
-
-                                    let file = file_option.unwrap();
+                                    let file: Vec<u8> = file_data.read_bytes().await.unwrap().into();
 
                                     let unpacked = Packed::from(file);
 
@@ -54,7 +48,7 @@ pub fn Models() -> Element {
 
                                     let new_file_name = match file_name.rfind('.') {
                                         Some(pos) => &file_name[..pos],
-                                        None => file_name,
+                                        None => &file_name,
                                     };
 
                                     let _eval = document::eval(format!(r"
