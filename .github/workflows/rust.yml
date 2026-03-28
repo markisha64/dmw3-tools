@@ -36,7 +36,7 @@ jobs:
     - name: Uncomment base_path
       run: sed -i 's/# base_path/base_path/' Dioxus.toml
     - name: Fix bg url
-      run: sed -i 's|bg.webp|dmw3-tools/bg.webp|g' assets/style.css
+      run: sed -i 's|bg.webp|dmw3-tools/bg.webp|g' public/style.css
     - name: Fix backgrounds url
       run: sed -i 's|backgrounds|dmw3-tools/backgrounds|g' src/pages/grids.rs
     - name: Bundle
