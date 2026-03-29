@@ -29,10 +29,10 @@ jobs:
           ~/.cargo
         key: linux-cargo-${{ hashFiles('Cargo.lock') }}
         restore-keys: linux-cargo-${{ hashFiles('Cargo.lock') }}
-    - name: Get binstall
-      run: cargo install cargo-binstall
+    - name: Get Cargo Binstall
+      uses: cargo-bins/cargo-binstall@main
     - name: Get cli tool
-      run: cargo binstall dioxus-cli@0.7.4
+      run: cargo binstall dioxus-cli@0.7.3
     - name: Uncomment base_path
       run: sed -i 's/# base_path/base_path/' Dioxus.toml
     - name: Fix bg url
