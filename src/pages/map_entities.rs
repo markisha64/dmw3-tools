@@ -72,15 +72,63 @@ fn conditionToString(
 
             match complex_step {
                 Some(step) => {
-                    let _cs_op = step.operation_and_type & 0b00001111;
+                    let cs_op = step.operation_and_type & 0b00001111;
                     let cs_type = step.operation_and_type & 0b11110000;
 
-                    if cs_type == 32 {
-                        "Unknown complex step".to_string()
+                    if cs_type == 16 {
+                        match cs_op {
+                            1 => {
+                                let op = match condition.flag {
+                                    0 => "locked",
+                                    _ => "unlocked",
+                                };
+
+                                format!("Digimon #{} is {}", step.value, op)
+                            }
+                            5 => {
+                                let op = match condition.flag {
+                                    0 => "<",
+                                    _ => "=>",
+                                };
+
+                                format!("Total party level {} {}", op, step.value * 15 + 30)
+                            }
+                            6 => {
+                                let op = match condition.flag {
+                                    0 => "unlocked",
+                                    _ => "locked",
+                                };
+
+                                format!("Digimon #{} is {}", step.value, op)
+                            }
+                            9 => {
+                                let op = match condition.flag {
+                                    0 => "locked",
+                                    _ => "unlocked",
+                                };
+
+                                format!("All rookies {}", op)
+                            }
+                            _ => format!(
+                                "Unknown complex step cs_type: {}, cs_op: {}",
+                                cs_type, cs_op
+                            ),
+                        }
+                    } else if cs_type == 32 {
+                        format!(
+                            "Unknown complex step cs_type: {}, cs_op: {}",
+                            cs_type, cs_op
+                        )
                     } else if cs_type < 33 {
-                        "Unknown complex step".to_string()
+                        format!(
+                            "Unknown complex step cs_type: {}, cs_op: {}",
+                            cs_type, cs_op
+                        )
                     } else if cs_type == 64 {
-                        "Unknown complex step".to_string()
+                        format!(
+                            "Unknown complex step cs_type: {}, cs_op: {}",
+                            cs_type, cs_op
+                        )
                     } else if cs_type < 65 {
                         if cs_type != 48 {
                             return "Unknown complex step".to_string();
@@ -90,7 +138,10 @@ fn conditionToString(
 
                         format!("#{} ≤ Quest ≤ #{}", range.min, range.max)
                     } else {
-                        "Unknown complex step".to_string()
+                        format!(
+                            "Unknown complex step cs_type: {}, cs_op: {}",
+                            cs_type, cs_op
+                        )
                     }
                 }
                 None => "Unknown complex step".to_string(),
@@ -112,7 +163,7 @@ fn conditionToString(
 
             format!("{} \"{}\"", add_s, item_names[value as usize])
         }
-        _ => "Unknown".to_string(),
+        _ => format!("Unknown ctype: {}, value: {}", c_type, value),
     }
 }
 
