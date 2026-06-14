@@ -1,26 +1,13 @@
 use std::collections::HashMap;
 
 use dioxus::prelude::*;
-use dmw3_structs::{EntityData, ScriptConditionStep};
+use dmw3_structs::ScriptConditionStep;
 use regex::Regex;
 
 use crate::{
     components::SelectedMap,
     data::{DataParsed, NamesParsed},
 };
-
-struct MappedEntityLogic {
-    conditions: Vec<ScriptConditionStep>,
-    scripts: Vec<ScriptConditionStep>,
-    conversation: usize,
-}
-
-struct MappedEntity {
-    data: EntityData,
-    conditions: Vec<ScriptConditionStep>,
-    logics: Vec<MappedEntityLogic>,
-    name: String,
-}
 
 fn get_entity_name(str: &String) -> Option<String> {
     let re = Regex::new(r"\[name\](.*?)\[name\]").ok()?;
@@ -235,113 +222,7 @@ pub fn MapEntities() -> Element {
         .map(|(_, l)| l)
         .context("failed to find talk file")?;
 
-    let first_logic = map_object
-        .entities
-        .iter()
-        .find(|x| !x.logic.null())
-        .map(|x| x.logic.value)
-        .unwrap_or(0);
-
-    let first_entity_conditions = map_object
-        .entities
-        .iter()
-        .find(|x| !x.conditions.null())
-        .map(|x| x.conditions.value)
-        .unwrap_or(0);
-
-    let scripts = map_object
-        .entity_logics
-        .iter()
-        .filter(|x| !x.script.null())
-        .map(|x| x.script);
-
-    let conditions = map_object
-        .entity_logics
-        .iter()
-        .filter(|x| !x.conditions.null())
-        .map(|x| x.conditions);
-
-    let mut script_cond = Vec::from_iter(scripts);
-    script_cond.extend(conditions);
-
-    let script_cond_min = script_cond
-        .iter()
-        .min_by(|a, b| a.value.cmp(&b.value))
-        .map(|x| x.value)
-        .unwrap_or(0);
-
-    let mut entities = map_object
-        .entities
-        .iter()
-        .map(|entity| {
-            let mut logics = Vec::new();
-            let mut conditions = Vec::new();
-
-            if !entity.logic.null() {
-                let logics_idx = ((entity.logic.value - first_logic) / 0xc) as usize;
-
-                for logic in &map_object.entity_logics[logics_idx..] {
-                    let mut conditions = Vec::new();
-                    let mut scripts = Vec::new();
-
-                    if logic.text_index == 0 {
-                        break;
-                    }
-
-                    if !logic.conditions.null() {
-                        let conditions_idx =
-                            ((logic.conditions.value - script_cond_min) / 0x4) as usize;
-
-                        for condition in &map_object.scripts_conditions[conditions_idx..] {
-                            if condition.is_last_step() {
-                                break;
-                            }
-
-                            conditions.push(*condition);
-                        }
-                    }
-
-                    if !logic.script.null() {
-                        let scripts_idx = ((logic.script.value - script_cond_min) / 0x4) as usize;
-
-                        for script in &map_object.scripts_conditions[scripts_idx..] {
-                            if script.is_last_step() {
-                                break;
-                            }
-
-                            scripts.push(*script);
-                        }
-                    }
-
-                    logics.push(MappedEntityLogic {
-                        conditions,
-                        scripts,
-                        conversation: logic.text_index as usize,
-                    });
-                }
-            }
-
-            if !entity.conditions.null() {
-                let conditions_idx =
-                    ((entity.conditions.value - first_entity_conditions) / 0x4) as usize;
-
-                for condition in &map_object.entity_conditions[conditions_idx..] {
-                    if condition.is_last_step() {
-                        break;
-                    }
-
-                    conditions.push(*condition);
-                }
-            }
-
-            return MappedEntity {
-                data: entity.clone(),
-                conditions,
-                logics,
-                name: "-".to_string(),
-            };
-        })
-        .collect::<Vec<_>>();
+    let mut entities = map_object.mapped_entities.clone();
 
     let sprite_logics = entities.iter().fold(HashMap::new(), |mut a, b| {
         let rf = a.entry(b.data.sprite).or_insert_with(Vec::new);

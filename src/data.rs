@@ -26,6 +26,7 @@ pub struct MapObject {
     pub entities: Vec<EntityData>,
     pub entity_logics: Vec<EntityLogic>,
     pub scripts_conditions: Vec<ScriptConditionStep>,
+    pub mapped_entities: Vec<MappedEntity>,
     pub talk_file: u16,
     pub entity_conditions: Vec<ScriptConditionStep>,
     pub grids: Vec<Grid>,
@@ -68,6 +69,21 @@ pub struct NamesParsed {
     pub talk_files: Vec<(u16, LangFile)>,
 
     pub card_names: LangFile,
+}
+
+#[derive(Clone)]
+pub struct MappedEntityLogic {
+    pub conditions: Vec<ScriptConditionStep>,
+    pub scripts: Vec<ScriptConditionStep>,
+    pub conversation: usize,
+}
+
+#[derive(Clone)]
+pub struct MappedEntity {
+    pub data: EntityData,
+    pub conditions: Vec<ScriptConditionStep>,
+    pub logics: Vec<MappedEntityLogic>,
+    pub name: String,
 }
 
 pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
@@ -149,7 +165,7 @@ fn read_grids(bytes: Vec<u8>) -> Vec<Grid> {
         .collect()
 }
 
-pub fn init_maps() -> HashMap<String, MapObject> {
+pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<String, MapObject> {
     let cursor = Cursor::new(include_bytes!("../dump/dmw2003/maps.tar"));
 
     let mut archive = Archive::new(cursor);
@@ -207,6 +223,150 @@ pub fn init_maps() -> HashMap<String, MapObject> {
             let talk_file_bytes = &mapper[&format!("maps/{folder}/talk_file")];
             let talk_file: u16 = u16::from_le_bytes([talk_file_bytes[0], talk_file_bytes[1]]);
 
+            let entities: Vec<EntityData> = read_vec(&mapper[&format!("maps/{folder}/entities")]);
+            let entity_logics: Vec<EntityLogic> =
+                read_vec(&mapper[&format!("maps/{folder}/entity_logics")]);
+            let entity_conditions: Vec<ScriptConditionStep> =
+                read_vec(&mapper[&format!("maps/{folder}/entity_conditions")]);
+            let scripts_conditions: Vec<ScriptConditionStep> =
+                read_vec(&mapper[&format!("maps/{folder}/scripts_conditions")]);
+
+            let first_logic = entities
+                .iter()
+                .find(|x| !x.logic.null())
+                .map(|x| x.logic.value)
+                .unwrap_or(0);
+
+            let first_entity_conditions = entities
+                .iter()
+                .find(|x| !x.conditions.null())
+                .map(|x| x.conditions.value)
+                .unwrap_or(0);
+
+            let scripts = entity_logics
+                .iter()
+                .filter(|x| !x.script.null())
+                .map(|x| x.script);
+
+            let conditions = entity_logics
+                .iter()
+                .filter(|x| !x.conditions.null())
+                .map(|x| x.conditions);
+
+            let mut script_cond = Vec::from_iter(scripts);
+            script_cond.extend(conditions);
+
+            let script_cond_min = script_cond
+                .iter()
+                .min_by(|a, b| a.value.cmp(&b.value))
+                .map(|x| x.value)
+                .unwrap_or(0);
+
+            let mapped_entities = entities
+                .iter()
+                .map(|entity| {
+                    let mut logics = Vec::new();
+                    let mut conditions = Vec::new();
+
+                    if !entity.logic.null() {
+                        let logics_idx = ((entity.logic.value - first_logic) / 0xc) as usize;
+
+                        for logic in &entity_logics[logics_idx..] {
+                            let mut conditions = Vec::new();
+                            let mut scripts = Vec::new();
+
+                            if logic.text_index == 0 {
+                                break;
+                            }
+
+                            if !logic.conditions.null() {
+                                let conditions_idx =
+                                    ((logic.conditions.value - script_cond_min) / 0x4) as usize;
+
+                                for condition in &scripts_conditions[conditions_idx..] {
+                                    let c_type = condition.bitfield >> 8 & 0xfe;
+                                    let value = condition.bitfield & 0x1ff;
+
+                                    if c_type & 0xfe == 112 {
+                                        if let Some(step) =
+                                            complex_steps.iter().find(|x| x.id == value as u8)
+                                        {
+                                            let cs_op = step.operation_and_type & 0b00001111;
+                                            let cs_type = step.operation_and_type & 0b11110000;
+
+                                            if cs_op == 9 {
+                                                tracing::info!("found all rookies: {}", folder);
+                                            }
+                                        }
+                                    }
+
+                                    if condition.is_last_step() {
+                                        break;
+                                    }
+
+                                    conditions.push(*condition);
+                                }
+                            }
+
+                            if !logic.script.null() {
+                                let scripts_idx =
+                                    ((logic.script.value - script_cond_min) / 0x4) as usize;
+
+                                for script in &scripts_conditions[scripts_idx..] {
+                                    if script.is_last_step() {
+                                        break;
+                                    }
+
+                                    scripts.push(*script);
+                                }
+                            }
+
+                            logics.push(MappedEntityLogic {
+                                conditions,
+                                scripts,
+                                conversation: logic.text_index as usize,
+                            });
+                        }
+                    }
+
+                    if !entity.conditions.null() {
+                        let conditions_idx =
+                            ((entity.conditions.value - first_entity_conditions) / 0x4) as usize;
+
+                        for condition in &entity_conditions[conditions_idx..] {
+                            let c_type = condition.bitfield >> 8 & 0xfe;
+                            let value = condition.bitfield & 0x1ff;
+
+                            if c_type & 0xfe == 112 {
+                                if let Some(step) =
+                                    complex_steps.iter().find(|x| x.id == value as u8)
+                                {
+                                    let cs_op = step.operation_and_type & 0b00001111;
+                                    let cs_type = step.operation_and_type & 0b11110000;
+
+                                    if cs_op == 9 {
+                                        tracing::info!("found all rookies: {}", folder);
+                                    }
+                                }
+                            }
+
+                            if condition.is_last_step() {
+                                break;
+                            }
+
+                            conditions.push(*condition);
+                        }
+                    }
+
+                    return MappedEntity {
+                        data: entity.clone(),
+                        conditions,
+                        logics,
+                        name: "-".to_string(),
+                    };
+                })
+                .collect::<Vec<_>>();
+
             result.insert(
                 folder.clone(),
                 MapObject {
@@ -215,14 +375,11 @@ pub fn init_maps() -> HashMap<String, MapObject> {
                         .chunks_exact(8)
                         .map(|x| Vec::from(x))
                         .collect(),
-                    entities: read_vec(&mapper[&format!("maps/{folder}/entities")]),
-                    entity_logics: read_vec(&mapper[&format!("maps/{folder}/entity_logics")]),
-                    scripts_conditions: read_vec(
-                        &mapper[&format!("maps/{folder}/scripts_conditions")],
-                    ),
-                    entity_conditions: read_vec(
-                        &mapper[&format!("maps/{folder}/entity_conditions")],
-                    ),
+                    entities,
+                    entity_logics,
+                    scripts_conditions,
+                    entity_conditions,
+                    mapped_entities,
                     stage_id,
                     talk_file,
                     grids: read_grids(mapper[&format!("maps/{folder}/grids")].clone()),
@@ -235,6 +392,8 @@ pub fn init_maps() -> HashMap<String, MapObject> {
 }
 
 pub fn init() -> DataParsed {
+    let complex_steps = read_vec(include_bytes!("../dump/dmw2003/complex_steps"));
+
     DataParsed {
         digivolutions: read_vec(include_bytes!("../dump/dmw2003/digivolutions")),
         digivolution_conditions: read_vec(include_bytes!(
@@ -249,7 +408,7 @@ pub fn init() -> DataParsed {
         shops: read_vec(include_bytes!("../dump/dmw2003/shops")),
         shop_items: read_vec(include_bytes!("../dump/dmw2003/shop_items")),
         enemy_stats: read_vec(include_bytes!("../dump/dmw2003/enemy_stats")),
-        map_objects: init_maps(),
+        map_objects: init_maps(&complex_steps),
         screen_name_mapping: read_vec(include_bytes!("../dump/dmw2003/screen_name_mapping")),
 
         card_shops: read_vec(include_bytes!("../dump/dmw2003/card_shops")),
@@ -261,7 +420,7 @@ pub fn init() -> DataParsed {
 
         quest_ranges: read_vec(include_bytes!("../dump/dmw2003/quest_ranges")),
         charisma_reqs: CHARISMA_VALUES,
-        complex_steps: read_vec(include_bytes!("../dump/dmw2003/complex_steps")),
+        complex_steps,
     }
 }
 
