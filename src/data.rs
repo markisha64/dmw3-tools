@@ -290,12 +290,12 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
                                     ((logic.conditions.value - script_cond_min) / 0x4) as usize;
 
                                 for condition in &scripts_conditions[conditions_idx..] {
-                                    let c_type = condition.bitfield >> 8 & 0xfe;
-                                    let value = condition.bitfield & 0x1ff;
-
-                                    if c_type & 0xfe == 112 {
-                                        if let Some(step) =
-                                            complex_steps.iter().find(|x| x.id == value as u8)
+                                    if condition.condition_type
+                                        == dmw3_structs::ScriptConditionType::Complex
+                                    {
+                                        if let Some(step) = complex_steps
+                                            .iter()
+                                            .find(|x| x.id == condition.value as u8)
                                         {
                                             let cs_op = step.operation_and_type & 0b00001111;
                                             let cs_type = step.operation_and_type & 0b11110000;
@@ -340,12 +340,11 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
                             ((entity.conditions.value - first_entity_conditions) / 0x4) as usize;
 
                         for condition in &entity_conditions[conditions_idx..] {
-                            let c_type = condition.bitfield >> 8 & 0xfe;
-                            let value = condition.bitfield & 0x1ff;
-
-                            if c_type & 0xfe == 112 {
+                            if condition.condition_type
+                                == dmw3_structs::ScriptConditionType::Complex
+                            {
                                 if let Some(step) =
-                                    complex_steps.iter().find(|x| x.id == value as u8)
+                                    complex_steps.iter().find(|x| x.id == condition.value as u8)
                                 {
                                     let cs_op = step.operation_and_type & 0b00001111;
                                     let cs_type = step.operation_and_type & 0b11110000;

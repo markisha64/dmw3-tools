@@ -1349,17 +1349,17 @@ dependencies = [
 [[package]]
 name = "dmw3_consts"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 
 [[package]]
 name = "dmw3_grids"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 
 [[package]]
 name = "dmw3_model"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 dependencies = [
  "binrw",
 ]
@@ -1367,7 +1367,7 @@ dependencies = [
 [[package]]
 name = "dmw3_pack"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 dependencies = [
  "anyhow",
  "binrw",
@@ -1376,7 +1376,7 @@ dependencies = [
 [[package]]
 name = "dmw3_structs"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 dependencies = [
  "binrw",
  "dmw3_consts",
@@ -3170,7 +3170,7 @@ dependencies = [
 [[package]]
 name = "rlen"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 dependencies = [
  "clap",
 ]
@@ -3667,7 +3667,7 @@ dependencies = [
 [[package]]
 name = "tim"
 version = "0.1.0"
-source = "git+https://github.com/markisha64/dmw3-util#762719d8dc1cf73fa0b18612d68b3237c975dc72"
+source = "git+https://github.com/markisha64/dmw3-util#9b1fe5a92abce5bb504a5776ebc3fb53eac92202"
 dependencies = [
  "clap",
 ]

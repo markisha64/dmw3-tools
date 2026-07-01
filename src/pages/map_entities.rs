@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use dioxus::prelude::*;
-use dmw3_structs::ScriptConditionStep;
+use dmw3_structs::{ScriptConditionStep, ScriptConditionType};
 use regex::Regex;
 
 use crate::{
@@ -24,29 +24,30 @@ fn conditionToString(
     let complex_steps = &data_parsed.complex_steps;
     let quest_ranges = &data_parsed.quest_ranges;
 
-    let c_type = condition.bitfield >> 8 & 0xfe;
-    let value = condition.bitfield & 0x1ff;
+    let value = condition.value;
     let set_s: &str = match condition.flag {
         0 => "unset",
         _ => "set",
     };
 
-    match c_type & 0xfe {
-        0 => format!("Flag \"Tamer\" #{} is {}", value, set_s),
-        2 => format!("Flag item box #{} opened is {}", value, set_s),
-        4 => format!("Flag auction #{} done is {}", value, set_s),
-        6 => format!("Flag \"DDNA Megas\" #{} is {}", value, set_s),
-        8 => format!("Flag UNK-2 #{} is {}", value, set_s),
-        10 => format!("Flag \"Bosses\" #{} is {}", value, set_s),
-        12 => format!("Flag \"A.o.A.\" #{} is {}", value, set_s),
-        14 => format!("Flag \"Battled Tamer\" #{} is {}", value, set_s),
-        16 => format!("Flag UNK-6 #{} is {}", value, set_s),
-        24 => format!("Flag UNK-7 #{} is {}", value, set_s),
-        26 => format!("Flag \"NPC I\" #{} is {}", value, set_s),
-        28 => format!("Flag \"NPC II\" #{} is {}", value, set_s),
-        32 => format!("Flag area #{} visited is {}", value, set_s),
-        64 => format!("Flag story #{} is {}", value, set_s),
-        96 => {
+    match condition.condition_type {
+        ScriptConditionType::TamerFlag => format!("Flag \"Tamer\" #{} is {}", value, set_s),
+        ScriptConditionType::ItemBox => format!("Flag item box #{} opened is {}", value, set_s),
+        ScriptConditionType::Auction => format!("Flag auction #{} done is {}", value, set_s),
+        ScriptConditionType::DdnaMegas => format!("Flag \"DDNA Megas\" #{} is {}", value, set_s),
+        ScriptConditionType::Unk2 => format!("Flag UNK-2 #{} is {}", value, set_s),
+        ScriptConditionType::Bosses => format!("Flag \"Bosses\" #{} is {}", value, set_s),
+        ScriptConditionType::AoA => format!("Flag \"A.o.A.\" #{} is {}", value, set_s),
+        ScriptConditionType::BattledTamer => {
+            format!("Flag \"Battled Tamer\" #{} is {}", value, set_s)
+        }
+        ScriptConditionType::Unk6 => format!("Flag UNK-6 #{} is {}", value, set_s),
+        ScriptConditionType::Unk7 => format!("Flag UNK-7 #{} is {}", value, set_s),
+        ScriptConditionType::NpcI => format!("Flag \"NPC I\" #{} is {}", value, set_s),
+        ScriptConditionType::NpcII => format!("Flag \"NPC II\" #{} is {}", value, set_s),
+        ScriptConditionType::AreaVisited => format!("Flag area #{} visited is {}", value, set_s),
+        ScriptConditionType::Story => format!("Flag story #{} is {}", value, set_s),
+        ScriptConditionType::Quest => {
             let op = match condition.flag {
                 0 => "≠",
                 _ => "=",
@@ -54,7 +55,7 @@ fn conditionToString(
 
             format!("Quest {} #{}", op, value)
         }
-        112 => {
+        ScriptConditionType::Complex => {
             let complex_step = complex_steps.iter().find(|x| x.id == value as u8);
 
             match complex_step {
@@ -101,26 +102,7 @@ fn conditionToString(
                                 cs_type, cs_op
                             ),
                         }
-                    } else if cs_type == 32 {
-                        format!(
-                            "Unknown complex step cs_type: {}, cs_op: {}",
-                            cs_type, cs_op
-                        )
-                    } else if cs_type < 33 {
-                        format!(
-                            "Unknown complex step cs_type: {}, cs_op: {}",
-                            cs_type, cs_op
-                        )
-                    } else if cs_type == 64 {
-                        format!(
-                            "Unknown complex step cs_type: {}, cs_op: {}",
-                            cs_type, cs_op
-                        )
-                    } else if cs_type < 65 {
-                        if cs_type != 48 {
-                            return "Unknown complex step".to_string();
-                        }
-
+                    } else if cs_type == 48 {
                         let range = &quest_ranges[step.value as usize];
 
                         format!("#{} ≤ Quest ≤ #{}", range.min, range.max)
@@ -134,7 +116,7 @@ fn conditionToString(
                 None => "Unknown complex step".to_string(),
             }
         }
-        114 => {
+        ScriptConditionType::Charisma => {
             let op = match condition.flag {
                 0 => "<",
                 _ => "≥",
@@ -142,7 +124,7 @@ fn conditionToString(
 
             format!("Total charisma {} {}", op, charisma_reqs[value as usize])
         }
-        128..=143 => {
+        ScriptConditionType::Item(_) => {
             let add_s = match condition.flag {
                 0 => "Doesn't own item",
                 _ => "Owns item",
@@ -150,41 +132,43 @@ fn conditionToString(
 
             format!("{} \"{}\"", add_s, item_names[value as usize])
         }
-        _ => format!("Unknown ctype: {}, value: {}", c_type, value),
+        ScriptConditionType::Unknown(c_type) => {
+            format!("Unknown ctype: {}, value: {}", c_type, value)
+        }
+        _ => format!("Unknown ctype: {:?}, value: {}", condition.condition_type, value),
     }
 }
 
 fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> String {
-    let c_type = script.bitfield >> 8 & 0xfe;
-    let value = script.bitfield & 0x1ff;
+    let value = script.value;
     let set_s: &str = match script.flag {
         0 => "Unset",
         _ => "Set",
     };
 
-    match c_type {
-        0 => format!("{} flag \"Tamer\" #{}", set_s, value),
-        2 => format!("{} flag item box #{} opened", set_s, value),
-        4 => format!("{} flag auction #{} done", set_s, value),
-        6 => format!("{} \"DDNA Megas\" #{}", set_s, value),
-        8 => format!("{} flag UNK-2 #{}", set_s, value),
-        10 => format!("{} flag \"Bosses\" #{}", set_s, value),
-        12 => format!("{} flag \"A.o.A.\" #{}", set_s, value),
-        14 => format!("{} flag \"Battled Tamer\" #{}", set_s, value),
-        16 => format!("{} flag UNK-6 #{}", set_s, value),
-        24 => format!("{} flag UNK-7 #{}", set_s, value),
-        26 => format!("{} flag \"NPC I\" #{}", set_s, value),
-        28 => format!("{} flag \"NPC II\" #{}", set_s, value),
-        32 => format!("{} flag area #{} visited", set_s, value),
-        64 => format!("{} flag story #{}", set_s, value),
-        116 => format!("Start scripted battle #{}", value),
-        118 => format!("Start card battle #{}", value),
-        120 => format!("Start stronger card battle #{}", value),
-        122 => match 29 < value {
+    match script.condition_type {
+        ScriptConditionType::TamerFlag => format!("{} flag \"Tamer\" #{}", set_s, value),
+        ScriptConditionType::ItemBox => format!("{} flag item box #{} opened", set_s, value),
+        ScriptConditionType::Auction => format!("{} flag auction #{} done", set_s, value),
+        ScriptConditionType::DdnaMegas => format!("{} \"DDNA Megas\" #{}", set_s, value),
+        ScriptConditionType::Unk2 => format!("{} flag UNK-2 #{}", set_s, value),
+        ScriptConditionType::Bosses => format!("{} flag \"Bosses\" #{}", set_s, value),
+        ScriptConditionType::AoA => format!("{} flag \"A.o.A.\" #{}", set_s, value),
+        ScriptConditionType::BattledTamer => format!("{} flag \"Battled Tamer\" #{}", set_s, value),
+        ScriptConditionType::Unk6 => format!("{} flag UNK-6 #{}", set_s, value),
+        ScriptConditionType::Unk7 => format!("{} flag UNK-7 #{}", set_s, value),
+        ScriptConditionType::NpcI => format!("{} flag \"NPC I\" #{}", set_s, value),
+        ScriptConditionType::NpcII => format!("{} flag \"NPC II\" #{}", set_s, value),
+        ScriptConditionType::AreaVisited => format!("{} flag area #{} visited", set_s, value),
+        ScriptConditionType::Story => format!("{} flag story #{}", set_s, value),
+        ScriptConditionType::ScriptedBattle => format!("Start scripted battle #{}", value),
+        ScriptConditionType::CardBattle => format!("Start card battle #{}", value),
+        ScriptConditionType::StrongerCardBattle => format!("Start stronger card battle #{}", value),
+        ScriptConditionType::InnOrShop => match 29 < value {
             true => format!("Inn ({value})"),
             _ => format!("Shop ({value})"),
         },
-        128..=143 => {
+        ScriptConditionType::Item(_) => {
             let add_s = match script.flag {
                 0 => "Remove",
                 _ => "Add",
@@ -192,7 +176,7 @@ fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> Stri
 
             format!("{} \"{}\"", add_s, item_names[value as usize])
         }
-        144 => format!("Start cutscene #{}", value),
+        ScriptConditionType::Cutscene => format!("Start cutscene #{}", value),
         _ => "Unknown".to_string(),
     }
 }
