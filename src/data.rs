@@ -28,7 +28,7 @@ pub struct MapObject {
     pub scripts_conditions: Vec<ScriptConditionStep>,
     pub mapped_entities: Vec<MappedEntity>,
     pub talk_file: u16,
-    pub entity_conditions: Vec<ScriptConditionStep>,
+    pub _entity_conditions: Vec<ScriptConditionStep>,
     pub grids: Vec<Grid>,
 }
 
@@ -290,22 +290,6 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
                                     ((logic.conditions.value - script_cond_min) / 0x4) as usize;
 
                                 for condition in &scripts_conditions[conditions_idx..] {
-                                    if condition.condition_type
-                                        == dmw3_structs::ScriptConditionType::Complex
-                                    {
-                                        if let Some(step) = complex_steps
-                                            .iter()
-                                            .find(|x| x.id == condition.value as u8)
-                                        {
-                                            let cs_op = step.operation_and_type & 0b00001111;
-                                            let cs_type = step.operation_and_type & 0b11110000;
-
-                                            if cs_op == 9 {
-                                                tracing::info!("found all rookies: {}", folder);
-                                            }
-                                        }
-                                    }
-
                                     if condition.is_last_step() {
                                         break;
                                     }
@@ -347,7 +331,7 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
                                     complex_steps.iter().find(|x| x.id == condition.value as u8)
                                 {
                                     let cs_op = step.operation_and_type & 0b00001111;
-                                    let cs_type = step.operation_and_type & 0b11110000;
+                                    let _cs_type = step.operation_and_type & 0b11110000;
 
                                     if cs_op == 9 {
                                         tracing::info!("found all rookies: {}", folder);
@@ -383,7 +367,7 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
                     entities,
                     entity_logics,
                     scripts_conditions,
-                    entity_conditions,
+                    _entity_conditions: entity_conditions,
                     mapped_entities,
                     stage_id,
                     talk_file,
