@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use binread::BinRead;
+use binrw::BinRead;
 use dioxus::prelude::*;
 use dmw3_model::Header;
 use dmw3_pack::Packed;

@@ -1,4 +1,4 @@
-use binread::BinRead;
+use binrw::BinRead;
 use dmw3_consts::CHARISMA_VALUES;
 use dmw3_grids::Grid;
 use dmw3_pack::Packed;
@@ -86,13 +86,16 @@ pub struct MappedEntity {
     pub name: String,
 }
 
-pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
+pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T>
+where
+    for<'a> <T as BinRead>::Args<'a>: Default,
+{
     let mut result = Vec::new();
 
     let mut reader = &mut Cursor::new(bytes);
 
     loop {
-        let read_result = T::read(&mut reader);
+        let read_result = T::read_le(&mut reader);
 
         match read_result {
             Ok(r) => result.push(r),
@@ -103,12 +106,15 @@ pub fn read_vec<T: BinRead>(bytes: &[u8]) -> Vec<T> {
     result
 }
 
-fn read_blocks<T: BinRead>(data: &Vec<u8>, l: usize) -> anyhow::Result<Vec<T>> {
+fn read_blocks<T: BinRead>(data: &Vec<u8>, l: usize) -> anyhow::Result<Vec<T>>
+where
+    for<'a> <T as BinRead>::Args<'a>: Default,
+{
     let mut cursor = Cursor::new(&data[..]);
     let mut rv = Vec::new();
 
     for _ in 0..(data.len() / l) {
-        rv.push(T::read(&mut cursor)?);
+        rv.push(T::read_le(&mut cursor)?);
     }
 
     Ok(rv)
