@@ -24,160 +24,194 @@ fn conditionToString(
     let complex_steps = &data_parsed.complex_steps;
     let quest_ranges = &data_parsed.quest_ranges;
 
-    let value = condition.value;
-    let set_s: &str = match condition.flag {
-        0 => "unset",
-        _ => "set",
-    };
-
-    match condition.condition_type {
-        ScriptConditionType::TamerFlag => format!("Flag \"Tamer\" #{} is {}", value, set_s),
-        ScriptConditionType::ItemBox => format!("Flag item box #{} opened is {}", value, set_s),
-        ScriptConditionType::Auction => format!("Flag auction #{} done is {}", value, set_s),
-        ScriptConditionType::DdnaMegas => format!("Flag \"DDNA Megas\" #{} is {}", value, set_s),
-        ScriptConditionType::Unk2 => format!("Flag UNK-2 #{} is {}", value, set_s),
-        ScriptConditionType::Bosses => format!("Flag \"Bosses\" #{} is {}", value, set_s),
-        ScriptConditionType::AoA => format!("Flag \"A.o.A.\" #{} is {}", value, set_s),
-        ScriptConditionType::BattledTamer => {
-            format!("Flag \"Battled Tamer\" #{} is {}", value, set_s)
-        }
-        ScriptConditionType::Unk6 => format!("Flag UNK-6 #{} is {}", value, set_s),
-        ScriptConditionType::Unk7 => format!("Flag UNK-7 #{} is {}", value, set_s),
-        ScriptConditionType::NpcI => format!("Flag \"NPC I\" #{} is {}", value, set_s),
-        ScriptConditionType::NpcII => format!("Flag \"NPC II\" #{} is {}", value, set_s),
-        ScriptConditionType::AreaVisited => format!("Flag area #{} visited is {}", value, set_s),
-        ScriptConditionType::Story => format!("Flag story #{} is {}", value, set_s),
-        ScriptConditionType::Quest => {
-            let op = match condition.flag {
-                0 => "≠",
-                _ => "=",
+    match condition {
+        ScriptConditionStep::Step {
+            value,
+            condition_type,
+            flag,
+        } => {
+            let value = value;
+            let set_s: &str = match flag {
+                0 => "unset",
+                _ => "set",
             };
 
-            format!("Quest {} #{}", op, value)
-        }
-        ScriptConditionType::Complex => {
-            let complex_step = complex_steps.iter().find(|x| x.id == value as u8);
+            match condition_type {
+                ScriptConditionType::TamerFlag => format!("Flag \"Tamer\" #{} is {}", value, set_s),
+                ScriptConditionType::ItemBox => {
+                    format!("Flag item box #{} opened is {}", value, set_s)
+                }
+                ScriptConditionType::Auction => {
+                    format!("Flag auction #{} done is {}", value, set_s)
+                }
+                ScriptConditionType::DdnaMegas => {
+                    format!("Flag \"DDNA Megas\" #{} is {}", value, set_s)
+                }
+                ScriptConditionType::Unk2 => format!("Flag UNK-2 #{} is {}", value, set_s),
+                ScriptConditionType::Bosses => format!("Flag \"Bosses\" #{} is {}", value, set_s),
+                ScriptConditionType::AoA => format!("Flag \"A.o.A.\" #{} is {}", value, set_s),
+                ScriptConditionType::BattledTamer => {
+                    format!("Flag \"Battled Tamer\" #{} is {}", value, set_s)
+                }
+                ScriptConditionType::Unk6 => format!("Flag UNK-6 #{} is {}", value, set_s),
+                ScriptConditionType::Unk7 => format!("Flag UNK-7 #{} is {}", value, set_s),
+                ScriptConditionType::NpcI => format!("Flag \"NPC I\" #{} is {}", value, set_s),
+                ScriptConditionType::NpcII => format!("Flag \"NPC II\" #{} is {}", value, set_s),
+                ScriptConditionType::AreaVisited => {
+                    format!("Flag area #{} visited is {}", value, set_s)
+                }
+                ScriptConditionType::Story => format!("Flag story #{} is {}", value, set_s),
+                ScriptConditionType::Quest => {
+                    let op = match flag {
+                        0 => "≠",
+                        _ => "=",
+                    };
 
-            match complex_step {
-                Some(step) => {
-                    let cs_op = step.operation_and_type & 0b00001111;
-                    let cs_type = step.operation_and_type & 0b11110000;
+                    format!("Quest {} #{}", op, value)
+                }
+                ScriptConditionType::Complex => {
+                    let complex_step = complex_steps.iter().find(|x| x.id == value as u8);
 
-                    if cs_type == 16 {
-                        match cs_op {
-                            1 => {
-                                let op = match condition.flag {
-                                    0 => "locked",
-                                    _ => "unlocked",
-                                };
+                    match complex_step {
+                        Some(step) => {
+                            let cs_op = step.operation_and_type & 0b00001111;
+                            let cs_type = step.operation_and_type & 0b11110000;
 
-                                format!("Digimon #{} is {}", step.value, op)
+                            if cs_type == 16 {
+                                match cs_op {
+                                    1 => {
+                                        let op = match flag {
+                                            0 => "locked",
+                                            _ => "unlocked",
+                                        };
+
+                                        format!("Digimon #{} is {}", step.value, op)
+                                    }
+                                    5 => {
+                                        let op = match flag {
+                                            0 => "<",
+                                            _ => "=>",
+                                        };
+
+                                        format!("Total party level {} {}", op, step.value * 15 + 30)
+                                    }
+                                    6 => {
+                                        let op = match flag {
+                                            0 => "unlocked",
+                                            _ => "locked",
+                                        };
+
+                                        format!("Digimon #{} is {}", step.value, op)
+                                    }
+                                    9 => {
+                                        let op = match flag {
+                                            0 => "locked",
+                                            _ => "unlocked",
+                                        };
+
+                                        format!("All rookies {}", op)
+                                    }
+                                    _ => format!(
+                                        "Unknown complex step cs_type: {}, cs_op: {}",
+                                        cs_type, cs_op
+                                    ),
+                                }
+                            } else if cs_type == 48 {
+                                let range = &quest_ranges[step.value as usize];
+
+                                format!("#{} ≤ Quest ≤ #{}", range.min, range.max)
+                            } else {
+                                format!(
+                                    "Unknown complex step cs_type: {}, cs_op: {}",
+                                    cs_type, cs_op
+                                )
                             }
-                            5 => {
-                                let op = match condition.flag {
-                                    0 => "<",
-                                    _ => "=>",
-                                };
-
-                                format!("Total party level {} {}", op, step.value * 15 + 30)
-                            }
-                            6 => {
-                                let op = match condition.flag {
-                                    0 => "unlocked",
-                                    _ => "locked",
-                                };
-
-                                format!("Digimon #{} is {}", step.value, op)
-                            }
-                            9 => {
-                                let op = match condition.flag {
-                                    0 => "locked",
-                                    _ => "unlocked",
-                                };
-
-                                format!("All rookies {}", op)
-                            }
-                            _ => format!(
-                                "Unknown complex step cs_type: {}, cs_op: {}",
-                                cs_type, cs_op
-                            ),
                         }
-                    } else if cs_type == 48 {
-                        let range = &quest_ranges[step.value as usize];
-
-                        format!("#{} ≤ Quest ≤ #{}", range.min, range.max)
-                    } else {
-                        format!(
-                            "Unknown complex step cs_type: {}, cs_op: {}",
-                            cs_type, cs_op
-                        )
+                        None => "Unknown complex step".to_string(),
                     }
                 }
-                None => "Unknown complex step".to_string(),
+                ScriptConditionType::Charisma => {
+                    let op = match flag {
+                        0 => "<",
+                        _ => "≥",
+                    };
+
+                    format!("Total charisma {} {}", op, charisma_reqs[value as usize])
+                }
+                ScriptConditionType::Item(_) => {
+                    let add_s = match flag {
+                        0 => "Doesn't own item",
+                        _ => "Owns item",
+                    };
+
+                    format!("{} \"{}\"", add_s, item_names[value as usize])
+                }
+                ScriptConditionType::Unknown(c_type) => {
+                    format!("Unknown ctype: {}, value: {}", c_type, value)
+                }
+                _ => format!("Unknown ctype: {:?}, value: {}", condition_type, value),
             }
         }
-        ScriptConditionType::Charisma => {
-            let op = match condition.flag {
-                0 => "<",
-                _ => "≥",
-            };
-
-            format!("Total charisma {} {}", op, charisma_reqs[value as usize])
-        }
-        ScriptConditionType::Item(_) => {
-            let add_s = match condition.flag {
-                0 => "Doesn't own item",
-                _ => "Owns item",
-            };
-
-            format!("{} \"{}\"", add_s, item_names[value as usize])
-        }
-        ScriptConditionType::Unknown(c_type) => {
-            format!("Unknown ctype: {}, value: {}", c_type, value)
-        }
-        _ => format!("Unknown ctype: {:?}, value: {}", condition.condition_type, value),
+        ScriptConditionStep::EndStep => "End".to_string(),
     }
 }
 
 fn scriptToString(script: ScriptConditionStep, item_names: &Vec<String>) -> String {
-    let value = script.value;
-    let set_s: &str = match script.flag {
-        0 => "Unset",
-        _ => "Set",
-    };
-
-    match script.condition_type {
-        ScriptConditionType::TamerFlag => format!("{} flag \"Tamer\" #{}", set_s, value),
-        ScriptConditionType::ItemBox => format!("{} flag item box #{} opened", set_s, value),
-        ScriptConditionType::Auction => format!("{} flag auction #{} done", set_s, value),
-        ScriptConditionType::DdnaMegas => format!("{} \"DDNA Megas\" #{}", set_s, value),
-        ScriptConditionType::Unk2 => format!("{} flag UNK-2 #{}", set_s, value),
-        ScriptConditionType::Bosses => format!("{} flag \"Bosses\" #{}", set_s, value),
-        ScriptConditionType::AoA => format!("{} flag \"A.o.A.\" #{}", set_s, value),
-        ScriptConditionType::BattledTamer => format!("{} flag \"Battled Tamer\" #{}", set_s, value),
-        ScriptConditionType::Unk6 => format!("{} flag UNK-6 #{}", set_s, value),
-        ScriptConditionType::Unk7 => format!("{} flag UNK-7 #{}", set_s, value),
-        ScriptConditionType::NpcI => format!("{} flag \"NPC I\" #{}", set_s, value),
-        ScriptConditionType::NpcII => format!("{} flag \"NPC II\" #{}", set_s, value),
-        ScriptConditionType::AreaVisited => format!("{} flag area #{} visited", set_s, value),
-        ScriptConditionType::Story => format!("{} flag story #{}", set_s, value),
-        ScriptConditionType::ScriptedBattle => format!("Start scripted battle #{}", value),
-        ScriptConditionType::CardBattle => format!("Start card battle #{}", value),
-        ScriptConditionType::StrongerCardBattle => format!("Start stronger card battle #{}", value),
-        ScriptConditionType::InnOrShop => match 29 < value {
-            true => format!("Inn ({value})"),
-            _ => format!("Shop ({value})"),
-        },
-        ScriptConditionType::Item(_) => {
-            let add_s = match script.flag {
-                0 => "Remove",
-                _ => "Add",
+    match script {
+        ScriptConditionStep::Step {
+            value,
+            condition_type,
+            flag,
+        } => {
+            let value = value;
+            let set_s: &str = match flag {
+                0 => "Unset",
+                _ => "Set",
             };
 
-            format!("{} \"{}\"", add_s, item_names[value as usize])
+            match condition_type {
+                ScriptConditionType::TamerFlag => format!("{} flag \"Tamer\" #{}", set_s, value),
+                ScriptConditionType::ItemBox => {
+                    format!("{} flag item box #{} opened", set_s, value)
+                }
+                ScriptConditionType::Auction => format!("{} flag auction #{} done", set_s, value),
+                ScriptConditionType::DdnaMegas => format!("{} \"DDNA Megas\" #{}", set_s, value),
+                ScriptConditionType::Unk2 => format!("{} flag UNK-2 #{}", set_s, value),
+                ScriptConditionType::Bosses => format!("{} flag \"Bosses\" #{}", set_s, value),
+                ScriptConditionType::AoA => format!("{} flag \"A.o.A.\" #{}", set_s, value),
+                ScriptConditionType::BattledTamer => {
+                    format!("{} flag \"Battled Tamer\" #{}", set_s, value)
+                }
+                ScriptConditionType::Unk6 => format!("{} flag UNK-6 #{}", set_s, value),
+                ScriptConditionType::Unk7 => format!("{} flag UNK-7 #{}", set_s, value),
+                ScriptConditionType::NpcI => format!("{} flag \"NPC I\" #{}", set_s, value),
+                ScriptConditionType::NpcII => format!("{} flag \"NPC II\" #{}", set_s, value),
+                ScriptConditionType::AreaVisited => {
+                    format!("{} flag area #{} visited", set_s, value)
+                }
+                ScriptConditionType::Story => format!("{} flag story #{}", set_s, value),
+                ScriptConditionType::ScriptedBattle => format!("Start scripted battle #{}", value),
+                ScriptConditionType::CardBattle => format!("Start card battle #{}", value),
+                ScriptConditionType::StrongerCardBattle => {
+                    format!("Start stronger card battle #{}", value)
+                }
+                ScriptConditionType::InnOrShop => match 29 < value {
+                    true => format!("Inn ({value})"),
+                    _ => format!("Shop ({value})"),
+                },
+                ScriptConditionType::Item(_) => {
+                    let add_s = match flag {
+                        0 => "Remove",
+                        _ => "Add",
+                    };
+
+                    format!("{} \"{}\"", add_s, item_names[value as usize])
+                }
+                ScriptConditionType::Cutscene => format!("Start cutscene #{}", value),
+                _ => "Unknown".to_string(),
+            }
         }
-        ScriptConditionType::Cutscene => format!("Start cutscene #{}", value),
-        _ => "Unknown".to_string(),
+        ScriptConditionStep::EndStep => "End".to_string(),
     }
 }
 

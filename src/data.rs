@@ -171,7 +171,7 @@ fn read_grids(bytes: Vec<u8>) -> Vec<Grid> {
         .collect()
 }
 
-pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<String, MapObject> {
+pub fn init_maps() -> HashMap<String, MapObject> {
     let cursor = Cursor::new(include_bytes!("../dump/dmw2003/maps.tar"));
 
     let mut archive = Archive::new(cursor);
@@ -324,21 +324,6 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
                             ((entity.conditions.value - first_entity_conditions) / 0x4) as usize;
 
                         for condition in &entity_conditions[conditions_idx..] {
-                            if condition.condition_type
-                                == dmw3_structs::ScriptConditionType::Complex
-                            {
-                                if let Some(step) =
-                                    complex_steps.iter().find(|x| x.id == condition.value as u8)
-                                {
-                                    let cs_op = step.operation_and_type & 0b00001111;
-                                    let _cs_type = step.operation_and_type & 0b11110000;
-
-                                    if cs_op == 9 {
-                                        tracing::info!("found all rookies: {}", folder);
-                                    }
-                                }
-                            }
-
                             if condition.is_last_step() {
                                 break;
                             }
@@ -381,8 +366,6 @@ pub fn init_maps(complex_steps: &Vec<ComplexScriptConditionStep>) -> HashMap<Str
 }
 
 pub fn init() -> DataParsed {
-    let complex_steps = read_vec(include_bytes!("../dump/dmw2003/complex_steps"));
-
     DataParsed {
         digivolutions: read_vec(include_bytes!("../dump/dmw2003/digivolutions")),
         digivolution_conditions: read_vec(include_bytes!(
@@ -397,7 +380,7 @@ pub fn init() -> DataParsed {
         shops: read_vec(include_bytes!("../dump/dmw2003/shops")),
         shop_items: read_vec(include_bytes!("../dump/dmw2003/shop_items")),
         enemy_stats: read_vec(include_bytes!("../dump/dmw2003/enemy_stats")),
-        map_objects: init_maps(&complex_steps),
+        map_objects: init_maps(),
         screen_name_mapping: read_vec(include_bytes!("../dump/dmw2003/screen_name_mapping")),
 
         card_shops: read_vec(include_bytes!("../dump/dmw2003/card_shops")),
@@ -409,7 +392,7 @@ pub fn init() -> DataParsed {
 
         quest_ranges: read_vec(include_bytes!("../dump/dmw2003/quest_ranges")),
         charisma_reqs: CHARISMA_VALUES,
-        complex_steps,
+        complex_steps: read_vec(include_bytes!("../dump/dmw2003/complex_steps")),
     }
 }
 
