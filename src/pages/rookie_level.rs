@@ -1,9 +1,9 @@
 use dioxus::prelude::*;
 use dmw3_structs::DigivolutionData;
 
-const HEADERS: [&str; 12] = [
-    "Str", "Def", "Spt", "Wis", "Spd", "Fir res", "Wtr res", "Ice res", "Wnd res", "Thd res",
-    "Mch res", "Drk res",
+const HEADERS: [&str; 13] = [
+    "Str", "Def", "Spt", "Wis", "Spd", "Cha", "Fir res", "Wtr res", "Ice res", "Wnd res",
+    "Thd res", "Mch res", "Drk res",
 ];
 
 use crate::{
@@ -202,6 +202,11 @@ pub fn RookieLevel() -> Element {
             c_level,
             c_target_level,
             rookies[c_rookie as usize].stat_offsets[4] as usize,
+        ),
+        stat_gain(
+            c_level,
+            c_target_level,
+            rookies[c_rookie as usize].stat_offsets[5] as usize,
         ),
     ];
 
